@@ -96,7 +96,8 @@
       "Bash(dart /mnt/c/Users/marouen/Documents/flutter/bin/cache/dart-sdk/bin/dart analyze /mnt/c/Users/marouen/Desktop/WorkingSpace/BYRSA/lib/features/messaging/)",
       "Bash(/usr/bin/flutter test *)",
       "Bash(/mnt/c/Users/marouen/Documents/flutter/bin/flutter test *)",
-      "Bash(/root/flutter/bin/flutter test *)"
+      "Bash(/root/flutter/bin/flutter test *)",
+      "Bash(awk '{print $2, $3}')"
     ]
   }
 }

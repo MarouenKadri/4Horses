@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../core/design/app_design_system.dart';
 import '../../widgets/shared/payment_common_widgets.dart';
-import '../../widgets/shared/user_common_widgets.dart';
 
 class ClientFinanceActivityTab extends StatefulWidget {
   const ClientFinanceActivityTab({super.key});
@@ -409,7 +408,7 @@ class _ClientFiltersHeader extends SliverPersistentHeaderDelegate {
     required this.onFilterChanged,
   });
 
-  static const double _height = 182;
+  static const double _height = 236;
 
   @override
   double get minExtent => _height;
@@ -433,75 +432,50 @@ class _ClientFiltersHeader extends SliverPersistentHeaderDelegate {
         children: [
           Divider(height: 1, color: context.colors.divider),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
               decoration: BoxDecoration(
-                color: context.colors.surface,
-                borderRadius: BorderRadius.circular(14),
+                color: context.colors.surfaceAlt,
+                borderRadius: BorderRadius.circular(18),
                 border: Border.all(color: context.colors.border),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          month,
-                          style: context.text.labelSmall?.copyWith(
-                            color: context.colors.textTertiary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        AppGap.h4,
-                        Text(
-                          '${totalPaid.toStringAsFixed(0)} €',
-                          style: context.text.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                        Text(
-                          'Dépensé ce mois',
-                          style: context.text.labelSmall?.copyWith(
-                            color: context.colors.textTertiary,
-                          ),
-                        ),
-                      ],
+                  Text(
+                    'Résumé',
+                    style: context.text.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: context.colors.textPrimary,
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '− ${totalPaid.toStringAsFixed(0)} €',
-                        style: context.text.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: context.colors.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        'payé',
-                        style: context.text.labelSmall?.copyWith(
-                          color: context.colors.textTertiary,
-                        ),
-                      ),
-                      AppGap.h6,
-                      Text(
-                        '+ ${totalRefunded.toStringAsFixed(0)} €',
-                        style: context.text.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: context.colors.textSecondary,
-                        ),
-                      ),
-                      Text(
-                        'remboursé',
-                        style: context.text.labelSmall?.copyWith(
-                          color: context.colors.textTertiary,
-                        ),
-                      ),
-                    ],
+                  AppGap.h4,
+                  Text(
+                    month,
+                    style: context.text.bodySmall?.copyWith(
+                      color: context.colors.textSecondary,
+                    ),
+                  ),
+                  AppGap.h14,
+                  _SummaryMetric(
+                    label: 'Dépensé',
+                    value: '− ${totalPaid.toStringAsFixed(0)} €',
+                    valueColor: context.colors.textPrimary,
+                  ),
+                  AppGap.h10,
+                  _SummaryMetric(
+                    label: 'Remboursé',
+                    value: '+ ${totalRefunded.toStringAsFixed(0)} €',
+                    valueColor: AppColors.primary,
+                  ),
+                  AppGap.h12,
+                  Text(
+                    'Touchez une ligne pour voir le détail du paiement.',
+                    style: context.text.bodySmall?.copyWith(
+                      color: context.colors.textTertiary,
+                      height: 1.4,
+                    ),
                   ),
                 ],
               ),
@@ -519,6 +493,41 @@ class _ClientFiltersHeader extends SliverPersistentHeaderDelegate {
   }
 }
 
+class _SummaryMetric extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color valueColor;
+
+  const _SummaryMetric({
+    required this.label,
+    required this.value,
+    required this.valueColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: context.text.bodyMedium?.copyWith(
+              color: context.colors.textSecondary,
+            ),
+          ),
+        ),
+        Text(
+          value,
+          style: context.text.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: valueColor,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _TxTile extends StatelessWidget {
   final _Tx tx;
   final VoidCallback onTap;
@@ -528,134 +537,28 @@ class _TxTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isRefund = tx.type == _T.refund;
-    final pipelineStage = _pipelineStage(tx);
-    final pipelineCaption = switch (pipelineStage) {
-      PaymentMissionPipelineStage.waiting24h =>
-        'Paiement securise, versement sous 24h',
-      PaymentMissionPipelineStage.paid => 'Paiement verse au prestataire',
-      _ => null,
-    };
-    final trailingBadgeLabel = tx.pending
-        ? '24h'
+    final subtitle = tx.pending
+        ? '${tx.sub} · Versement au prestataire sous 24h'
         : isRefund
-            ? 'Rembourse'
-            : tx.card;
+            ? '${tx.sub} · Remboursement reçu'
+            : '${tx.sub} · ${tx.card}';
 
-    return InkWell(
+    return PaymentTxTile(
+      icon: isRefund
+          ? Icons.arrow_downward_rounded
+          : Icons.arrow_upward_rounded,
+      title: tx.title,
+      subtitle: subtitle,
+      amount: '${isRefund ? '+' : '−'}${tx.amount.toStringAsFixed(2)} €',
+      isPositive: isRefund,
+      badge: tx.pending ? 'En attente' : isRefund ? 'Remboursé' : 'Payé',
+      badgeColor: tx.pending
+          ? context.colors.textTertiary
+          : isRefund
+              ? AppColors.primary
+              : context.colors.textTertiary,
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: context.colors.surfaceAlt,
-                    borderRadius: BorderRadius.circular(11),
-                    border: Border.all(color: context.colors.border),
-                  ),
-                  child: Icon(
-                    isRefund
-                        ? Icons.arrow_downward_rounded
-                        : Icons.arrow_upward_rounded,
-                    size: 17,
-                    color: context.colors.textSecondary,
-                  ),
-                ),
-                AppGap.w12,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        tx.title,
-                        style: context.text.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: context.colors.textPrimary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      AppGap.h2,
-                      Text(
-                        tx.sub,
-                        style: context.text.bodySmall?.copyWith(
-                          color: context.colors.textTertiary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                AppGap.w12,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '${isRefund ? '+' : '−'}${tx.amount.toStringAsFixed(2)} €',
-                      style: context.text.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: tx.pending
-                            ? context.colors.textSecondary
-                            : context.colors.textPrimary,
-                      ),
-                    ),
-                    AppGap.h2,
-                    if (tx.pending)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.colors.surfaceAlt,
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: context.colors.border),
-                        ),
-                        child: Text(
-                          trailingBadgeLabel,
-                          style: context.text.labelSmall?.copyWith(
-                            fontSize: 10,
-                            color: context.colors.textTertiary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      )
-                    else
-                      Text(
-                        trailingBadgeLabel,
-                        style: context.text.labelSmall?.copyWith(
-                          color: isRefund
-                              ? AppColors.primary
-                              : context.colors.textTertiary,
-                          fontWeight:
-                              isRefund ? FontWeight.w600 : FontWeight.w500,
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-            if (pipelineStage != null) ...[
-              AppGap.h10,
-              PaymentMissionPipelineInline(
-                stage: pipelineStage,
-                caption: pipelineCaption,
-              ),
-            ],
-          ],
-        ),
-      ),
     );
-  }
-
-  PaymentMissionPipelineStage? _pipelineStage(_Tx tx) {
-    if (tx.type != _T.payment) return null;
-    if (tx.pending) return PaymentMissionPipelineStage.waiting24h;
-    return PaymentMissionPipelineStage.paid;
   }
 }
 

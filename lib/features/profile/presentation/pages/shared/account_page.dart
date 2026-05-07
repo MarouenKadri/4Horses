@@ -40,7 +40,7 @@ class _AccountPageState extends State<AccountPage> {
 
     return Scaffold(
       backgroundColor: context.colors.background,
-      appBar: AppSectionBar(pageTitle: 'Mon compte'),
+      appBar: AppSectionBar(pageTitle: 'Mon compte', showRolePill: true),
       body: AppPageBody(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 48),
         useSafeAreaBottom: true,
@@ -348,14 +348,6 @@ class _ProfileHeader extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.accountProfileNameStyle,
-                ),
-                AppGap.h4,
-                Text(
-                  isFreelancerMode ? 'Freelancer' : 'Client',
-                  style: context.accountProfileMetaStyle.copyWith(
-                    fontSize: AppFontSize.md,
-                    color: context.colors.textTertiary,
-                  ),
                 ),
               ],
             ),

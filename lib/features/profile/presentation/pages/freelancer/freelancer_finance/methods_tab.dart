@@ -239,49 +239,84 @@ class _IbanSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextFormField(
+              textCapitalization: TextCapitalization.characters,
               style: TextStyle(
                 fontSize: AppFontSize.body,
                 color: context.colors.textPrimary,
+                letterSpacing: 1.5,
               ),
               decoration: AppInputDecorations.profileField(
                 context,
-                hintText: 'IBAN (FR76...)',
+                hintText: 'FR76 3000 1007 94...',
                 radius: 18,
-                prefixIcon: Icon(
-                  Icons.account_balance_rounded,
-                  size: 16,
-                  color: context.colors.textHint,
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(left: 14, right: 10),
+                  child: Icon(Icons.account_balance_rounded,
+                      size: 16, color: context.colors.textHint),
                 ),
+              ).copyWith(
+                labelText: 'IBAN',
+                errorStyle: context.profileErrorStyle,
               ),
             ),
             AppGap.h10,
             TextFormField(
+              textCapitalization: TextCapitalization.characters,
               style: TextStyle(
                 fontSize: AppFontSize.body,
                 color: context.colors.textPrimary,
               ),
               decoration: AppInputDecorations.profileField(
                 context,
-                hintText: 'BIC / SWIFT (optionnel)',
+                hintText: 'BNPAFRPP...',
                 radius: 18,
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(left: 14, right: 10),
+                  child: Icon(Icons.code_rounded,
+                      size: 16, color: context.colors.textHint),
+                ),
+              ).copyWith(
+                labelText: 'BIC / SWIFT (optionnel)',
+                errorStyle: context.profileErrorStyle,
               ),
             ),
             AppGap.h10,
             TextFormField(
+              textCapitalization: TextCapitalization.words,
               style: TextStyle(
                 fontSize: AppFontSize.body,
                 color: context.colors.textPrimary,
               ),
               decoration: AppInputDecorations.profileField(
                 context,
-                hintText: 'Titulaire du compte',
+                hintText: 'Jean Dupont',
                 radius: 18,
-                prefixIcon: Icon(
-                  Icons.person_outline_rounded,
-                  size: 16,
-                  color: context.colors.textHint,
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(left: 14, right: 10),
+                  child: Icon(Icons.person_outline_rounded,
+                      size: 16, color: context.colors.textHint),
                 ),
+              ).copyWith(
+                labelText: 'Titulaire du compte',
+                errorStyle: context.profileErrorStyle,
               ),
+            ),
+            AppGap.h16,
+            Row(
+              children: [
+                Icon(Icons.lock_outline_rounded,
+                    size: 13, color: context.colors.textTertiary),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Coordonnées bancaires chiffrées et sécurisées',
+                    style: context.text.bodySmall?.copyWith(
+                      color: context.colors.textTertiary,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

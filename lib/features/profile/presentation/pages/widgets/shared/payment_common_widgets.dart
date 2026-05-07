@@ -723,7 +723,6 @@ class _AddCardSheetState extends State<AddCardSheet> {
                         style: context.sheetFormTitleStyle,
                       ),
                       AppGap.h16,
-                      Divider(color: context.colors.divider, height: 1),
                     ],
                   ),
                 ),
@@ -754,14 +753,18 @@ class _AddCardSheetState extends State<AddCardSheet> {
                           onChanged: _onNumberChanged,
                           decoration: AppInputDecorations.profileField(
                             context,
-                            hintText: 'Numéro de carte',
+                            hintText: '1234 5678 9012 3456',
                             radius: 18,
-                            prefixIcon: Icon(
-                              Icons.credit_card_rounded,
-                              size: 16,
-                              color: context.colors.textHint,
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(left: 14, right: 10),
+                              child: Icon(Icons.credit_card_rounded,
+                                  size: 16, color: context.colors.textHint),
                             ),
-                          ).copyWith(suffixIcon: _brandBadge()),
+                          ).copyWith(
+                            labelText: 'Numéro de carte',
+                            errorStyle: context.profileErrorStyle,
+                            suffixIcon: _brandBadge(),
+                          ),
                           validator: (v) =>
                               (v == null || v.replaceAll(' ', '').length < _maxDigits)
                                   ? 'Numéro invalide'
@@ -785,7 +788,11 @@ class _AddCardSheetState extends State<AddCardSheet> {
                                   context,
                                   hintText: 'MM/AA',
                                   radius: 18,
-                                ).copyWith(counterText: ''),
+                                ).copyWith(
+                                  labelText: 'Expiration',
+                                  counterText: '',
+                                  errorStyle: context.profileErrorStyle,
+                                ),
                                 validator: (v) =>
                                     (v == null || v.length < 5) ? 'Invalide' : null,
                               ),
@@ -805,9 +812,13 @@ class _AddCardSheetState extends State<AddCardSheet> {
                                 onChanged: _onCvvChanged,
                                 decoration: AppInputDecorations.profileField(
                                   context,
-                                  hintText: 'CVV',
+                                  hintText: '•••',
                                   radius: 18,
-                                ).copyWith(counterText: ''),
+                                ).copyWith(
+                                  labelText: 'CVV',
+                                  counterText: '',
+                                  errorStyle: context.profileErrorStyle,
+                                ),
                                 validator: (v) =>
                                     (v == null || v.length < _cvvLen) ? 'Invalide' : null,
                               ),
@@ -826,16 +837,36 @@ class _AddCardSheetState extends State<AddCardSheet> {
                           ),
                           decoration: AppInputDecorations.profileField(
                             context,
-                            hintText: 'Titulaire de la carte',
+                            hintText: 'JEAN DUPONT',
                             radius: 18,
-                            prefixIcon: Icon(
-                              Icons.person_outline_rounded,
-                              size: 16,
-                              color: context.colors.textHint,
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(left: 14, right: 10),
+                              child: Icon(Icons.person_outline_rounded,
+                                  size: 16, color: context.colors.textHint),
                             ),
+                          ).copyWith(
+                            labelText: 'Titulaire de la carte',
+                            errorStyle: context.profileErrorStyle,
                           ),
                           validator: (v) =>
                               (v == null || v.trim().isEmpty) ? 'Nom requis' : null,
+                        ),
+                        AppGap.h16,
+                        Row(
+                          children: [
+                            Icon(Icons.lock_outline_rounded,
+                                size: 13, color: context.colors.textTertiary),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Données chiffrées · jamais stockées sur nos serveurs',
+                                style: context.text.bodySmall?.copyWith(
+                                  color: context.colors.textTertiary,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -898,16 +929,9 @@ class _LiveCardPreview extends StatelessWidget {
     return '${raw.substring(0, 4)}  ${raw.substring(4, 8)}  ${raw.substring(8, 12)}  ${raw.substring(12, 16)}';
   }
 
-  List<Color> get _gradientColors => switch (brand) {
-    _AddCardBrand.visa       => [const Color(0xFF1E3A5F), AppColors.blueAction],
-    _AddCardBrand.mastercard => [const Color(0xFF7A1A00), AppColors.mastercardOrange],
-    _AddCardBrand.amex       => [AppColors.deepNavy, AppColors.blueNavy],
-    _AddCardBrand.unknown    => [AppColors.primaryDark, AppColors.primary],
-  };
-
-  String get _networkLabel => switch (brand) {
+  String get _brandLabel => switch (brand) {
     _AddCardBrand.visa       => 'VISA',
-    _AddCardBrand.mastercard => 'MC',
+    _AddCardBrand.mastercard => 'MASTERCARD',
     _AddCardBrand.amex       => 'AMEX',
     _AddCardBrand.unknown    => '',
   };
@@ -916,152 +940,110 @@ class _LiveCardPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final displayName = name.trim().isEmpty ? 'TITULAIRE' : name.toUpperCase();
     final displayExpiry = expiry.isEmpty ? '••/••' : expiry;
-    final colors = _gradientColors;
 
     return SizedBox(
-      height: 176,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 380),
-        transitionBuilder: (child, anim) => FadeTransition(
-          opacity: anim,
-          child: ScaleTransition(
-            scale: Tween<double>(begin: 0.97, end: 1.0).animate(
-              CurvedAnimation(parent: anim, curve: Curves.easeOut),
+      height: 172,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: AppColors.inkDark,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.22),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
-            child: child,
-          ),
+          ],
         ),
-        child: Container(
-          key: ValueKey(brand),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: colors,
-            ),
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: colors.last.withValues(alpha: 0.38),
-                blurRadius: 22,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ─── Chip doré + sans-contact + marque ───
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 32,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Color(0xFFD4AF37), Color(0xFFB8860B)],
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+        padding: const EdgeInsets.all(22),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ─── Chip + marque ─────────────────────────────
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 30,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  Row(
-                    children: [
-                      Transform.rotate(
-                        angle: 1.5708,
-                        child: const Icon(
-                          Icons.wifi_rounded,
-                          size: 18,
-                          color: Colors.white54,
-                        ),
-                      ),
-                      if (brand != _AddCardBrand.unknown) ...[
-                        const SizedBox(width: 10),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.18),
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.3),
-                              width: 0.8,
-                            ),
-                          ),
-                          child: Text(
-                            _networkLabel,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
-              ),
-              const Spacer(),
-              // ─── Numéro ───
-              Text(
-                _displayNumber,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2.5,
                 ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: brand == _AddCardBrand.unknown
+                      ? const SizedBox(key: ValueKey('none'), width: 60)
+                      : Text(
+                          key: ValueKey(brand),
+                          _brandLabel,
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.55),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            // ─── Numéro ────────────────────────────────────
+            Text(
+              _displayNumber,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 3,
+                fontFeatures: [FontFeature.tabularFigures()],
               ),
-              const SizedBox(height: 14),
-              // ─── Expiry + nom ───
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'EXPIRE',
-                        style: TextStyle(
-                          color: Colors.white54,
-                          fontSize: 8,
-                          letterSpacing: 1.2,
-                        ),
+            ),
+            const SizedBox(height: 16),
+            // ─── Expiry + nom ──────────────────────────────
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'EXPIRE',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.35),
+                        fontSize: 8,
+                        letterSpacing: 1.5,
                       ),
-                      Text(
-                        displayExpiry,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    displayName,
-                    style: TextStyle(
-                      color: name.trim().isEmpty
-                          ? Colors.white38
-                          : Colors.white.withValues(alpha: 0.85),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1,
                     ),
+                    const SizedBox(height: 2),
+                    Text(
+                      displayExpiry,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.5,
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  displayName,
+                  style: TextStyle(
+                    color: name.trim().isEmpty
+                        ? Colors.white.withValues(alpha: 0.25)
+                        : Colors.white.withValues(alpha: 0.75),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1.2,
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

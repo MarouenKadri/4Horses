@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/design/app_design_system.dart';
 import '../../../../data/models/transaction.dart';
 import '../../widgets/shared/payment_common_widgets.dart';
-import '../../widgets/shared/user_common_widgets.dart';
 
 class FreelancerFinanceActivityTab extends StatefulWidget {
   const FreelancerFinanceActivityTab({super.key});
@@ -532,136 +531,95 @@ class _BalanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.ink, AppColors.surface],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        color: context.colors.surfaceAlt,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: context.colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(9),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.account_balance_wallet_rounded,
-                  size: 16,
-                  color: Colors.white70,
-                ),
+              Icon(
+                Icons.account_balance_wallet_outlined,
+                size: 18,
+                color: context.colors.textSecondary,
               ),
               AppGap.w10,
-              const Text(
+              Text(
                 'Solde disponible',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.white54,
-                  fontWeight: FontWeight.w500,
+                style: context.text.bodySmall?.copyWith(
+                  color: context.colors.textSecondary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          AppGap.h14,
-          const Text(
+          AppGap.h12,
+          Text(
             '145,50 €',
-            style: TextStyle(
-              fontSize: 36,
+            style: context.text.headlineMedium?.copyWith(
               fontWeight: FontWeight.w800,
-              color: Colors.white,
-              letterSpacing: -1,
+              color: context.colors.textPrimary,
             ),
           ),
-          AppGap.h18,
-          Divider(color: Colors.white.withValues(alpha: 0.1), height: 1),
-          AppGap.h16,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.lock_clock_rounded,
-                    size: 14,
-                    color: Colors.white38,
-                  ),
-                  AppGap.w6,
-                  const Text(
-                    'En attente',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.white54,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              const Text(
-                '100,00 €',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
           AppGap.h8,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.07),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.schedule_rounded,
-                      size: 12,
-                      color: Colors.white38,
-                    ),
-                    AppGap.w4,
-                    const Text(
-                      'Versement dans 18h',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.white54,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          Text(
+            'Votre prochain versement automatique arrive dans 18h.',
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          AppGap.h16,
+          Divider(height: 1, color: context.colors.divider),
+          AppGap.h14,
+          _BalanceInfoRow(
+            label: 'En attente',
+            value: '100,00 €',
+          ),
+          AppGap.h10,
+          _BalanceInfoRow(
+            label: 'Dernier retrait',
+            value: '200,00 €',
           ),
         ],
       ),
+    );
+  }
+}
+
+class _BalanceInfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _BalanceInfoRow({
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: context.text.bodyMedium?.copyWith(
+              color: context.colors.textSecondary,
+            ),
+          ),
+        ),
+        Text(
+          value,
+          style: context.text.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.textPrimary,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -678,8 +636,8 @@ class _RetirerBtn extends StatelessWidget {
       child: Container(
         height: 50,
         decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(14),
+          color: context.colors.surfaceAlt,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: context.colors.border),
         ),
         child: Row(
@@ -722,7 +680,7 @@ class _FiltersHeader extends SliverPersistentHeaderDelegate {
     required this.onPeriodTap,
   });
 
-  static const double _height = 172;
+  static const double _height = 292;
 
   @override
   double get minExtent => _height;
@@ -744,49 +702,57 @@ class _FiltersHeader extends SliverPersistentHeaderDelegate {
         children: [
           Divider(height: 1, color: context.colors.divider),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
-            child: Column(
-              children: [
-                summary,
-                AppGap.h10,
-                GestureDetector(
-                  onTap: onPeriodTap,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 9,
-                    ),
-                    decoration: BoxDecoration(
-                      color: context.colors.surface,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: context.colors.border),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today_rounded,
-                          size: 14,
-                          color: context.colors.textTertiary,
-                        ),
-                        AppGap.w8,
-                        Text(
-                          period,
-                          style: context.text.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: context.colors.textSecondary,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+              decoration: BoxDecoration(
+                color: context.colors.surfaceAlt,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: context.colors.border),
+              ),
+              child: Column(
+                children: [
+                  summary,
+                  AppGap.h12,
+                  GestureDetector(
+                    onTap: onPeriodTap,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 11,
+                      ),
+                      decoration: BoxDecoration(
+                        color: context.colors.surface,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: context.colors.border),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today_rounded,
+                            size: 14,
+                            color: context.colors.textTertiary,
                           ),
-                        ),
-                        const Spacer(),
-                        Icon(
-                          Icons.expand_more_rounded,
-                          size: 16,
-                          color: context.colors.textTertiary,
-                        ),
-                      ],
+                          AppGap.w8,
+                          Text(
+                            period,
+                            style: context.text.bodySmall?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              color: context.colors.textSecondary,
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.expand_more_rounded,
+                            size: 16,
+                            color: context.colors.textTertiary,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           PaymentFilterPills(
@@ -816,74 +782,80 @@ class _SummaryStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: context.colors.border),
+        color: Colors.transparent,
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            _Cell(
-              'Revenus',
-              '+${totalRevenu.toStringAsFixed(0)} €',
-              context.colors.textPrimary,
-              context,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Résumé',
+            style: context.text.bodySmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.textPrimary,
             ),
-            VerticalDivider(width: 1, color: context.colors.divider),
-            _Cell(
-              'En attente',
-              '${totalEnAttente.toStringAsFixed(0)} €',
-              context.colors.textSecondary,
-              context,
+          ),
+          AppGap.h4,
+          Text(
+            'Lecture rapide de vos mouvements sur la période.',
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.textSecondary,
             ),
-            VerticalDivider(width: 1, color: context.colors.divider),
-            _Cell(
-              'Retraits',
-              '−${totalRetrait.toStringAsFixed(0)} €',
-              context.colors.textSecondary,
-              context,
-            ),
-          ],
-        ),
+          ),
+          AppGap.h14,
+          _SummaryLine(
+            label: 'Revenus encaissés',
+            value: '+${totalRevenu.toStringAsFixed(0)} €',
+            valueColor: context.colors.textPrimary,
+          ),
+          AppGap.h10,
+          _SummaryLine(
+            label: 'En attente',
+            value: '${totalEnAttente.toStringAsFixed(0)} €',
+            valueColor: context.colors.textSecondary,
+          ),
+          AppGap.h10,
+          _SummaryLine(
+            label: 'Retraits',
+            value: '−${totalRetrait.toStringAsFixed(0)} €',
+            valueColor: context.colors.textSecondary,
+          ),
+        ],
       ),
     );
   }
 }
 
-class _Cell extends StatelessWidget {
+class _SummaryLine extends StatelessWidget {
   final String label;
   final String value;
   final Color valueColor;
-  final BuildContext ctx;
 
-  const _Cell(this.label, this.value, this.valueColor, this.ctx);
+  const _SummaryLine({
+    required this.label,
+    required this.value,
+    required this.valueColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: ctx.text.labelSmall?.copyWith(
-                color: ctx.colors.textTertiary,
-                fontWeight: FontWeight.w500,
-              ),
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: context.text.bodyMedium?.copyWith(
+              color: context.colors.textSecondary,
             ),
-            AppGap.h4,
-            Text(
-              value,
-              style: ctx.text.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: valueColor,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        Text(
+          value,
+          style: context.text.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: valueColor,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -897,175 +869,43 @@ class _TxTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPositive = tx.type.isPositive;
-    final isHeld = tx.type == TransactionType.held;
-    final pipelineStage = _pipelineStage(tx);
-    final heldBadgeLabel = switch (pipelineStage) {
-      PaymentMissionPipelineStage.secured => 'Fonds securises',
-      PaymentMissionPipelineStage.waiting24h => 'Sous 24h',
-      PaymentMissionPipelineStage.dispute => 'Litige',
-      _ => 'Sous 24h',
-    };
-    final heldBadgeColor = switch (pipelineStage) {
-      PaymentMissionPipelineStage.secured => context.colors.primary,
-      PaymentMissionPipelineStage.dispute => context.colors.error,
-      _ => context.colors.textTertiary,
-    };
-    final pipelineCaption = switch (pipelineStage) {
-      PaymentMissionPipelineStage.secured =>
-        'Fonds securises pour la mission',
-      PaymentMissionPipelineStage.waiting24h =>
-        'Versement automatique sous 24h',
-      PaymentMissionPipelineStage.paid => 'Versement recu pour la mission',
-      PaymentMissionPipelineStage.dispute =>
-        'Litige en cours, versement suspendu',
-      _ => null,
-    };
+    final subtitleBase = tx.clientName ?? tx.description ?? tx.type.label;
+    final subtitle = tx.status == TransactionStatus.completed
+        ? subtitleBase
+        : '$subtitleBase · ${tx.status.label}';
 
-    return InkWell(
+    return PaymentTxTile(
+      icon: tx.type.icon,
+      title: tx.missionTitle ?? tx.type.label,
+      subtitle: subtitle,
+      amount: '${isPositive ? '+' : '−'}${tx.amount.toStringAsFixed(2)} €',
+      isPositive: isPositive,
+      badge: _badgeLabel(tx),
+      badgeColor: _badgeColor(context, tx),
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: context.colors.surfaceAlt,
-                    borderRadius: BorderRadius.circular(11),
-                    border: Border.all(color: context.colors.border),
-                  ),
-                  child: Icon(
-                    tx.type.icon,
-                    size: 17,
-                    color: context.colors.textSecondary,
-                  ),
-                ),
-                AppGap.w12,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        tx.missionTitle ?? tx.type.label,
-                        style: context.text.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: context.colors.textPrimary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if ((tx.clientName ?? tx.description) != null) ...[
-                        AppGap.h2,
-                        Text(
-                          tx.clientName ?? tx.description!,
-                          style: context.text.bodySmall?.copyWith(
-                            color: context.colors.textTertiary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                AppGap.w12,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '${isPositive ? '+' : '−'}${tx.amount.toStringAsFixed(2)} €',
-                      style: context.text.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: isHeld
-                            ? context.colors.textSecondary
-                            : isPositive
-                                ? context.colors.textPrimary
-                                : context.colors.textSecondary,
-                      ),
-                    ),
-                    if (isHeld) ...[
-                      AppGap.h3,
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.colors.surfaceAlt,
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: context.colors.border),
-                        ),
-                        child: Text(
-                          heldBadgeLabel,
-                          style: context.text.labelSmall?.copyWith(
-                            fontSize: 10,
-                            color: heldBadgeColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ] else if (tx.status != TransactionStatus.completed) ...[
-                      AppGap.h3,
-                      Text(
-                        tx.status.label,
-                        style: context.text.labelSmall?.copyWith(
-                          color: context.colors.textTertiary,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-            if (pipelineStage != null) ...[
-              AppGap.h10,
-              PaymentMissionPipelineInline(
-                stage: pipelineStage,
-                caption: pipelineCaption,
-              ),
-            ],
-          ],
-        ),
-      ),
     );
   }
 
-  PaymentMissionPipelineStage? _pipelineStage(Transaction tx) {
-    if (tx.status == TransactionStatus.inDispute) {
-      return PaymentMissionPipelineStage.dispute;
-    }
+  String? _badgeLabel(Transaction tx) {
+    return switch (tx.status) {
+      TransactionStatus.awaitingRelease => 'Sous 24h',
+      TransactionStatus.pending => 'En cours',
+      TransactionStatus.inDispute => 'Litige',
+      TransactionStatus.held => 'Sécurisé',
+      TransactionStatus.failed => 'Échoué',
+      _ => tx.type == TransactionType.bonus ? 'Bonus' : null,
+    };
+  }
 
-    final isMissionTransaction =
-        tx.missionTitle != null ||
-        tx.type == TransactionType.held ||
-        tx.type == TransactionType.released ||
-        tx.type == TransactionType.income;
-    if (!isMissionTransaction) return null;
-
-    if (tx.type == TransactionType.held || tx.status == TransactionStatus.held) {
-      if (tx.status == TransactionStatus.awaitingRelease ||
-          tx.status == TransactionStatus.pending) {
-        return PaymentMissionPipelineStage.waiting24h;
-      }
-      return PaymentMissionPipelineStage.secured;
-    }
-
-    if (tx.status == TransactionStatus.awaitingRelease ||
-        tx.status == TransactionStatus.pending) {
-      return PaymentMissionPipelineStage.waiting24h;
-    }
-
-    if (tx.type == TransactionType.income ||
-        tx.type == TransactionType.released) {
-      return PaymentMissionPipelineStage.paid;
-    }
-
-    return null;
+  Color? _badgeColor(BuildContext context, Transaction tx) {
+    return switch (tx.status) {
+      TransactionStatus.inDispute || TransactionStatus.failed =>
+        context.colors.error,
+      TransactionStatus.awaitingRelease ||
+      TransactionStatus.pending ||
+      TransactionStatus.held => context.colors.textTertiary,
+      _ => tx.type == TransactionType.bonus ? AppColors.primary : null,
+    };
   }
 }
 

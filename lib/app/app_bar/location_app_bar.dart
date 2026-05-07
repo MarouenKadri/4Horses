@@ -33,19 +33,15 @@ class LocationData {
 class HomeActionBar extends StatelessWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;
   final int unreadCount;
-  final String avatarLabel;
 
   final VoidCallback onNotificationsTap;
-  final VoidCallback onAvatarTap;
   final Animation<double>? bellScale;
 
   const HomeActionBar({
     super.key,
     this.bottom,
     required this.unreadCount,
-    required this.avatarLabel,
     required this.onNotificationsTap,
-    required this.onAvatarTap,
     this.bellScale,
   });
 
@@ -72,14 +68,6 @@ class HomeActionBar extends StatelessWidget implements PreferredSizeWidget {
               : null,
           badgeColor: AppColors.error,
           scale: bellScale,
-        ),
-        AppBarActionCircleButton(
-          icon: Icons.person_outline_rounded,
-          onTap: onAvatarTap,
-          size: 34,
-          iconSize: 20,
-          backgroundColor: Colors.transparent,
-          iconColor: context.colors.textSecondary,
         ),
         const SizedBox(width: 12),
       ],
@@ -196,15 +184,7 @@ class _HomeAppBarState extends State<HomeAppBar>
 
   @override
   Widget build(BuildContext context) {
-    final profile = context.watch<ProfileProvider>().profile;
     final unread = context.watch<NotificationProvider>().unreadCount;
-    final auth = context.watch<AuthProvider>();
-    final isClient = auth.currentRole == UserRole.client;
-    final firstName = profile?.firstName ?? '';
-    final avatarUrl = profile?.avatarUrl ?? '';
-    final avatarLabel = firstName.isNotEmpty
-        ? firstName[0].toUpperCase()
-        : (isClient ? 'C' : 'F');
 
     if (unread > _prevUnread) _bellCtrl.forward(from: 0);
     _prevUnread = unread;
@@ -212,16 +192,9 @@ class _HomeAppBarState extends State<HomeAppBar>
     return HomeActionBar(
       bottom: widget.bottom,
       unreadCount: unread,
-      avatarLabel: avatarLabel,
       bellScale: _bellScale,
       onNotificationsTap: () =>
           HomeAppBarCoordinator.openNotifications(context),
-      onAvatarTap: () => HomeAppBarCoordinator.openRoleSheet(
-        context,
-        firstName: firstName,
-        avatarUrl: avatarUrl,
-        onGoToAccount: widget.onGoToAccount,
-      ),
     );
   }
 }
