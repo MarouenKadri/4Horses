@@ -30,7 +30,7 @@ class LocationData {
 
 // ─── Dumb presentation bar ────────────────────────────────────────────────────
 
-class AppLocationRoleBar extends StatelessWidget implements PreferredSizeWidget {
+class HomeActionBar extends StatelessWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;
   final int unreadCount;
   final String avatarLabel;
@@ -39,7 +39,7 @@ class AppLocationRoleBar extends StatelessWidget implements PreferredSizeWidget 
   final VoidCallback onAvatarTap;
   final Animation<double>? bellScale;
 
-  const AppLocationRoleBar({
+  const HomeActionBar({
     super.key,
     this.bottom,
     required this.unreadCount,
@@ -89,8 +89,8 @@ class AppLocationRoleBar extends StatelessWidget implements PreferredSizeWidget 
 
 // ─── Static helpers ───────────────────────────────────────────────────────────
 
-class LocationAppBarCoordinator {
-  const LocationAppBarCoordinator._();
+class HomeAppBarCoordinator {
+  const HomeAppBarCoordinator._();
 
   static Future<LocationData?> pickLocation(
     BuildContext context, {
@@ -153,11 +153,11 @@ class LocationAppBarCoordinator {
 
 // ─── Stateful widget ─────────────────────────────────────────────────────────
 
-class LocationAppBar extends StatefulWidget implements PreferredSizeWidget {
+class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;
   final VoidCallback? onGoToAccount;
 
-  const LocationAppBar({super.key, this.bottom, this.onGoToAccount});
+  const HomeAppBar({super.key, this.bottom, this.onGoToAccount});
 
   @override
   Size get preferredSize => Size.fromHeight(
@@ -165,10 +165,10 @@ class LocationAppBar extends StatefulWidget implements PreferredSizeWidget {
       );
 
   @override
-  State<LocationAppBar> createState() => _LocationAppBarState();
+  State<HomeAppBar> createState() => _HomeAppBarState();
 }
 
-class _LocationAppBarState extends State<LocationAppBar>
+class _HomeAppBarState extends State<HomeAppBar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _bellCtrl;
   late final Animation<double> _bellScale;
@@ -209,14 +209,14 @@ class _LocationAppBarState extends State<LocationAppBar>
     if (unread > _prevUnread) _bellCtrl.forward(from: 0);
     _prevUnread = unread;
 
-    return AppLocationRoleBar(
+    return HomeActionBar(
       bottom: widget.bottom,
       unreadCount: unread,
       avatarLabel: avatarLabel,
       bellScale: _bellScale,
       onNotificationsTap: () =>
-          LocationAppBarCoordinator.openNotifications(context),
-      onAvatarTap: () => LocationAppBarCoordinator.openRoleSheet(
+          HomeAppBarCoordinator.openNotifications(context),
+      onAvatarTap: () => HomeAppBarCoordinator.openRoleSheet(
         context,
         firstName: firstName,
         avatarUrl: avatarUrl,
