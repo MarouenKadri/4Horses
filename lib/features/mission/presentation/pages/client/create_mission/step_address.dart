@@ -1,4 +1,3 @@
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -143,9 +142,9 @@ class _StepAddressState extends State<StepAddress> {
                 markers: [
                   Marker(
                     point: _selectedLatLng!,
-                    width: 48,
-                    height: 56,
-                    child: const _MapPin(),
+                    width: 44,
+                    height: 52,
+                    child: const AppMapPin(),
                   ),
                 ],
               ),
@@ -356,57 +355,6 @@ class _SearchBar extends StatelessWidget {
   }
 }
 
-class _MapPin extends StatelessWidget {
-  const _MapPin();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: AppColors.stepBlue,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2.5),
-            boxShadow: const [
-              BoxShadow(
-                color: Color.fromRGBO(24, 71, 168, 0.24),
-                blurRadius: 10,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: const Icon(Icons.place_outlined,
-              color: Colors.white, size: 16),
-        ),
-        CustomPaint(
-          size: const Size(12, 10),
-          painter: _PinTailPainter(),
-        ),
-      ],
-    );
-  }
-}
-
-class _PinTailPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.stepBlue
-      ..style = PaintingStyle.fill;
-    final path = ui.Path()
-      ..moveTo(0, 0)
-      ..lineTo(size.width / 2, size.height)
-      ..lineTo(size.width, 0)
-      ..close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_) => false;
-}
 
 class _SelectedAddressCard extends StatelessWidget {
   final String address;

@@ -312,31 +312,9 @@ class _LocationSearchPageState extends State<LocationSearchPage>
                         MarkerLayer(markers: [
                           Marker(
                             point: _pin!,
-                            width: AppBarMetrics.mapPinMarkerSize,
-                            height: AppBarMetrics.mapPinMarkerSize,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                AppIconCircle(
-                                  icon: Icons.location_on_rounded,
-                                  size: AppBarMetrics.mapPinIconSize,
-                                  iconSize: AppBarMetrics.mapPinInnerIconSize,
-                                  backgroundColor: AppColors.charcoal,
-                                  iconColor: Colors.white,
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color.fromRGBO(0, 0, 0, 0.12),
-                                      blurRadius: 10,
-                                      spreadRadius: 1,
-                                    ),
-                                  ],
-                                ),
-                                const CustomPaint(
-                                  size: Size(12, 6),
-                                  painter: _PinTailPainter(AppColors.charcoal),
-                                ),
-                              ],
-                            ),
+                            width: 44,
+                            height: 52,
+                            child: const AppMapPin(),
                           ),
                         ]),
                     ],
@@ -620,24 +598,6 @@ class _LocationSearchPageState extends State<LocationSearchPage>
   }
 }
 
-class _PinTailPainter extends CustomPainter {
-  final Color color;
-  const _PinTailPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color;
-    final path = ui.Path()
-      ..moveTo(0, 0)
-      ..lineTo(size.width / 2, size.height)
-      ..lineTo(size.width, 0)
-      ..close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_PinTailPainter old) => old.color != color;
-}
 
 class _AddrItem extends StatelessWidget {
   final IconData icon;
