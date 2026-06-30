@@ -19,7 +19,7 @@ class MissionCardFrame extends StatelessWidget {
 
   /// Titre principal — catégorie ou intitulé mission
   static const TextStyle titleStyle = TextStyle(
-    fontSize: 20,
+    fontSize: AppFontSize.h3,
     fontWeight: FontWeight.w600,
     color: AppColors.cardTitle,
     letterSpacing: -0.2,
@@ -28,7 +28,7 @@ class MissionCardFrame extends StatelessWidget {
 
   /// Sous-titre — intitulé secondaire ou description courte
   static const TextStyle subtitleStyle = TextStyle(
-    fontSize: 14,
+    fontSize: AppFontSize.base,
     fontWeight: FontWeight.w400,
     color: AppColors.cardSubtitle,
     height: 1.45,
@@ -36,7 +36,7 @@ class MissionCardFrame extends StatelessWidget {
 
   /// Label catégorie / meta compacte
   static const TextStyle metaStyle = TextStyle(
-    fontSize: 12,
+    fontSize: AppFontSize.sm,
     fontWeight: FontWeight.w500,
     color: AppColors.cardMeta,
     letterSpacing: 0.1,
@@ -44,7 +44,7 @@ class MissionCardFrame extends StatelessWidget {
 
   /// Titre compact pour les cards petites (archive)
   static const TextStyle titleCompactStyle = TextStyle(
-    fontSize: 16,
+    fontSize: AppFontSize.lg,
     fontWeight: FontWeight.w600,
     color: AppColors.cardTitle,
     letterSpacing: -0.2,
@@ -52,7 +52,7 @@ class MissionCardFrame extends StatelessWidget {
 
   /// Texte d'action / info courte semi-bold (ex: "Commence le...", badges)
   static const TextStyle captionStyle = TextStyle(
-    fontSize: 13,
+    fontSize: AppFontSize.md,
     fontWeight: FontWeight.w600,
     color: AppColors.cardCaption,
   );

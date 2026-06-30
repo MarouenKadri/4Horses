@@ -277,7 +277,7 @@ class _ActiveMissionsSection extends StatelessWidget {
                   child: Text(
                     '${missions.length} mission${missions.length > 1 ? 's' : ''}',
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: AppFontSize.sm,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primary,
                     ),
@@ -376,7 +376,7 @@ class _EmptyTodayCard extends StatelessWidget {
                   Text(
                     'Créer une mission',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: AppFontSize.md,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
                     ),
@@ -463,7 +463,7 @@ class _ActiveMissionCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 15,
+                fontSize: AppFontSize.body,
                 fontWeight: FontWeight.w700,
                 color: AppColors.inkDark,
                 letterSpacing: -0.2,

@@ -271,7 +271,8 @@ class _MissionContextStrip extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 10,
-            backgroundImage: NetworkImage(contactAvatar),
+            backgroundImage: contactAvatar.isNotEmpty ? NetworkImage(contactAvatar) : null,
+            onBackgroundImageError: contactAvatar.isNotEmpty ? (_, __) {} : null,
             backgroundColor: _kBorder,
           ),
           AppGap.w6,

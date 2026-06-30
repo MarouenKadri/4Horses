@@ -55,7 +55,8 @@ class ChatMessageBubble extends StatelessWidget {
                 showAvatar
                     ? CircleAvatar(
                         radius: 15,
-                        backgroundImage: NetworkImage(contactAvatar),
+                        backgroundImage: contactAvatar.isNotEmpty ? NetworkImage(contactAvatar) : null,
+                        onBackgroundImageError: contactAvatar.isNotEmpty ? (_, __) {} : null,
                         backgroundColor: _kBorder,
                       )
                     : const SizedBox(width: 30),

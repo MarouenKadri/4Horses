@@ -215,7 +215,7 @@ class _AmountInput extends StatelessWidget {
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       style: context.text.displayMedium?.copyWith(
-        fontSize: 34,
+        fontSize: AppFontSize.d3,
         fontWeight: FontWeight.w600,
         color: context.colors.textPrimary,
         letterSpacing: -1,
@@ -228,7 +228,7 @@ class _AmountInput extends StatelessWidget {
         labelText: label,
         hintStyle: context.text.displayMedium?.copyWith(
           color: context.colors.textHint,
-          fontSize: 34,
+          fontSize: AppFontSize.d3,
           fontWeight: useLightHint ? FontWeight.w300 : FontWeight.w600,
           letterSpacing: -1,
         ),

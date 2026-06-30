@@ -501,6 +501,9 @@ class _CandidateCard extends StatelessWidget {
                           backgroundImage: candidate.avatar.isNotEmpty
                               ? NetworkImage(candidate.avatar)
                               : null,
+                          onBackgroundImageError: candidate.avatar.isNotEmpty
+                              ? (_, __) {}
+                              : null,
                           child: candidate.avatar.isEmpty
                               ? const Icon(
                                   Icons.person_outline_rounded,
