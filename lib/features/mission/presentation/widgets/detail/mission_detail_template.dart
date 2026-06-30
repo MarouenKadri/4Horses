@@ -51,6 +51,10 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
   /// Cacher le bottom (ex: isReadOnly côté client)
   bool get isBottomHidden;
 
+  /// Révéler l'adresse complète et la carte interactive.
+  /// false = mission publique non encore attribuée au viewer.
+  bool get canSeeFullAddress;
+
   // ─── Lifecycle ─────────────────────────────────────────────────────────────
 
   @override
@@ -184,104 +188,150 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 182,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: context.colors.border),
+        child: canSeeFullAddress
+            ? _buildFullMap(context)
+            : _buildLockedAddress(context),
+      ),
+    );
+  }
+
+  Widget _buildFullMap(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: 182,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: context.colors.border),
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: _DetailMapPreview(address: mission.address),
+                ),
               ),
-              clipBehavior: Clip.hardEdge,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: IgnorePointer(
-                      child: _DetailMapPreview(address: mission.address),
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MissionMapPage(address: mission.address),
                     ),
                   ),
-                  // Overlay Flutter au-dessus de la platform view pour capturer les taps
-                  Positioned.fill(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => MissionMapPage(address: mission.address),
-                        ),
-                      ),
-                      child: const SizedBox.expand(),
-                    ),
-                  ),
-                  const Center(child: DetailMiniMapPin()),
-                  Positioned(
-                    right: 12,
-                    bottom: 12,
-                    child: GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              MissionMapPage(address: mission.address),
-                        ),
-                      ),
-                      child: Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.96),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: context.colors.border,
-                            width: 0.8,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.07),
-                              blurRadius: 18,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.search_rounded,
-                          size: 18,
-                          color: context.colors.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  child: const SizedBox.expand(),
+                ),
               ),
-            ),
-            AppGap.h14,
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 2),
-                  child: Icon(
-                    Icons.location_on_outlined,
-                    size: 16,
-                    color: context.colors.textTertiary,
+              const Center(child: DetailMiniMapPin()),
+              Positioned(
+                right: 12,
+                bottom: 12,
+                child: GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MissionMapPage(address: mission.address),
+                    ),
+                  ),
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.96),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: context.colors.border,
+                        width: 0.8,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.07),
+                          blurRadius: 18,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.search_rounded,
+                      size: 18,
+                      color: context.colors.textPrimary,
+                    ),
                   ),
                 ),
-                AppGap.w8,
-                Expanded(
-                  child: Text(
-                    mission.address.shortAddress.isNotEmpty
-                        ? mission.address.shortAddress
-                        : mission.address.fullAddress,
-                    style: context.missionEntityNameStyle.copyWith(
-                      height: 1.35,
-                    ),
+              ),
+            ],
+          ),
+        ),
+        AppGap.h14,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Icon(
+                Icons.location_on_outlined,
+                size: 16,
+                color: context.colors.textTertiary,
+              ),
+            ),
+            AppGap.w8,
+            Expanded(
+              child: Text(
+                mission.address.shortAddress.isNotEmpty
+                    ? mission.address.shortAddress
+                    : mission.address.fullAddress,
+                style: context.missionEntityNameStyle.copyWith(height: 1.35),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLockedAddress(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: context.colors.border.withValues(alpha: 0.4),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.lock_outline_rounded,
+              size: 18,
+              color: context.colors.textSecondary,
+            ),
+          ),
+          AppGap.w12,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  mission.address.shortAddress.isNotEmpty
+                      ? mission.address.shortAddress
+                      : 'Adresse non disponible',
+                  style: context.missionEntityNameStyle,
+                ),
+                AppGap.h4,
+                Text(
+                  'Adresse complète disponible après confirmation',
+                  style: context.missionBodyStyle.copyWith(
+                    color: context.colors.textSecondary,
+                    fontSize: 12,
                   ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

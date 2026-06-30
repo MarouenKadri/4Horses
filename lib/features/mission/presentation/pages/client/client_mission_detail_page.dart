@@ -11,6 +11,7 @@ import '../../widgets/detail/mission_detail_template.dart';
 import '../../widgets/shared/mission_finance_ui.dart';
 import '../../../../client/presentation/pages/freelancer_profile_view.dart';
 import '../../../../messaging/presentation/pages/chat_page.dart';
+import '../../../../messaging/messaging_provider.dart';
 import 'candidates_page.dart';
 import '../../widgets/detail/client_detail_sections.dart';
 import '../../widgets/shared/mission_shared_widgets.dart';
@@ -76,6 +77,9 @@ class _ClientMissionDetailPageState
           orElse: () => mission,
         );
   }
+
+  @override
+  bool get canSeeFullAddress => true;
 
   @override
   bool get showTimeline => mission.status != MissionStatus.draft;
@@ -386,18 +390,29 @@ class _ClientMissionDetailPageState
         ),
       );
 
-  void _openChat(PrestaInfo presta) => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ChatPage(
-            contactUserId: presta.id,
-            contactName: presta.name,
-            contactAvatar: presta.avatarUrl,
-            isVerified: presta.isVerified,
-            missionTitle: mission.title,
-          ),
+  Future<void> _openChat(PrestaInfo presta) async {
+    final conversationId = await context
+        .read<MessagingProvider>()
+        .getOrCreateConversation(
+          otherUserId: presta.id,
+          iAmClient: true,
+          missionId: mission.id,
+        );
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChatPage(
+          conversationId: conversationId,
+          contactUserId: presta.id,
+          contactName: presta.name,
+          contactAvatar: presta.avatarUrl,
+          isVerified: presta.isVerified,
+          missionTitle: mission.title,
         ),
-      );
+      ),
+    );
+  }
 
   Future<void> _editMission() async => Navigator.push(
         context,

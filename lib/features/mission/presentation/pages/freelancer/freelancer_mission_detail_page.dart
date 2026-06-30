@@ -100,6 +100,9 @@ class _FreelancerMissionDetailPageState
   bool get showTimeline => widget.isOwn;
 
   @override
+  bool get canSeeFullAddress => widget.isOwn && _isAccepted;
+
+  @override
   bool get isBottomHidden => false;
 
   @override

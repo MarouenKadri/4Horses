@@ -12,8 +12,14 @@ class SupabaseMissionRepository implements MissionRepository {
 
   String? get _userId => _supabase.auth.currentUser?.id;
 
-  // Only fetch profile columns actually used by _clientFromJson / _prestaFromJson
-  static const _select =
+  // Public missions: omit phone — only city/neighbourhood should be visible before assignment
+  static const _selectPublic =
+      '*, '
+      'client:profiles!client_id(id, first_name, last_name, avatar_url, rating, completed_missions, is_verified), '
+      'presta:profiles!assigned_presta_id(id, first_name, last_name, avatar_url, rating, reviews_count, completed_missions, is_verified)';
+
+  // Owned missions (client or assigned freelancer): include phone for coordination
+  static const _selectOwned =
       '*, '
       'client:profiles!client_id(id, first_name, last_name, avatar_url, rating, completed_missions, is_verified, phone), '
       'presta:profiles!assigned_presta_id(id, first_name, last_name, avatar_url, rating, reviews_count, completed_missions, is_verified, phone)';
@@ -26,7 +32,7 @@ class SupabaseMissionRepository implements MissionRepository {
     try {
       final data = await _supabase
           .from('missions')
-          .select(_select)
+          .select(_selectOwned)
           .eq('client_id', _userId!)
           .order('created_at', ascending: false)
           .limit(100);
@@ -44,7 +50,7 @@ class SupabaseMissionRepository implements MissionRepository {
     try {
       var query = _supabase
           .from('missions')
-          .select(_select)
+          .select(_selectPublic)
           .eq('is_public', true);
 
       if (_userId != null) {
@@ -81,14 +87,14 @@ class SupabaseMissionRepository implements MissionRepository {
       if (candidateMissionIds.isEmpty) {
         data = await _supabase
             .from('missions')
-            .select(_select)
+            .select(_selectOwned)
             .eq('assigned_presta_id', _userId!)
             .order('created_at', ascending: false)
             .limit(100);
       } else {
         data = await _supabase
             .from('missions')
-            .select(_select)
+            .select(_selectOwned)
             .or(
               'assigned_presta_id.eq.$_userId,id.in.(${candidateMissionIds.join(',')})',
             )
