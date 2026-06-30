@@ -38,7 +38,7 @@ class MainBottomNav extends StatelessWidget {
         ),
       ),
     );
-    final useCenterGap = hasCenterGap && items.length.isEven && items.length >= 4;
+    final useCenterGap = hasCenterGap && items.length >= 4;
     final rowChildren = useCenterGap
         ? <Widget>[
             ...navTiles.take(items.length ~/ 2),

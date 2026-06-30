@@ -97,7 +97,10 @@
       "Bash(/usr/bin/flutter test *)",
       "Bash(/mnt/c/Users/marouen/Documents/flutter/bin/flutter test *)",
       "Bash(/root/flutter/bin/flutter test *)",
-      "Bash(awk '{print $2, $3}')"
+      "Bash(awk '{print $2, $3}')",
+      "Bash(awk -F: '{print $1}')",
+      "Bash(pip install *)",
+      "Bash(dart run *)"
     ]
   }
 }

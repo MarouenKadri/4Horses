@@ -6,7 +6,6 @@ import 'message_time_status.dart';
 
 const _kInk   = AppColors.ink;
 const _kWhite = AppColors.surface;
-const _kBorder = AppColors.divider;
 
 class LocationMessageBubble extends StatelessWidget {
   final ChatMessage message;

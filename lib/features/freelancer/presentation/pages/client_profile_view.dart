@@ -9,39 +9,7 @@ import '../../../profile/presentation/pages/shared/base_profile_view.dart';
 import '../../../profile/profile_provider.dart';
 
 export '../../../profile/presentation/pages/shared/base_profile_view.dart'
-    show ProfileStatData, VerifiedItemData;
-
-// ─── Enum (partagé avec freelancer_profile_view via base) ─────────────────────
-
-enum CancellationLevel { never, rarely, sometimes, often }
-
-extension CancellationLevelExtension on CancellationLevel {
-  String get label {
-    switch (this) {
-      case CancellationLevel.never:
-        return "N'annule jamais";
-      case CancellationLevel.rarely:
-        return 'Annule rarement';
-      case CancellationLevel.sometimes:
-        return 'Annule parfois';
-      case CancellationLevel.often:
-        return 'Annule souvent';
-    }
-  }
-
-  int get reliabilityScore {
-    switch (this) {
-      case CancellationLevel.never:
-        return 100;
-      case CancellationLevel.rarely:
-        return 96;
-      case CancellationLevel.sometimes:
-        return 88;
-      case CancellationLevel.often:
-        return 74;
-    }
-  }
-}
+    show ProfileStatData, VerifiedItemData, CancellationLevel, CancellationLevelExtension;
 
 // ─── Widget ───────────────────────────────────────────────────────────────────
 
@@ -187,7 +155,7 @@ class _ClientProfileViewState extends BaseProfileState<ClientProfileView> {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(AppRadius.xl),
               boxShadow: const [
                 BoxShadow(color: AppColors.blackAlpha03, blurRadius: 24, offset: Offset(0, 10)),

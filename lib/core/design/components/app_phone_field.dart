@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../app_design_system.dart';
-import 'country_picker.dart';
-import 'app_text_field.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AppPhoneField — hérite de AppBaseField.

@@ -160,7 +160,7 @@ class _CategoryStoryCircle extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: context.colors.surface.withValues(alpha: 0.96),
-                        borderRadius: BorderRadius.circular(999),
+                        borderRadius: BorderRadius.circular(AppRadius.full),
                         border: Border.all(
                           color: accent.withValues(alpha: 0.22),
                           width: 0.8,

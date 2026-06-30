@@ -384,8 +384,9 @@ class AuthProvider extends ChangeNotifier {
   // ─── Switch de rôle ───────────────────────────────────────────────────────
 
   Future<void> switchRole(UserRole newRole) async {
-    if (!isLogged || newRole == UserRole.guest || newRole == currentRole)
+    if (!isLogged || newRole == UserRole.guest || newRole == currentRole) {
       return;
+    }
     final token = ++_switchToken;
     pendingRole = newRole;
     isLoading = true;

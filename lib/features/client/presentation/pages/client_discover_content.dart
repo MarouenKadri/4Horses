@@ -316,10 +316,10 @@ class _EmptyTodayCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
         boxShadow: const [
           BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.04),
+            color: AppColors.blackAlpha03,
             blurRadius: 24,
             offset: Offset(0, 10),
           ),
@@ -357,32 +357,13 @@ class _EmptyTodayCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          GestureDetector(
-            onTap: () => Navigator.push(
+          AppButton(
+            label: 'Créer une mission',
+            variant: ButtonVariant.black,
+            icon: Icons.add_rounded,
+            onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const PostMissionFlow()),
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.inkDark,
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.add_rounded, size: 16, color: Colors.white),
-                  SizedBox(width: 6),
-                  Text(
-                    'Créer une mission',
-                    style: TextStyle(
-                      fontSize: AppFontSize.md,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ],
@@ -422,19 +403,24 @@ class _ActiveMissionCard extends StatelessWidget {
         ? _dateLabel(mission.date)
         : (timeLabel ?? '—');
 
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        slideUpRoute(page: ClientMissionDetailPage(mission: mission)),
-      ),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
-          border: Border.all(color: context.colors.border),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
+      child: InkWell(
+        onTap: () => Navigator.push(
+          context,
+          slideUpRoute(page: ClientMissionDetailPage(mission: mission)),
         ),
-        child: Column(
+        borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
+        splashColor: Colors.black.withValues(alpha: 0.04),
+        highlightColor: Colors.black.withValues(alpha: 0.02),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
+            border: Border.all(color: context.colors.border),
+          ),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Date/heure + flèche ────────────────────────────
@@ -462,10 +448,9 @@ class _ActiveMissionCard extends StatelessWidget {
               mission.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: AppFontSize.body,
+              style: context.text.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: AppColors.inkDark,
+                color: context.colors.textPrimary,
                 letterSpacing: -0.2,
               ),
             ),
@@ -585,7 +570,7 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
                     border: Border.all(color: context.colors.border),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.05),
+                        color: AppColors.blackAlpha07,
                         blurRadius: 16,
                         offset: Offset(0, 3),
                       ),
@@ -652,7 +637,7 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
                     ),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.05),
+                        color: AppColors.blackAlpha07,
                         blurRadius: 16,
                         offset: Offset(0, 3),
                       ),
@@ -764,87 +749,80 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
   }
 
   void _showFilterSheet() {
-    showModalBottomSheet(
+    showAppBottomSheet(
       context: context,
-      backgroundColor: context.colors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      wrapWithSurface: false,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheet) => Padding(
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Handle bar
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: ctx.colors.border,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        builder: (ctx, setSheet) => AppSheetSurface(
+          color: ctx.colors.sheetBg,
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Catégorie',
-                    style: context.text.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  if (_selectedCategoryId != null)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() => _selectedCategoryId = null);
-                        setSheet(() {});
-                        Navigator.pop(ctx);
-                      },
-                      child: Text(
-                        'Réinitialiser',
-                        style: context.text.labelMedium?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
+                  const AppBottomSheetHandle(),
+                  AppGap.h12,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Catégorie',
+                        style: ctx.text.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
+                      if (_selectedCategoryId != null)
+                        GestureDetector(
+                          onTap: () {
+                            setState(() => _selectedCategoryId = null);
+                            setSheet(() {});
+                            Navigator.pop(ctx);
+                          },
+                          child: Text(
+                            'Réinitialiser',
+                            style: ctx.text.labelMedium?.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  AppGap.h16,
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _CategoryChip(
+                        label: 'Tous',
+                        selected: _selectedCategoryId == null,
+                        onTap: () {
+                          setState(() => _selectedCategoryId = null);
+                          setSheet(() {});
+                          Navigator.pop(ctx);
+                        },
+                      ),
+                      ...ServiceCategory.all.map(
+                        (cat) => _CategoryChip(
+                          label: cat.name,
+                          icon: cat.icon,
+                          color: cat.color,
+                          selected: _selectedCategoryId == cat.id,
+                          onTap: () {
+                            setState(() => _selectedCategoryId = cat.id);
+                            setSheet(() {});
+                            Navigator.pop(ctx);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _CategoryChip(
-                    label: 'Tous',
-                    selected: _selectedCategoryId == null,
-                    onTap: () {
-                      setState(() => _selectedCategoryId = null);
-                      setSheet(() {});
-                      Navigator.pop(ctx);
-                    },
-                  ),
-                  ...ServiceCategory.all.map(
-                    (cat) => _CategoryChip(
-                      label: cat.name,
-                      icon: cat.icon,
-                      color: cat.color,
-                      selected: _selectedCategoryId == cat.id,
-                      onTap: () {
-                        setState(() => _selectedCategoryId = cat.id);
-                        setSheet(() {});
-                        Navigator.pop(ctx);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),

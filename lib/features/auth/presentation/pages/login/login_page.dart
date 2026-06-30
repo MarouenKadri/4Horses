@@ -49,8 +49,8 @@ class _LoginPageState extends State<LoginPage> {
     _debounce?.cancel();
     _inputCtrl.dispose();
     _passCtrl.dispose();
-    for (final c in _otpControllers) c.dispose();
-    for (final f in _otpFocusNodes) f.dispose();
+    for (final c in _otpControllers) { c.dispose(); }
+    for (final f in _otpFocusNodes) { f.dispose(); }
     super.dispose();
   }
 

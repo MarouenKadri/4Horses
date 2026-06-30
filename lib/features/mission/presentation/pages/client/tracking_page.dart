@@ -121,17 +121,6 @@ class _TrackingPageState extends State<TrackingPage> {
     });
   }
 
-  String get _etaLabel {
-    if (_freelancerPosition == null || _distanceKm == null) return '…';
-    final dist = _distanceKm! < 1
-        ? '${(_distanceKm! * 1000).round()} m'
-        : '${_distanceKm!.toStringAsFixed(1)} km';
-    final eta = _etaMinutes >= 60
-        ? '${_etaMinutes ~/ 60}h ${_etaMinutes % 60}min'
-        : '$_etaMinutes min';
-    return '~$eta · $dist';
-  }
-
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
@@ -272,7 +261,7 @@ class _ClientTrackingPanel extends StatelessWidget {
             padding: AppInsets.a14,
             color: AppColors.successLight,
             borderRadius: BorderRadius.circular(AppDesign.radius14),
-            border: Border.all(color: AppColors.success.withOpacity(0.3)),
+            border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
             child: Row(
               children: [
                 const Icon(Icons.play_circle_rounded, color: AppColors.primary, size: 20),
@@ -346,7 +335,7 @@ class _EtaCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.schedule_rounded, color: color, size: 22),
@@ -378,7 +367,7 @@ class _EtaCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.08),
+              color: color.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(999),
             ),
             child: Text(

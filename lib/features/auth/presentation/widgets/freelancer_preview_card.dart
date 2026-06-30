@@ -21,10 +21,13 @@ class FreelancerPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadius.cardLg),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
+        splashColor: Colors.black.withValues(alpha: 0.04),
+        highlightColor: Colors.black.withValues(alpha: 0.02),
         child: SizedBox(
           width: width,
           child: Stack(
@@ -95,7 +98,7 @@ class FreelancerPreviewCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.45),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(AppRadius.cardLg),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -171,7 +174,7 @@ class FreelancerPreviewCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(AppRadius.cardLg),
                           ),
                           child: Text(
                             freelancer.job,

@@ -90,6 +90,8 @@ class MyApp extends StatelessWidget {
           GlobalCupertinoLocalizations.delegate,
         ],
         theme: AppThemeData.theme,
+        darkTheme: AppThemeData.darkTheme,
+        themeMode: ThemeMode.system,
         home: const RootNav(),
       ),
     );

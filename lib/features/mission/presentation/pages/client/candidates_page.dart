@@ -79,12 +79,13 @@ class _CandidatesPageState extends State<CandidatesPage> {
       final diff = DateTime.now().difference(createdAt);
       if (diff.inMinutes < 1) {
         appliedAt = 'À l\'instant';
-      } else if (diff.inMinutes < 60)
+      } else if (diff.inMinutes < 60) {
         appliedAt = 'Il y a ${diff.inMinutes} min';
-      else if (diff.inHours < 24)
+      } else if (diff.inHours < 24) {
         appliedAt = 'Il y a ${diff.inHours}h';
-      else
+      } else {
         appliedAt = 'Il y a ${diff.inDays}j';
+      }
     }
     final price = _asDouble(row['proposed_price']);
     final statusStr = (row['status'] ?? 'en_attente').toString();

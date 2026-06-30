@@ -2,12 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/design/app_design_system.dart';
-import '../auth_provider.dart';
-import '../enum/user_role.dart';
-import '../widgets/sheet_profile_header.dart';
 import '../../features/notifications/notification_provider.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
-import '../../features/profile/profile_provider.dart';
 import 'location_search_page.dart';
 import 'role_switch_sheet.dart';
 

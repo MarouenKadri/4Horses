@@ -57,7 +57,7 @@ class AppSegmentedTabBar extends StatelessWidget implements PreferredSizeWidget 
     }
 
     return AnimatedBuilder(
-      animation: tabController!,
+      animation: tabController,
       builder: (context, _) => _buildPills(
         context,
         getSelected: (_) => tabController.index,

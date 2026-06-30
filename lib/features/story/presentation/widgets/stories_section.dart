@@ -104,7 +104,7 @@ class _AddStoryCard extends StatelessWidget {
       child: Container(
         width: 110,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadius.cardLg),
           color: context.colors.surfaceAlt,
           border: Border.all(color: context.colors.border, width: 1),
         ),
@@ -169,7 +169,7 @@ class _StoryCard extends StatelessWidget {
       child: Container(
         width: 110,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadius.cardLg),
           border: Border.all(
             color: isViewed
                 ? context.colors.border
@@ -224,7 +224,7 @@ class _StoryCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.34),
-                  borderRadius: BorderRadius.circular(999),
+                  borderRadius: BorderRadius.circular(AppRadius.full),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.16),
                     width: 0.8,

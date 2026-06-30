@@ -12,6 +12,40 @@ import '../../../../reviews/presentation/widgets/review_card.dart';
 import '../../../../reviews/presentation/widgets/reviews_summary.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
+/// Shared enums
+/// ═══════════════════════════════════════════════════════════════════════════
+
+enum CancellationLevel { never, rarely, sometimes, often }
+
+extension CancellationLevelExtension on CancellationLevel {
+  String get label {
+    switch (this) {
+      case CancellationLevel.never:
+        return "N'annule jamais";
+      case CancellationLevel.rarely:
+        return 'Annule rarement';
+      case CancellationLevel.sometimes:
+        return 'Annule parfois';
+      case CancellationLevel.often:
+        return 'Annule souvent';
+    }
+  }
+
+  int get reliabilityScore {
+    switch (this) {
+      case CancellationLevel.never:
+        return 100;
+      case CancellationLevel.rarely:
+        return 96;
+      case CancellationLevel.sometimes:
+        return 88;
+      case CancellationLevel.often:
+        return 74;
+    }
+  }
+}
+
+/// ═══════════════════════════════════════════════════════════════════════════
 /// Data classes
 /// ═══════════════════════════════════════════════════════════════════════════
 
@@ -510,55 +544,6 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
 /// ═══════════════════════════════════════════════════════════════════════════
 /// Widgets partagés (public pour être utilisés dans les sous-classes)
 /// ═══════════════════════════════════════════════════════════════════════════
-
-class ProfileTabPill extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final bool active;
-  final VoidCallback onTap;
-
-  const ProfileTabPill({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.active,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-        decoration: BoxDecoration(
-          color: active ? AppColors.inkDark : Colors.white,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: active ? AppColors.inkDark : AppColors.gray50),
-          boxShadow: active
-              ? const [BoxShadow(color: AppColors.blackAlpha09, blurRadius: 8, offset: Offset(0, 3))]
-              : null,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 13, color: active ? Colors.white : AppColors.gray600),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: active ? Colors.white : AppColors.inkDark,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class ProfileLevelPill extends StatelessWidget {
   final String level;

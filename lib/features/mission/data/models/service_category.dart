@@ -310,6 +310,6 @@ extension ServiceCategoryX on ServiceCategory {
 
   String get chipLabel => id == 'bricolage' ? 'Brico' : name;
 
-  Color get lightColor => color.withOpacity(0.1);
-  Color get mediumColor => color.withOpacity(0.3);
+  Color get lightColor => color.withValues(alpha: 0.1);
+  Color get mediumColor => color.withValues(alpha: 0.3);
 }

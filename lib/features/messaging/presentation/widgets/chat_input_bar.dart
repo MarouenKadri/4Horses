@@ -141,7 +141,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                         constraints: const BoxConstraints(minHeight: 44),
                         decoration: BoxDecoration(
                           color: _kWhite,
-                          borderRadius: BorderRadius.circular(999),
+                          borderRadius: BorderRadius.circular(AppRadius.full),
                           border: Border.all(color: _kBorder, width: 1),
                         ),
                         child: Row(

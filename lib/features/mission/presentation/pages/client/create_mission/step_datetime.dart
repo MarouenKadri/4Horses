@@ -129,7 +129,7 @@ class StepDate extends StatelessWidget {
                 builder: (ctx, child) => Theme(
                   data: Theme.of(ctx).copyWith(
                     colorScheme: const ColorScheme.light(
-                      primary: AppColors.stepBlue,
+                      primary: AppColors.primary,
                       onPrimary: Colors.white,
                       surface: Colors.white,
                       onSurface: AppColors.inkDark,
@@ -210,13 +210,10 @@ class StepTime extends StatelessWidget {
             children: quickTimes.map((time) {
               final isSelected = selectedTime?.hour == time.hour &&
                   selectedTime?.minute == time.minute;
-              final isUnavailable = false;
               return Opacity(
-                opacity: isUnavailable ? 0.22 : 1,
+                opacity: 1,
                 child: GestureDetector(
-                  onTap: isUnavailable
-                      ? null
-                      : () {
+                  onTap: () {
                           HapticFeedback.selectionClick();
                           onTimeSelected(time);
                           Future.delayed(const Duration(milliseconds: 180), onCompleted);

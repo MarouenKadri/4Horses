@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../app_design_system.dart';
-import 'app_text_field.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AppEmailField — hérite de AppBaseField.

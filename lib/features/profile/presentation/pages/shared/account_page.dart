@@ -247,8 +247,11 @@ class _ProfileHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          GestureDetector(
+          InkWell(
             onTap: isUploading ? null : () => _pickAvatar(context, profileProv),
+            borderRadius: BorderRadius.circular(34),
+            splashColor: Colors.black.withValues(alpha: 0.04),
+            highlightColor: Colors.black.withValues(alpha: 0.02),
             child: Stack(
               clipBehavior: Clip.none,
               children: [

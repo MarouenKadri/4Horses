@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../app/app_bar/location_app_bar.dart';
 import '../../core/design/app_design_system.dart';
-import '../../core/design/tokens/app_colors.dart';
 import '../../features/profile/profile_provider.dart';
 import '../client/presentation/pages/freelancer_profile_view.dart';
 import '../mission/data/models/mission.dart';

@@ -1,14 +1,18 @@
 // Fonctions utilitaires de masquage partagées dans le module auth.
 
 String friendlyAuthError(String message) {
-  if (message.contains('Invalid login credentials'))
+  if (message.contains('Invalid login credentials')) {
     return 'Email ou mot de passe incorrect';
-  if (message.contains('Email not confirmed'))
+  }
+  if (message.contains('Email not confirmed')) {
     return 'Confirmez votre email avant de vous connecter';
-  if (message.contains('User already registered'))
+  }
+  if (message.contains('User already registered')) {
     return 'Cet email est déjà utilisé';
-  if (message.contains('Password should be'))
+  }
+  if (message.contains('Password should be')) {
     return 'Mot de passe trop court (minimum 8 caractères)';
+  }
   return 'Une erreur est survenue';
 }
 

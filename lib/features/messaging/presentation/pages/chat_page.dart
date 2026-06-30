@@ -212,7 +212,7 @@ class _ChatPageState extends State<ChatPage> {
           Container(
             padding: AppInsets.a12,
             decoration: BoxDecoration(
-              color: AppColors.warning.withOpacity(0.1),
+              color: AppColors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppRadius.small),
             ),
             child: Row(
@@ -359,12 +359,16 @@ class _ChatPageState extends State<ChatPage> {
       titleSpacing: 0,
       title: Row(
         children: [
-          GestureDetector(
-            onTap: widget.onProfileTap,
-            child: CircleAvatar(
-              radius: 19,
-              backgroundImage: NetworkImage(widget.contactAvatar),
-              backgroundColor: _kBorder,
+          ClipOval(
+            child: InkWell(
+              onTap: widget.onProfileTap,
+              splashColor: Colors.black.withValues(alpha: 0.04),
+              highlightColor: Colors.black.withValues(alpha: 0.02),
+              child: CircleAvatar(
+                radius: 19,
+                backgroundImage: NetworkImage(widget.contactAvatar),
+                backgroundColor: _kBorder,
+              ),
             ),
           ),
           AppGap.w12,
@@ -475,20 +479,26 @@ class _MessageList extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   AppGap.h16,
-                  GestureDetector(
-                    onTap: () =>
-                        provider.open(conversationId!, forceRefresh: true),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: _kInk,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        'Réessayer',
-                        style: context.chatPrimaryActionStyle
-                            .copyWith(color: _kWhite),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: InkWell(
+                      onTap: () =>
+                          provider.open(conversationId!, forceRefresh: true),
+                      borderRadius: BorderRadius.circular(999),
+                      splashColor: Colors.black.withValues(alpha: 0.04),
+                      highlightColor: Colors.black.withValues(alpha: 0.02),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: _kInk,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          'Réessayer',
+                          style: context.chatPrimaryActionStyle
+                              .copyWith(color: _kWhite),
+                        ),
                       ),
                     ),
                   ),
@@ -659,20 +669,26 @@ class _MissionBanner extends StatelessWidget {
           ),
           if (showAccept) ...[
             AppGap.w12,
-            GestureDetector(
-              onTap: onAccept,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: BoxDecoration(
-                  color: _kInk,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  'Accepter',
-                  style: context.chatPrimaryActionStyle.copyWith(
-                    fontSize: AppFontSize.sm,
-                    color: _kWhite,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: InkWell(
+                onTap: onAccept,
+                borderRadius: BorderRadius.circular(999),
+                splashColor: Colors.black.withValues(alpha: 0.04),
+                highlightColor: Colors.black.withValues(alpha: 0.02),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _kInk,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    'Accepter',
+                    style: context.chatPrimaryActionStyle.copyWith(
+                      fontSize: AppFontSize.sm,
+                      color: _kWhite,
+                    ),
                   ),
                 ),
               ),
@@ -710,8 +726,11 @@ class _ContactWarning extends StatelessWidget {
               style: context.chatWarningStyle,
             ),
           ),
-          GestureDetector(
+          InkWell(
             onTap: onDismiss,
+            borderRadius: BorderRadius.circular(12),
+            splashColor: Colors.black.withValues(alpha: 0.04),
+            highlightColor: Colors.black.withValues(alpha: 0.02),
             child: Icon(Icons.close_rounded,
                 color: AppColors.error, size: 16),
           ),

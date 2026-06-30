@@ -10,7 +10,6 @@ import '../../../../../core/design/app_design_system.dart';
 import '../../../data/models/registration_data.dart';
 import '../../../data/models/user_type.dart';
 import '../../utils/auth_formatters.dart';
-import '../../widgets/country_picker.dart';
 import '../../widgets/photo_picker.dart';
 
 enum _FieldCheckStatus { idle, checking, available, taken }
@@ -778,7 +777,7 @@ class _BirthdateGenderPageState extends State<_BirthdateGenderPage> {
       final now = DateTime.now();
       int age = now.year - date.year;
       if (now.month < date.month ||
-          (now.month == date.month && now.day < date.day)) age--;
+          (now.month == date.month && now.day < date.day)) { age--; }
       if (age < 18) {
         setState(() => _error = 'Vous devez avoir au moins 18 ans');
         widget.onBirthdateChanged(null);
@@ -855,7 +854,7 @@ class _BirthdateGenderPageState extends State<_BirthdateGenderPage> {
                         color: selected
                             ? context.colors.textPrimary
                             : context.colors.surfaceAlt,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
                         border: Border.all(
                           color: selected
                               ? context.colors.textPrimary

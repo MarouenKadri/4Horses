@@ -239,11 +239,7 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
             child: AppMap.tracking(
               freelancerPosition: _currentPosition,
               destination: _destinationLatLng,
-              freelancerMarker: const Icon(
-                Icons.navigation_rounded,
-                color: AppColors.secondary,
-                size: 32,
-              ),
+              freelancerMarker: const AppMapPin(color: AppColors.primary),
               showWaiting: !_locationError,
               waitingText: 'Localisation en cours…',
             ),
@@ -688,6 +684,13 @@ class _StartCodeSheetState extends State<_StartCodeSheet> {
       child: AppFormSheet(
         title: 'Entrer le code client',
         color: context.colors.surface,
+        footer: AppButton(
+          label: 'Vérifier le code',
+          onPressed: _loading ? null : _verify,
+          variant: ButtonVariant.black,
+          isLoading: _loading,
+          height: 52,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -719,13 +722,6 @@ class _StartCodeSheetState extends State<_StartCodeSheet> {
               ),
             ),
           ],
-        ),
-        footer: AppButton(
-          label: 'Vérifier le code',
-          onPressed: _loading ? null : _verify,
-          variant: ButtonVariant.black,
-          isLoading: _loading,
-          height: 52,
         ),
       ),
     );

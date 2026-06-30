@@ -164,12 +164,12 @@ class _CandidatesBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(
         color: hasOffers
-            ? context.colors.primary.withOpacity(0.08)
+            ? context.colors.primary.withValues(alpha: 0.08)
             : context.colors.surfaceAlt,
         borderRadius: BorderRadius.circular(999),
         border: Border.all(
           color: hasOffers
-              ? context.colors.primary.withOpacity(0.25)
+              ? context.colors.primary.withValues(alpha: 0.25)
               : context.colors.border,
         ),
       ),

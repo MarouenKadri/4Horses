@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-const _fnBase = 'https://fjafqmklzaiokyrhfvyl.supabase.co/functions/v1';
 
 class StripeCard {
   final String id;
@@ -48,6 +47,11 @@ class StripeCard {
 
 class PaymentService {
   static final _supabase = Supabase.instance.client;
+
+  static String get _fnBase {
+    final url = dotenv.env['SUPABASE_URL'] ?? '';
+    return '$url/functions/v1';
+  }
 
   static String get _token => _supabase.auth.currentSession?.accessToken ?? '';
 

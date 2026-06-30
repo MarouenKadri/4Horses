@@ -20,20 +20,27 @@ class MissionProvider extends ChangeNotifier {
   bool isLoading = false;
 
   StreamSubscription<AuthState>? _authSub;
+  RealtimeChannel? _channel;
+
+  String? get _userId => _supabase.auth.currentUser?.id;
 
   MissionProvider({MissionRepository? repository})
       : _repository = repository ?? SupabaseMissionRepository() {
     _authSub = _supabase.auth.onAuthStateChange.listen((data) {
       if (data.event == AuthChangeEvent.signedIn) {
-        _load();
+        _channel?.unsubscribe();
+        _channel = null;
+        _init();
       } else if (data.event == AuthChangeEvent.signedOut) {
         _reset();
       }
     });
-    if (_supabase.auth.currentUser != null) _load();
+    if (_supabase.auth.currentUser != null) _init();
   }
 
   void _reset() {
+    _channel?.unsubscribe();
+    _channel = null;
     _clientMissions = [];
     _publicMissions = [];
     _freelancerMissions = [];
@@ -44,6 +51,15 @@ class MissionProvider extends ChangeNotifier {
   List<Mission> get clientMissions => List.unmodifiable(_clientMissions);
   List<Mission> get publicMissions => List.unmodifiable(_publicMissions);
   List<Mission> get freelancerMissions => List.unmodifiable(_freelancerMissions);
+
+  // ─── Init ─────────────────────────────────────────────────────────────────
+
+  Future<void> _init() async {
+    final userId = _userId;
+    if (userId == null) return;
+    await _load();
+    _subscribeRealtime(userId);
+  }
 
   // ─── Chargement initial ───────────────────────────────────────────────────
 
@@ -331,6 +347,94 @@ class MissionProvider extends ChangeNotifier {
     return true;
   }
 
+  // ─── Realtime ─────────────────────────────────────────────────────────────
+
+  void _subscribeRealtime(String userId) {
+    _channel = _supabase
+        .channel('missions_$userId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'missions',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'client_id',
+            value: userId,
+          ),
+          callback: _onMissionUpdate,
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'missions',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'assigned_presta_id',
+            value: userId,
+          ),
+          callback: _onMissionUpdate,
+        )
+        .subscribe();
+  }
+
+  void _onMissionUpdate(PostgresChangePayload payload) {
+    try {
+      final record = payload.newRecord;
+      final id = record['id'] as String?;
+      final statusStr = record['status'] as String?;
+      if (id == null || statusStr == null) return;
+      final newStatus = _statusFromDb(statusStr);
+      _updateMissionStatusLocally(id, newStatus);
+    } catch (e) {
+      debugPrint('realtime mission update error: $e');
+    }
+  }
+
+  void _updateMissionStatusLocally(String id, MissionStatus newStatus) {
+    bool changed = false;
+
+    _clientMissions = _clientMissions.map((m) {
+      if (m.id != id || m.status == newStatus) return m;
+      changed = true;
+      return m.copyWith(status: newStatus);
+    }).toList();
+
+    _publicMissions = _publicMissions.map((m) {
+      if (m.id != id || m.status == newStatus) return m;
+      changed = true;
+      return m.copyWith(status: newStatus);
+    }).toList();
+
+    _freelancerMissions = _freelancerMissions.map((m) {
+      if (m.id != id || m.status == newStatus) return m;
+      changed = true;
+      return m.copyWith(status: newStatus);
+    }).toList();
+
+    if (changed) notifyListeners();
+  }
+
+  static MissionStatus _statusFromDb(String? s) => switch (s) {
+    'draft'                => MissionStatus.draft,
+    'waiting_candidates'   => MissionStatus.waitingCandidates,
+    'candidate_received'   => MissionStatus.candidateReceived,
+    'presta_chosen'        => MissionStatus.confirmed,
+    'confirmed'            => MissionStatus.confirmed,
+    'on_the_way'           => MissionStatus.onTheWay,
+    'in_progress'          => MissionStatus.inProgress,
+    'completion_requested' => MissionStatus.completionRequested,
+    'completed'            => MissionStatus.completed,
+    'payment_held'         => MissionStatus.paymentHeld,
+    'awaiting_release'     => MissionStatus.awaitingRelease,
+    'waiting_payment'      => MissionStatus.awaitingRelease,
+    'in_dispute'           => MissionStatus.inDispute,
+    'dispute'              => MissionStatus.inDispute,
+    'closed'               => MissionStatus.closed,
+    'cancelled'            => MissionStatus.cancelled,
+    'expired'              => MissionStatus.expired,
+    _                      => MissionStatus.waitingCandidates,
+  };
+
   // ─── Helpers ─────────────────────────────────────────────────────────────
 
   List<Mission> _prependUniqueById(List<Mission> source, Mission mission) {
@@ -353,6 +457,7 @@ class MissionProvider extends ChangeNotifier {
   @override
   void dispose() {
     _authSub?.cancel();
+    _channel?.unsubscribe();
     super.dispose();
   }
 }

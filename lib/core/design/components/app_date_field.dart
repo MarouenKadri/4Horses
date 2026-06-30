@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../app_design_system.dart';
-import 'app_text_field.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DateInputFormatter — centralisé ici, était dupliqué dans register_flow

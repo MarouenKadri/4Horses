@@ -7,6 +7,8 @@ import '../enum/user_role.dart';
 import '../../features/messaging/messaging_provider.dart';
 import '../../features/messaging/presentation/pages/messages_page.dart';
 import '../../features/mission/presentation/pages/client/create_mission_page.dart';
+import '../../features/notifications/notification_provider.dart';
+import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/profile/presentation/pages/shared/account_page.dart';
 import 'bottom_nav/app_nav_config.dart';
 import 'bottom_nav/app_nav_shell.dart';
@@ -23,54 +25,62 @@ class AppNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final role = context.watch<AuthProvider>().currentRole;
     final isClient = role == UserRole.client;
-    const accountIndex = 3;
+    const accountIndex = 4;
 
     return Consumer<MessagingProvider>(
-      builder: (_, messaging, __) => AppNavShell(
-        // ValueKey(role) force la réinitialisation des pages au changement de rôle.
-        key: ValueKey(role),
-        config: AppNavConfig(
-          items: [
-            NavItem(
-              isClient ? Icons.home_outlined : Icons.search_outlined,
-              isClient ? Icons.home_rounded : Icons.search_rounded,
-              isClient ? 'Découvrir' : 'Explorer',
-            ),
-            NavItem(
-              isClient ? Icons.assignment_outlined : Icons.work_outline_rounded,
-              isClient ? Icons.assignment_rounded : Icons.work_rounded,
-              'Missions',
-            ),
-            NavItem(
-              Icons.chat_bubble_outline,
-              Icons.chat_bubble_rounded,
-              'Messages',
-            ),
-            NavItem(
-              Icons.person_outline_rounded,
-              Icons.person_rounded,
-              isClient ? 'Compte' : 'Profil',
-            ),
-          ],
-          pagesBuilder: (goToIndex) => [
-            DiscoverShell(
-              onGoToAccount: () => goToIndex(accountIndex),
-              onGoToMissions: () => goToIndex(1),
-            ),
-            MissionsShell(onGoToAccount: () => goToIndex(accountIndex)),
-            MessagesPage(onGoToAccount: () => goToIndex(accountIndex)),
-            const AccountPage(),
-          ],
-          fabBuilder: isClient
-              ? (context, _, __, ___, ____) => _CreateMissionNavButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const PostMissionFlow()),
-                    ),
-                  )
-              : null,
+      builder: (_, messaging, __) => Consumer<NotificationProvider>(
+        builder: (_, notif, __) => AppNavShell(
+          // ValueKey(role) force la réinitialisation des pages au changement de rôle.
+          key: ValueKey(role),
+          config: AppNavConfig(
+            items: [
+              NavItem(
+                isClient ? Icons.home_outlined : Icons.search_outlined,
+                isClient ? Icons.home_rounded : Icons.search_rounded,
+                isClient ? 'Découvrir' : 'Explorer',
+              ),
+              NavItem(
+                isClient ? Icons.assignment_outlined : Icons.work_outline_rounded,
+                isClient ? Icons.assignment_rounded : Icons.work_rounded,
+                'Missions',
+              ),
+              NavItem(
+                Icons.chat_bubble_outline,
+                Icons.chat_bubble_rounded,
+                'Messages',
+              ),
+              NavItem(
+                Icons.notifications_outlined,
+                Icons.notifications_rounded,
+                'Notifications',
+              ),
+              NavItem(
+                Icons.person_outline_rounded,
+                Icons.person_rounded,
+                isClient ? 'Compte' : 'Profil',
+              ),
+            ],
+            pagesBuilder: (goToIndex) => [
+              DiscoverShell(
+                onGoToAccount: () => goToIndex(accountIndex),
+                onGoToMissions: () => goToIndex(1),
+              ),
+              MissionsShell(onGoToAccount: () => goToIndex(accountIndex)),
+              MessagesPage(onGoToAccount: () => goToIndex(accountIndex)),
+              const NotificationsPage(),
+              const AccountPage(),
+            ],
+            fabBuilder: isClient
+                ? (context, _, __, ___, ____) => _CreateMissionNavButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const PostMissionFlow()),
+                      ),
+                    )
+                : null,
+          ),
+          badgeCounts: {2: messaging.totalUnread, 3: notif.unreadCount},
         ),
-        badgeCounts: {2: messaging.totalUnread},
       ),
     );
   }

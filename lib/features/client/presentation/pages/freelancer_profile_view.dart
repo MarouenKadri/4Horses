@@ -1,4 +1,3 @@
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -12,39 +11,9 @@ import '../../../story/story.dart';
 import '../providers/freelancer_public_profile_provider.dart';
 
 export '../../../profile/presentation/pages/shared/base_profile_view.dart'
-    show ProfileStatData, VerifiedItemData;
+    show ProfileStatData, VerifiedItemData, CancellationLevel, CancellationLevelExtension;
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
-
-enum CancellationLevel { never, rarely, sometimes, often }
-
-extension CancellationLevelExtension on CancellationLevel {
-  String get label {
-    switch (this) {
-      case CancellationLevel.never:
-        return "N'annule jamais";
-      case CancellationLevel.rarely:
-        return 'Annule rarement';
-      case CancellationLevel.sometimes:
-        return 'Annule parfois';
-      case CancellationLevel.often:
-        return 'Annule souvent';
-    }
-  }
-
-  int get reliabilityScore {
-    switch (this) {
-      case CancellationLevel.never:
-        return 100;
-      case CancellationLevel.rarely:
-        return 96;
-      case CancellationLevel.sometimes:
-        return 88;
-      case CancellationLevel.often:
-        return 74;
-    }
-  }
-}
 
 enum FreelancerContactMode { spontaneous, pendingCandidate, confirmedPresta }
 
@@ -151,10 +120,6 @@ class _FreelancerProfilePageState
   double? get _longitude => _profileProvider.profile?.longitude;
   double get _zoneRadius => _profileProvider.profile?.zoneRadius ?? 10;
   double get _rate => _profileProvider.profile?.hourlyRate ?? widget.hourlyRate;
-
-  String get _memberSince =>
-      _formatMemberSince(_profileProvider.profile?.createdAt) ??
-      widget.memberSince;
 
   String get _experienceStat {
     final createdAt = _profileProvider.profile?.createdAt;
@@ -287,7 +252,7 @@ class _FreelancerProfilePageState
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(AppRadius.xl),
               boxShadow: const [
                 BoxShadow(color: AppColors.blackAlpha03, blurRadius: 24, offset: Offset(0, 10)),
@@ -310,7 +275,7 @@ class _FreelancerProfilePageState
           AppGap.h12,
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(AppRadius.xl),
               boxShadow: const [
                 BoxShadow(color: AppColors.blackAlpha03, blurRadius: 24, offset: Offset(0, 10)),
@@ -349,7 +314,7 @@ class _FreelancerProfilePageState
                               point: center,
                               width: 40,
                               height: 40,
-                              child: const _MapMarker(),
+                              child: const AppMapPin(color: AppColors.inkDark, size: 28),
                             ),
                           ],
                         ),
@@ -434,16 +399,6 @@ class _FreelancerProfilePageState
   }
 
 
-  // ── Helpers ─────────────────────────────────────────────────────────────────
-
-  String? _formatMemberSince(DateTime? createdAt) {
-    if (createdAt == null) return null;
-    const months = [
-      'Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin',
-      'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre',
-    ];
-    return '${months[createdAt.month - 1]} ${createdAt.year}';
-  }
 }
 
 // ── Widgets spécifiques freelancer ────────────────────────────────────────────
@@ -486,53 +441,6 @@ class _HeroRateBadge extends StatelessWidget {
       ),
     );
   }
-}
-
-class _MapMarker extends StatelessWidget {
-  const _MapMarker();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 28,
-          height: 28,
-          decoration: BoxDecoration(
-            color: AppColors.inkDark,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2),
-            boxShadow: const [
-              BoxShadow(
-                color: Color.fromRGBO(16, 20, 24, 0.08),
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(Icons.place_outlined, color: Colors.white, size: 16),
-        ),
-        CustomPaint(size: const Size(10, 6), painter: _PinTailPainter()),
-      ],
-    );
-  }
-}
-
-class _PinTailPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = AppColors.inkDark;
-    final path = ui.Path()
-      ..moveTo(0, 0)
-      ..lineTo(size.width / 2, size.height)
-      ..lineTo(size.width, 0)
-      ..close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_) => false;
 }
 
 // ── Stories bar (info tab) ────────────────────────────────────────────────────

@@ -15,6 +15,25 @@ class AppThemeData {
 
   static ThemeData get theme => _build();
 
+  static ThemeData get darkTheme => ThemeData(
+    useMaterial3: false,
+    brightness: Brightness.dark,
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
+      surface: AppColorsDark.surface,
+      error: AppColors.error,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onSurface: AppColorsDark.textPrimary,
+      onError: Colors.white,
+      outline: AppColorsDark.border,
+      outlineVariant: AppColorsDark.divider,
+      surfaceContainerHighest: AppColorsDark.surfaceAlt,
+    ),
+    textTheme: theme.textTheme,
+  );
+
   static ThemeData _build() {
     final textTheme = AppType.buildTextTheme(
       primary: AppColors.textPrimary,

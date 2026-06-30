@@ -175,9 +175,9 @@ abstract final class AppMap {
         freelancerPosition: freelancerPosition,
         destination: destination,
         freelancerMarker: freelancerMarker ??
-            const Icon(Icons.directions_run_rounded, color: AppColors.secondary, size: 32),
+            const AppMapPin(color: AppColors.primary),
         destinationMarker: destinationMarker ??
-            const AppMapPin(color: AppColors.success),
+            const AppMapPin(color: AppColors.inkDark),
         tile: tile,
         showWaiting: showWaiting,
         waitingText: waitingText,

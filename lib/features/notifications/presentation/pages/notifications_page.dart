@@ -308,21 +308,27 @@ class _FilterPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: AppInsets.h16v10,
-        decoration: BoxDecoration(
-          color: selected ? context.colors.textPrimary : context.colors.surfaceAlt,
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: Text(
-          label,
-          style: context.text.labelLarge?.copyWith(
-            fontSize: AppFontSize.md,
-            fontWeight: FontWeight.w600,
-            color: selected ? Colors.white : context.colors.textPrimary,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadius.full),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.full),
+        splashColor: Colors.black.withValues(alpha: 0.04),
+        highlightColor: Colors.black.withValues(alpha: 0.02),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: AppInsets.h16v10,
+          decoration: BoxDecoration(
+            color: selected ? context.colors.textPrimary : context.colors.surfaceAlt,
+            borderRadius: BorderRadius.circular(AppRadius.full),
+          ),
+          child: Text(
+            label,
+            style: context.text.labelLarge?.copyWith(
+              fontSize: AppFontSize.md,
+              fontWeight: FontWeight.w600,
+              color: selected ? Colors.white : context.colors.textPrimary,
+            ),
           ),
         ),
       ),
@@ -369,7 +375,7 @@ class _EmptyNotifications extends StatelessWidget {
               height: 68,
               decoration: BoxDecoration(
                 color: context.colors.surfaceAlt,
-                borderRadius: BorderRadius.circular(22),
+                borderRadius: BorderRadius.circular(AppRadius.xl),
               ),
               child: Icon(
                 Icons.notifications_none_rounded,

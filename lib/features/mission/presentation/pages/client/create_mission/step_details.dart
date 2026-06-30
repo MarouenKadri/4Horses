@@ -265,7 +265,7 @@ class _StepDetailsState extends State<StepDetails> {
           children: [
             AppSurfaceCard(
               padding: AppInsets.a16,
-              color: AppColors.error.withOpacity(0.1),
+              color: AppColors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppRadius.full),
               child: const Icon(
                 Icons.delete_outline_rounded,
@@ -483,7 +483,7 @@ class _StepDetailsState extends State<StepDetails> {
           borderRadius: BorderRadius.circular(AppRadius.button),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -545,7 +545,7 @@ class _StepDetailsState extends State<StepDetails> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.5),
+                        Colors.black.withValues(alpha: 0.5),
                       ],
                     ),
                   ),
@@ -559,7 +559,7 @@ class _StepDetailsState extends State<StepDetails> {
                 child: Container(
                   padding: AppInsets.h8v4,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(AppRadius.input),
                   ),
                   child: Text(
@@ -581,7 +581,7 @@ class _StepDetailsState extends State<StepDetails> {
                   child: Container(
                     padding: AppInsets.a6,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withValues(alpha: 0.6),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -594,59 +594,6 @@ class _StepDetailsState extends State<StepDetails> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-/// ─────────────────────────────────────────────────────────────
-/// 📷 Photo Option Tile
-/// ─────────────────────────────────────────────────────────────
-class _PhotoOptionTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _PhotoOptionTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-        child: Row(
-          children: [
-            Icon(icon, size: 21, color: AppColors.snow.withValues(alpha: 0.85)),
-            AppGap.w14,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: context.sheetActionTitleStyle.copyWith(
-                      color: AppColors.snow,
-                    ),
-                  ),
-                  AppGap.h2,
-                  Text(
-                    subtitle,
-                    style: context.sheetActionSubtitleStyle.copyWith(
-                      color: AppColors.gray500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );

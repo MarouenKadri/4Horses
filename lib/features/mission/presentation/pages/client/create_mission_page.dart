@@ -64,8 +64,6 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
   static const int _kDetails    = 4;
   static const int _kBudgetType = 5;
   static const int _kTarif      = 6;
-  static const int _kSummary    = 7;
-
   String? get _resolvedPreAssignedFreelancerId {
     final raw = widget.preAssignedFreelancerId?.trim();
     if (raw == null || raw.isEmpty) return null;
@@ -457,7 +455,7 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
           ? original!.assignedPresta
           : hasPreAssignedFreelancer
               ? PrestaInfo(
-                  id: preAssignedFreelancerId!,
+                  id: preAssignedFreelancerId,
                   name: widget.preAssignedFreelancerName ?? '',
                   avatarUrl: widget.preAssignedFreelancerAvatar ?? '',
                 )
