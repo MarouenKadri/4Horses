@@ -409,6 +409,12 @@ class _ClientMissionDetailPageState
           contactAvatar: presta.avatarUrl,
           isVerified: presta.isVerified,
           missionTitle: mission.title,
+          isMissionConfirmed: const {
+            MissionStatus.confirmed, MissionStatus.onTheWay,
+            MissionStatus.inProgress, MissionStatus.completionRequested,
+            MissionStatus.completed, MissionStatus.paymentHeld,
+            MissionStatus.awaitingRelease, MissionStatus.closed,
+          }.contains(mission.status),
         ),
       ),
     );

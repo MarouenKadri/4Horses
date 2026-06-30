@@ -63,6 +63,18 @@ class MessageModerationService {
     caseSensitive: false,
   );
 
+  // ── Adresses physiques ────────────────────────────────────────────────────
+  static final _physicalAddress = RegExp(
+    r'\b\d+\s*(,?\s*)?(rue|avenue|avenu|av\.|boulevard|blvd|allée|allee|impasse|chemin|place|route|voie)\b',
+    caseSensitive: false,
+  );
+
+  // ── Liens HTTP/www ────────────────────────────────────────────────────────
+  static final _httpLink = RegExp(
+    r'(https?://|www\.)\S+',
+    caseSensitive: false,
+  );
+
   // ─────────────────────────────────────────────────────────────────────────
 
   static final _locationMessage = RegExp(
@@ -102,6 +114,18 @@ class MessageModerationService {
       return const ModerationResult(
         blocked: true,
         reason: 'Les adresses email ne sont pas autorisées dans le chat.',
+      );
+    }
+    if (_physicalAddress.hasMatch(text)) {
+      return const ModerationResult(
+        blocked: true,
+        reason: 'Les adresses physiques ne sont pas autorisées dans le chat.',
+      );
+    }
+    if (_httpLink.hasMatch(text)) {
+      return const ModerationResult(
+        blocked: true,
+        reason: 'Les liens externes ne sont pas autorisés dans le chat.',
       );
     }
     return ModerationResult.allowed;

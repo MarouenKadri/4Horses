@@ -58,6 +58,15 @@ class ChatProvider extends ChangeNotifier {
             : (supabaseClient ?? Supabase.instance.client),
         _testCurrentUserId = testCurrentUserId;
 
+  /// Lifts or restores content moderation based on mission assignment status.
+  /// When [value] is true, phone numbers and addresses are allowed in chat.
+  void setMissionConfirmed(bool value) {
+    final repo = _repo;
+    if (repo is ModeratedMessagingRepository) {
+      repo.isMissionConfirmed = value;
+    }
+  }
+
   // ─── Lifecycle ────────────────────────────────────────────────────────────
 
   Future<void> open(String conversationId, {bool forceRefresh = false}) async {

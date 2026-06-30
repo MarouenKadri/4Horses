@@ -38,6 +38,10 @@ class ChatPage extends StatefulWidget {
   final String? confirmedMissionTitle;
   final VoidCallback? onProfileTap;
 
+  /// When true, content moderation is lifted so participants can share
+  /// phone numbers and addresses for on-site coordination.
+  final bool isMissionConfirmed;
+
   const ChatPage({
     super.key,
     this.conversationId,
@@ -55,6 +59,7 @@ class ChatPage extends StatefulWidget {
     this.freelancerAvatarUrl,
     this.confirmedMissionTitle,
     this.onProfileTap,
+    this.isMissionConfirmed = false,
   });
 
   @override
@@ -78,6 +83,7 @@ class _ChatPageState extends State<ChatPage> {
       onConversationSync:
           context.read<MessagingProvider>().updateConversationPreview,
     );
+    _chatProvider.setMissionConfirmed(widget.isMissionConfirmed);
     _chatProvider.addListener(_onChatUpdated);
     if (widget.conversationId != null) {
       _chatProvider.open(widget.conversationId!);

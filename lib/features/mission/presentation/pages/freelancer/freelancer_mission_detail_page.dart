@@ -437,6 +437,12 @@ class _FreelancerMissionDetailPageState
           isVerified: client.isVerified,
           missionTitle: mission.title,
           confirmedMissionTitle: mission.title,
+          isMissionConfirmed: const {
+            MissionStatus.confirmed, MissionStatus.onTheWay,
+            MissionStatus.inProgress, MissionStatus.completionRequested,
+            MissionStatus.completed, MissionStatus.paymentHeld,
+            MissionStatus.awaitingRelease, MissionStatus.closed,
+          }.contains(mission.status),
         ),
       ),
     );

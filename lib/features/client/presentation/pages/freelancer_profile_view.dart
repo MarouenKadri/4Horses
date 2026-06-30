@@ -429,6 +429,7 @@ class _FreelancerProfilePageState
       showReserveButton: isSpontaneous,
       freelancerId: isSpontaneous ? widget.freelancerId : null,
       confirmedMissionTitle: isConfirmed ? widget.confirmedMissionTitle : null,
+      isMissionConfirmed: isConfirmed,
     );
   }
 
