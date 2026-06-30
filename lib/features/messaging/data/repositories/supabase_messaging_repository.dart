@@ -44,7 +44,9 @@ class SupabaseMessagingRepository implements MessagingRepository {
           p['id'] as String: p,
       };
 
-      // Batch-count unread — 1 query
+      // Batch-count unread — 1 query, limited to avoid unbounded scans.
+      // TODO: replace with an RPC `get_unread_counts(conversation_ids uuid[])`
+      // returning TABLE(conversation_id uuid, count bigint) once volume justifies it.
       final conversationIds =
           rows.map<String>((r) => r['id'] as String).toList(growable: false);
 
@@ -53,7 +55,8 @@ class SupabaseMessagingRepository implements MessagingRepository {
           .select('conversation_id')
           .inFilter('conversation_id', conversationIds)
           .neq('status', 'read')
-          .neq('sender_id', userId);
+          .neq('sender_id', userId)
+          .limit(500);
 
       final unreadMap = <String, int>{};
       for (final msg in (unreadRows as List)) {
