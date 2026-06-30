@@ -270,6 +270,21 @@ class SupabaseMissionRepository implements MissionRepository {
     }
   }
 
+  @override
+  Future<void> withdrawCandidacy(String missionId) async {
+    if (_userId == null) return;
+    try {
+      await _supabase
+          .from('candidates')
+          .delete()
+          .eq('mission_id', missionId)
+          .eq('freelancer_id', _userId!);
+    } catch (e) {
+      debugPrint('withdrawCandidacy error: $e');
+      rethrow;
+    }
+  }
+
   // ─── Sérialisation ───────────────────────────────────────────────────────
 
   static Mission _fromJson(Map<String, dynamic> j) {

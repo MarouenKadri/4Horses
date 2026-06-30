@@ -83,6 +83,55 @@ class _MissionTabState extends State<_MissionTab> {
     });
   }
 
+  Future<void> _confirmWithdraw(BuildContext context, Mission mission) async {
+    final provider = context.read<MissionProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    final confirmed = await showAppDialog<bool>(
+      context: context,
+      title: const Text('Retirer la candidature'),
+      content: Text(
+        'Voulez-vous retirer votre candidature pour "${mission.title}" ?',
+      ),
+      confirmLabel: 'Retirer',
+      cancelLabel: 'Annuler',
+      confirmVariant: ButtonVariant.destructive,
+      onConfirm: () => Navigator.pop(context, true),
+      onCancel: () => Navigator.pop(context, false),
+    );
+    if (confirmed != true) return;
+    if (!mounted) return;
+    try {
+      await provider.withdrawCandidacy(mission.id);
+      messenger.showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle_outline_rounded, color: Colors.white, size: 18),
+              SizedBox(width: 10),
+              Text('Candidature retirée', style: TextStyle(color: Colors.white)),
+            ],
+          ),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (_) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.error_outline_rounded, color: Colors.white, size: 18),
+              SizedBox(width: 10),
+              Text('Erreur lors du retrait', style: TextStyle(color: Colors.white)),
+            ],
+          ),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   List<Mission> _filter(List<Mission> all) {
     return all
         .where(
@@ -124,19 +173,37 @@ class _MissionTabState extends State<_MissionTab> {
               separatorBuilder: (_, __) => const SizedBox(height: 14),
               itemBuilder: (context, index) {
                 final mission = missions[index];
-                return MissionSummaryCard(
-                  mission: mission,
-                  role: MissionUiRole.freelancer,
-                  showDescription: false,
-                  onTap: () => Navigator.push(
-                    context,
-                    slideUpRoute(
-                      page: FreelancerMissionDetailPage(
-                        mission: mission,
-                        isOwn: true,
+                final canWithdraw =
+                    widget.filter == _TabFilter.applied &&
+                    (mission.status == MissionStatus.waitingCandidates ||
+                        mission.status == MissionStatus.candidateReceived);
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    MissionSummaryCard(
+                      mission: mission,
+                      role: MissionUiRole.freelancer,
+                      showDescription: false,
+                      onTap: () => Navigator.push(
+                        context,
+                        slideUpRoute(
+                          page: FreelancerMissionDetailPage(
+                            mission: mission,
+                            isOwn: true,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    if (canWithdraw)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: AppButton(
+                          label: 'Retirer ma candidature',
+                          variant: ButtonVariant.ghost,
+                          onPressed: () => _confirmWithdraw(context, mission),
+                        ),
+                      ),
+                  ],
                 );
               },
             ),

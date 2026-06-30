@@ -244,6 +244,32 @@ class MissionProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Retrait de candidature ───────────────────────────────────────────────
+
+  Future<void> withdrawCandidacy(String missionId) async {
+    final prevPublic = List<Mission>.from(_publicMissions);
+    final prevFreelancer = List<Mission>.from(_freelancerMissions);
+
+    // Optimistic: décrémente le compteur et retire de la liste freelancer
+    _publicMissions = _publicMissions.map((m) {
+      if (m.id != missionId) return m;
+      return m.copyWith(candidatesCount: (m.candidatesCount - 1).clamp(0, 999));
+    }).toList();
+    _freelancerMissions = _freelancerMissions.where((m) => m.id != missionId).toList();
+    notifyListeners();
+
+    try {
+      await _repository.withdrawCandidacy(missionId);
+      await _load();
+    } catch (e) {
+      debugPrint('withdrawCandidacy failed: $e');
+      _publicMissions = prevPublic;
+      _freelancerMissions = prevFreelancer;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   // ─── Brouillon ───────────────────────────────────────────────────────────
 
   Future<void> saveDraft(Mission draft) async {

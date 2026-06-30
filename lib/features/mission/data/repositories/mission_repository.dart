@@ -14,6 +14,7 @@ abstract class MissionRepository {
   Future<void> updateStatus(String id, MissionStatus status);
   Future<void> submitProposal(String missionId, double price, String message);
   Future<List<Map<String, dynamic>>> fetchCandidates(String missionId);
+  Future<void> withdrawCandidacy(String missionId);
 }
 
 /// ─── Implémentation In-Memory (données de démo) ───────────────────────────
@@ -50,4 +51,7 @@ class InMemoryMissionRepository implements MissionRepository {
 
   @override
   Future<List<Map<String, dynamic>>> fetchCandidates(String missionId) async => [];
+
+  @override
+  Future<void> withdrawCandidacy(String missionId) async {}
 }
