@@ -155,7 +155,7 @@ class _SubServicesSheetState extends State<_SubServicesSheet> {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         boxShadow: const [
           BoxShadow(
-            color: Color.fromRGBO(16, 20, 24, 0.08),
+            color: AppColors.blackAlpha07,
             blurRadius: 24,
             offset: Offset(0, -6),
           ),
@@ -253,9 +253,7 @@ class _SubServicesSheetState extends State<_SubServicesSheet> {
                           label: subService,
                           selected: isSelected,
                           onTap: () => widget.onSelected(subService),
-                          backgroundColor: widget.serviceColor.withValues(
-                            alpha: 0.10,
-                          ),
+                          backgroundColor: context.colors.surfaceAlt,
                           foregroundColor: AppColors.inkDark,
                           selectedBackgroundColor: widget.serviceColor,
                           selectedForegroundColor: Colors.white,
@@ -297,7 +295,7 @@ class _SelectedServiceSummary extends StatelessWidget {
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: color.withValues(alpha: 0.22),
+          color: context.colors.border,
         ),
       ),
       child: Row(
