@@ -77,7 +77,7 @@ class _ProfileReviewsPageState extends State<ProfileReviewsPage> {
         titleWidget: Text('Avis', style: context.reviewPageTitleStyle),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: context.colors.primary))
           : Column(
               children: [
                 Padding(

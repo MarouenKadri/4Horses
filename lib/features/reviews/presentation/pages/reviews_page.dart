@@ -95,7 +95,7 @@ class _ReviewsPageContentState extends State<_ReviewsPageContent>
             : null,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: context.colors.primary))
           : Column(
               children: [
                 ReviewsSummary(reviews: received),

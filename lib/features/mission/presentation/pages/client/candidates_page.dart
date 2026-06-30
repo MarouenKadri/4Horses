@@ -356,7 +356,7 @@ class _CandidatesPageState extends State<CandidatesPage> {
           // ─── Liste des candidats ───
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(child: CircularProgressIndicator(color: context.colors.primary))
                 : displayCandidates.isEmpty
                 ? Center(
                     child: Column(

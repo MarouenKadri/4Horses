@@ -350,9 +350,9 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
 
   Widget _buildReviewsSection(BuildContext context) {
     if (_isLoadingReviews && !_hasLoadedReviews) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 36),
-        child: Center(child: CircularProgressIndicator()),
+      return Padding(
+        padding: const EdgeInsets.only(top: 36),
+        child: Center(child: CircularProgressIndicator(color: context.colors.primary)),
       );
     }
 

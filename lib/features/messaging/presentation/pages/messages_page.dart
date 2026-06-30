@@ -63,7 +63,7 @@ class _MessagesPageState extends State<MessagesPage> {
         child: Consumer<MessagingProvider>(
           builder: (context, provider, _) {
             if (provider.isLoadingConversations) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator(color: context.colors.primary));
             }
 
             if (provider.conversations.isEmpty) {
@@ -178,7 +178,16 @@ class _ConversationTile extends StatelessWidget {
         padding: AppInsets.h16v12,
         child: Row(
           children: [
-            CircleAvatar(radius: 28, backgroundImage: NetworkImage(avatar)),
+            CircleAvatar(
+              radius: 28,
+              backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
+              onBackgroundImageError: avatar.isNotEmpty
+                  ? (_, __) {}
+                  : null,
+              child: avatar.isEmpty
+                  ? const Icon(Icons.person_rounded, size: 28)
+                  : null,
+            ),
             AppGap.w14,
             Expanded(
               child: Column(

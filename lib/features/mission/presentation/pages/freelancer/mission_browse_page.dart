@@ -38,7 +38,6 @@ class MissionBrowsePage extends StatefulWidget {
 }
 
 class _MissionBrowsePageState extends State<MissionBrowsePage> {
-  bool _isLoading = true;
   late String? _selectedCategoryId;
   bool _showAppliedOnly = false;
   _MissionDateFilter _selectedDateFilter = _MissionDateFilter.all;
@@ -48,9 +47,6 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
   void initState() {
     super.initState();
     _selectedCategoryId = widget.initialCategoryId;
-    Future.delayed(const Duration(milliseconds: 1200), () {
-      if (mounted) setState(() => _isLoading = false);
-    });
   }
 
   List<Mission> _filtered(List<Mission> all, Set<String> appliedIds) {
@@ -174,10 +170,10 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
 
   @override
   Widget build(BuildContext context) {
-    final allMissions = context.watch<MissionProvider>().publicMissions;
-    final appliedIds = context
-        .watch<MissionProvider>()
-        .freelancerMissions
+    final missionProvider = context.watch<MissionProvider>();
+    final isLoading = missionProvider.isLoading;
+    final allMissions = missionProvider.publicMissions;
+    final appliedIds = missionProvider.freelancerMissions
         .map((m) => m.id)
         .toSet();
     final filtered = _filtered(allMissions, appliedIds);
@@ -214,11 +210,11 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _refresh,
-                color: AppColors.inkDark,
+                color: context.colors.primary,
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
-              if (_isLoading)
+              if (isLoading)
                 const SliverToBoxAdapter(
                   child: SizedBox(height: 380, child: SkeletonList()),
                 )

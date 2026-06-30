@@ -62,7 +62,7 @@ class _MyReviewsPageState extends State<MyReviewsPage>
               receivedReviews.isEmpty &&
               givenReviews.isEmpty &&
               provider.error == null
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: context.colors.primary))
           : Column(
               children: [
                 ReviewsSummary(reviews: receivedReviews),
