@@ -258,7 +258,7 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(Icons.bolt_rounded, size: 13, color: Colors.white),
-                                      SizedBox(width: 4),
+                                      AppGap.w4,
                                       Text(
                                         'Aujourd\'hui',
                                         style: TextStyle(
@@ -386,7 +386,7 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                AppGap.h20,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -410,9 +410,9 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                       ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                AppGap.h24,
                 _buildFilterSectionTitle(context, 'Affichage'),
-                const SizedBox(height: 16),
+                AppGap.h16,
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -436,9 +436,9 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                AppGap.h24,
                 _buildFilterSectionTitle(context, 'Type de service'),
-                const SizedBox(height: 16),
+                AppGap.h16,
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -465,9 +465,9 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                AppGap.h24,
                 _buildFilterSectionTitle(context, 'Date'),
-                const SizedBox(height: 16),
+                AppGap.h16,
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -506,9 +506,9 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                AppGap.h24,
                 _buildFilterSectionTitle(context, 'Tarif'),
-                const SizedBox(height: 16),
+                AppGap.h16,
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -563,7 +563,7 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 28),
+                AppGap.h28,
                 SizedBox(
                   width: double.infinity,
                   child: AppButton(
@@ -633,7 +633,7 @@ class _FilterPill extends StatelessWidget {
           children: [
             if (icon != null) ...[
               Icon(icon, size: 13, color: selected ? Colors.white : accent),
-              const SizedBox(width: 6),
+              AppGap.w6,
             ],
             Text(
               label,

@@ -256,10 +256,7 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
                 onPressed: () => Navigator.pop(context),
                 style: TextButton.styleFrom(
                   foregroundColor: context.colors.textSecondary,
-                  textStyle: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  textStyle: context.text.bodyMedium,
                 ),
                 child: const Text('Annuler'),
               ),
