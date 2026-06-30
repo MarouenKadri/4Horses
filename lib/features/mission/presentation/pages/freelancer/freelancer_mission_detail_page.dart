@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../../../core/design/app_design_system.dart';
 import '../../../../messaging/messaging_provider.dart';
 import '../../../../messaging/presentation/pages/chat_page.dart';
+import '../../../../notifications/notification_provider.dart';
+import '../../../../reviews/presentation/pages/client_review_page.dart';
 import '../../../data/models/mission.dart';
 import '../../mission_provider.dart';
 import '../../widgets/detail/mission_detail_primitives.dart';
@@ -13,6 +17,7 @@ import '../../widgets/shared/mission_finance_ui.dart';
 import '../../widgets/shared/mission_status_ui.dart';
 import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/detail/freelancer_detail_sections.dart';
+import '../../../profile/presentation/pages/freelancer/freelancer_activity_page.dart';
 import 'freelancer_tracking_page.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -43,6 +48,7 @@ class _FreelancerMissionDetailPageState
     extends MissionDetailBase<FreelancerMissionDetailPage> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
+  bool _hasRatedClient = false;
 
   // ─── Computed flags ─────────────────────────────────────────────────────────
 
@@ -309,10 +315,10 @@ class _FreelancerMissionDetailPageState
         ),
         MissionStatus.closed => (
           Icons.check_circle_outline_rounded,
-          'Mission terminee',
+          'Mission terminée',
           mission.rating != null
-              ? 'Note recue : ${mission.rating}/5'
-              : 'Paiement envoye et mission cloturee',
+              ? 'Note reçue : ${mission.rating}/5'
+              : 'Paiement envoyé et mission clôturée',
         ),
         _ => (
           Icons.close_rounded,
@@ -320,6 +326,38 @@ class _FreelancerMissionDetailPageState
           'Cette mission est maintenant closee',
         ),
       };
+      // Pour les missions closes, proposer d'évaluer le client si pas encore fait
+      if (mission.status == MissionStatus.closed) {
+        return DetailBottomArea(
+          caption: caption,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DetailReadonlyBadge(icon: icon, label: label),
+              AppGap.h10,
+              if (mission.client != null && !_hasRatedClient)
+                AppButton(
+                  label: 'Évaluer ${mission.client!.name}',
+                  icon: Icons.star_rounded,
+                  variant: ButtonVariant.outline,
+                  onPressed: () => _openClientReview(ctx),
+                ),
+              AppGap.h8,
+              AppButton(
+                label: 'Voir mes revenus',
+                variant: ButtonVariant.ghost,
+                onPressed: () => Navigator.push(
+                  ctx,
+                  MaterialPageRoute(
+                    builder: (_) => const FreelancerActivityPage(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
       return DetailBottomArea(
         caption: caption,
         child: DetailReadonlyBadge(icon: icon, label: label),
@@ -376,6 +414,18 @@ class _FreelancerMissionDetailPageState
 
   // ─── Actions ─────────────────────────────────────────────────────────────
 
+  Future<void> _openClientReview(BuildContext ctx) async {
+    final rated = await Navigator.push<bool>(
+      ctx,
+      MaterialPageRoute(
+        builder: (_) => ClientReviewPage(mission: mission),
+      ),
+    );
+    if (rated == true && mounted) {
+      setState(() => _hasRatedClient = true);
+    }
+  }
+
   void _showReportSheet() {
     showAppBottomSheet(
       context: context,
@@ -418,11 +468,7 @@ class _FreelancerMissionDetailPageState
     if (!mounted) return;
 
     if (conversationId == null) {
-      showAppSnackBar(
-        context,
-        'Aucune conversation n\'est encore disponible pour cette mission.',
-        type: SnackBarType.info,
-      );
+      _promptContactRequest(client);
       return;
     }
 
@@ -446,6 +492,49 @@ class _FreelancerMissionDetailPageState
         ),
       ),
     );
+  }
+
+  void _promptContactRequest(dynamic client) {
+    showAppDialog(
+      context: context,
+      title: 'Demander à être contacté',
+      message:
+          'Le client n\'a pas encore ouvert de conversation. Voulez-vous lui envoyer une demande de contact pour la mission "${mission.title}" ?',
+      confirmLabel: 'Envoyer la demande',
+      cancelLabel: 'Annuler',
+      onConfirm: () => _sendContactRequest(client),
+    );
+  }
+
+  Future<void> _sendContactRequest(dynamic client) async {
+    final freelancerName =
+        context.read<NotificationProvider>(); // just to check provider access
+    final currentUser = Supabase.instance.client.auth.currentUser;
+    final freelancerDisplayName = currentUser?.userMetadata?['first_name'] as String? ?? 'Le prestataire';
+
+    try {
+      await Supabase.instance.client.from('notifications').insert({
+        'user_id': client.id,
+        'type': 'mission',
+        'title': 'Demande de contact',
+        'body':
+            '$freelancerDisplayName souhaite vous contacter pour la mission "${mission.title}".',
+        'is_read': false,
+      });
+      if (!mounted) return;
+      showAppSnackBar(
+        context,
+        'Demande envoyée au client.',
+        type: SnackBarType.success,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      showAppSnackBar(
+        context,
+        'Impossible d\'envoyer la demande. Réessayez.',
+        type: SnackBarType.error,
+      );
+    }
   }
 
   Future<void> _openPhoneClient() async {
