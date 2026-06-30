@@ -375,36 +375,16 @@ class _FreelancerReportConfirmSheetState
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _loading
-                  ? null
-                  : () {
-                      setState(() => _loading = true);
-                      widget.onConfirm();
-                    },
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-                backgroundColor: context.colors.error,
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                textStyle: context.missionButtonStyle,
-              ),
-              child: _loading
-                  ? const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text('Signaler'),
-            ),
+          child: AppButton(
+            label: 'Signaler',
+            variant: ButtonVariant.destructive,
+            isLoading: _loading,
+            onPressed: _loading
+                ? null
+                : () {
+                    setState(() => _loading = true);
+                    widget.onConfirm();
+                  },
           ),
         ),
         AppGap.h12,
@@ -679,29 +659,16 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                   ),
                 ],
               ),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: canSubmit
-                      ? () => widget.onSubmit(
-                            double.parse(widget.priceController.text),
-                            widget.messageController.text,
-                          )
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: Colors.black,
-                    disabledBackgroundColor:
-                        Colors.black.withValues(alpha: 0.12),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(56),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    textStyle: context.missionButtonStyle,
-                  ),
-                  child: const Text('Envoyer ma proposition'),
-                ),
+              child: AppButton(
+                label: 'Envoyer ma proposition',
+                variant: ButtonVariant.black,
+                isEnabled: canSubmit,
+                onPressed: canSubmit
+                    ? () => widget.onSubmit(
+                          double.parse(widget.priceController.text),
+                          widget.messageController.text,
+                        )
+                    : null,
               ),
             ),
           ],

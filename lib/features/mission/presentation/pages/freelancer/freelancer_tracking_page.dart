@@ -722,27 +722,12 @@ class _StartCodeSheetState extends State<_StartCodeSheet> {
             ),
           ],
         ),
-        footer: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: _loading ? null : _verify,
-            style: ElevatedButton.styleFrom(
-              elevation: 0,
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              minimumSize: const Size.fromHeight(52),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(999),
-              ),
-            ),
-            child: _loading
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  )
-                : const Text('Verifier le code'),
-          ),
+        footer: AppButton(
+          label: 'Vérifier le code',
+          onPressed: _loading ? null : _verify,
+          variant: ButtonVariant.black,
+          isLoading: _loading,
+          height: 52,
         ),
       ),
     );
@@ -764,22 +749,13 @@ class _TrackingPrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: onTap,
-        icon: Icon(icon, size: 18),
-        label: Text(label),
-        style: ElevatedButton.styleFrom(
-          elevation: 0,
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(54),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(999),
-          ),
-        ),
-      ),
+    return AppButton(
+      label: label,
+      onPressed: onTap,
+      variant: ButtonVariant.black,
+      icon: icon,
+      iconTrailing: false,
+      height: 54,
     );
   }
 }

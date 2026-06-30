@@ -263,26 +263,14 @@ class _StepAddressState extends State<StepAddress> {
           bottom: _selectedLatLng != null && !_showSuggestions ? 96 : 30,
           child: Align(
             alignment: Alignment.bottomCenter,
-            child: OutlinedButton.icon(
+            child: AppButton(
+              label: 'Utiliser ma position actuelle',
               onPressed: _useCurrentLocation,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: context.colors.textPrimary,
-                side: BorderSide(color: context.colors.border, width: 1),
-                backgroundColor: context.colors.surface.withValues(alpha: 0.96),
-                minimumSize: const Size(0, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
-              icon: const Icon(Icons.my_location_outlined, size: 18),
-              label: Text(
-                'Utiliser ma position actuelle',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: context.colors.textPrimary,
-                ),
-              ),
+              variant: ButtonVariant.outline,
+              icon: Icons.my_location_outlined,
+              iconTrailing: false,
+              height: 48,
+              width: null,
             ),
           ),
         ),

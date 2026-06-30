@@ -114,7 +114,12 @@ class StepDate extends StatelessWidget {
             }).toList(),
           ),
           AppGap.h18,
-          OutlinedButton.icon(
+          AppButton(
+            label: 'Autre date',
+            variant: ButtonVariant.outline,
+            icon: Icons.calendar_month_outlined,
+            iconTrailing: false,
+            height: 54,
             onPressed: () async {
               final date = await showDatePicker(
                 context: context,
@@ -139,23 +144,6 @@ class StepDate extends StatelessWidget {
                 Future.delayed(const Duration(milliseconds: 150), onCompleted);
               }
             },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.textPrimary,
-              side: BorderSide(color: context.colors.border, width: 1),
-              backgroundColor: Colors.transparent,
-              minimumSize: const Size.fromHeight(54),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-            ),
-            icon: const Icon(Icons.calendar_month_outlined, size: 18),
-            label: Text(
-              'Autre date',
-              style: context.missionStepMutedStyle.copyWith(
-                fontSize: AppFontSize.baseHalf,
-                color: context.colors.textPrimary,
-              ),
-            ),
           ),
         ],
       ),
@@ -262,7 +250,12 @@ class StepTime extends StatelessWidget {
             }).toList(),
           ),
           AppGap.h18,
-          OutlinedButton.icon(
+          AppButton(
+            label: 'Autre heure',
+            variant: ButtonVariant.outline,
+            icon: Icons.schedule_outlined,
+            iconTrailing: false,
+            height: 54,
             onPressed: () async {
               final time = await showTimePicker(
                 context: context,
@@ -285,23 +278,6 @@ class StepTime extends StatelessWidget {
                 Future.delayed(const Duration(milliseconds: 180), onCompleted);
               }
             },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.textPrimary,
-              side: BorderSide(color: context.colors.border, width: 1),
-              backgroundColor: Colors.transparent,
-              minimumSize: const Size.fromHeight(54),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-            ),
-            icon: const Icon(Icons.schedule_outlined, size: 18),
-            label: Text(
-              'Autre heure',
-              style: context.missionStepMutedStyle.copyWith(
-                fontSize: AppFontSize.baseHalf,
-                color: context.colors.textPrimary,
-              ),
-            ),
           ),
         ],
       ),
