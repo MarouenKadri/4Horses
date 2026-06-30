@@ -298,6 +298,7 @@ class SupabaseMissionRepository implements MissionRepository {
       rating: null,
       client: clientMap != null ? _clientFromJson(clientMap) : null,
       assignedPresta: prestaMap != null ? _prestaFromJson(prestaMap) : null,
+      startCode: j['start_code'] as String?,
     );
   }
 

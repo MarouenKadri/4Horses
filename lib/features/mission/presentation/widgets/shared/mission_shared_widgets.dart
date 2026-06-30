@@ -102,7 +102,7 @@ class CategoryChip extends StatelessWidget {
         vertical: compact ? 4 : 6,
       ),
       decoration: BoxDecoration(
-        color: effectiveColor.withOpacity(0.1),
+        color: effectiveColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(
           compact ? AppRadius.tag : AppRadius.small,
         ),
@@ -401,7 +401,7 @@ class _AvatarShimmerState extends State<_AvatarShimmer>
       builder: (ctx, __) => Container(
         width: widget.radius * 2,
         height: widget.radius * 2,
-        color: ctx.colors.border.withOpacity(_anim.value),
+        color: ctx.colors.border.withValues(alpha: _anim.value),
       ),
     );
   }
@@ -555,7 +555,7 @@ class MissionImageHeader extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(AppRadius.small),
                 ),
                 child: Row(
@@ -731,7 +731,7 @@ class _MissionCardSkeleton extends StatelessWidget {
         width: w,
         height: h,
         decoration: BoxDecoration(
-          color: context.colors.border.withOpacity(opacity),
+          color: context.colors.border.withValues(alpha: opacity),
           borderRadius: BorderRadius.circular(r),
         ),
       );
@@ -858,7 +858,7 @@ class MissionLocationRow extends StatelessWidget {
         Container(
           padding: AppInsets.a10,
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
+            color: iconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(AppRadius.button),
           ),
           child: Icon(icon, color: iconColor, size: 24),

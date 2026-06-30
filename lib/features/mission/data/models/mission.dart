@@ -117,6 +117,7 @@ class Mission {
   final PrestaInfo? assignedPresta;
   final int candidatesCount;
   final int? rating;
+  final String? startCode;
 
   const Mission({
     required this.id,
@@ -134,6 +135,7 @@ class Mission {
     this.assignedPresta,
     this.candidatesCount = 0,
     this.rating,
+    this.startCode,
   });
 
   ServiceCategory? get category => ServiceCategory.findById(categoryId);
@@ -186,18 +188,10 @@ class Mission {
     return '${date.day} ${mois[date.month - 1]}';
   }
 
-  String? get startCode {
-    if (assignedPresta == null) return null;
-    return _stableSixDigitCode(
-      '$id|${assignedPresta!.id}|${createdAt.toIso8601String()}',
-    );
-  }
-
   bool matchesStartCode(String rawCode) {
-    final expected = startCode;
-    if (expected == null) return false;
+    if (startCode == null) return false;
     final normalized = rawCode.replaceAll(RegExp(r'[^0-9]'), '');
-    return normalized == expected;
+    return normalized == startCode;
   }
 
   Mission copyWith({
@@ -206,7 +200,7 @@ class Mission {
     MissionAddress? address, BudgetInfo? budget, MissionStatus? status,
     List<String>? images, DateTime? createdAt,
     ClientInfo? client, PrestaInfo? assignedPresta,
-    int? candidatesCount, int? rating,
+    int? candidatesCount, int? rating, String? startCode,
   }) {
     return Mission(
       id: id ?? this.id, title: title ?? this.title,
@@ -221,16 +215,7 @@ class Mission {
       assignedPresta: assignedPresta ?? this.assignedPresta,
       candidatesCount: candidatesCount ?? this.candidatesCount,
       rating: rating ?? this.rating,
+      startCode: startCode ?? this.startCode,
     );
   }
-}
-
-String _stableSixDigitCode(String seed) {
-  var hash = 2166136261;
-  for (final unit in seed.codeUnits) {
-    hash ^= unit;
-    hash = (hash * 16777619) & 0x7fffffff;
-  }
-  final value = 100000 + (hash % 900000);
-  return value.toString();
 }

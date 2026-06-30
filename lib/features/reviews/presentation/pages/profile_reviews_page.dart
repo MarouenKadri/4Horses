@@ -51,13 +51,16 @@ class _ProfileReviewsPageState extends State<ProfileReviewsPage> {
         reviewerUserType: widget.reviewerUserType,
       );
       if (!mounted) return;
-      setState(() => _reviews = reviews);
+      setState(() {
+        _reviews = reviews;
+        _isLoading = false;
+      });
     } catch (_) {
       if (!mounted) return;
-      setState(() => _error = 'Impossible de charger les avis');
-    } finally {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
+      setState(() {
+        _error = 'Impossible de charger les avis';
+        _isLoading = false;
+      });
     }
   }
 

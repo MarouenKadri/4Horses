@@ -295,10 +295,10 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                     end: Alignment.bottomCenter,
                     stops: const [0, 0.25, 0.6, 1],
                     colors: [
-                      Colors.black.withOpacity(AppStoryMetrics.viewerTopGradientAlpha),
+                      Colors.black.withValues(alpha: AppStoryMetrics.viewerTopGradientAlpha),
                       Colors.transparent,
                       Colors.transparent,
-                      Colors.black.withOpacity(AppStoryMetrics.viewerBottomGradientAlpha),
+                      Colors.black.withValues(alpha: AppStoryMetrics.viewerBottomGradientAlpha),
                     ],
                   ),
                 ),
@@ -367,7 +367,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                     child: LinearProgressIndicator(
                       value: value,
                       minHeight: 2.5,
-                      backgroundColor: Colors.white.withOpacity(
+                      backgroundColor: Colors.white.withValues(alpha: 
                         AppStoryMetrics.viewerProgressBackgroundAlpha,
                       ),
                       valueColor:
@@ -423,7 +423,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                       width: 42, height: 42,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: (cat?.themedColor(context) ?? context.colors.primary).withOpacity(
+                        color: (cat?.themedColor(context) ?? context.colors.primary).withValues(alpha: 
                           AppStoryMetrics.viewerCategoryBadgeAlpha,
                         ),
                         border: Border.all(color: Colors.white, width: 2),
@@ -468,7 +468,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
               child: Container(
                 padding: AppInsets.a6,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(
+                  color: Colors.black.withValues(alpha: 
                     AppStoryMetrics.viewerHeaderButtonAlpha,
                   ),
                   shape: BoxShape.circle,
@@ -485,7 +485,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
             child: Container(
               padding: AppInsets.a6,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(
+                color: Colors.black.withValues(alpha: 
                   AppStoryMetrics.viewerHeaderButtonAlpha,
                 ),
                 shape: BoxShape.circle,
@@ -538,12 +538,12 @@ class _StoryViewerPageState extends State<StoryViewerPage>
               // ── Heure ───────────────────────────────────────
               Icon(Icons.access_time_rounded,
                   size: 12,
-                  color: Colors.white.withOpacity(AppStoryMetrics.viewerMetaAlpha)),
+                  color: Colors.white.withValues(alpha: AppStoryMetrics.viewerMetaAlpha)),
               AppGap.w3,
               Text(
                 _timeAgo(story.createdAt),
                 style: context.storyMetaStyle.copyWith(
-                  color: Colors.white.withOpacity(AppStoryMetrics.viewerMetaAlpha),
+                  color: Colors.white.withValues(alpha: AppStoryMetrics.viewerMetaAlpha),
                 ),
               ),
               AppGap.w16,
@@ -576,7 +576,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                       style: context.text.labelSmall?.copyWith(
                         color: isLiked
                             ? Colors.white
-                            : Colors.white.withOpacity(AppStoryMetrics.viewerMetaAlpha),
+                            : Colors.white.withValues(alpha: AppStoryMetrics.viewerMetaAlpha),
                         fontWeight: FontWeight.w700,
                         shadows: const [
                           Shadow(color: Colors.black45, blurRadius: 4),
@@ -840,12 +840,12 @@ class _EditStorySheetState extends State<_EditStorySheet> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 13, vertical: 8),
                     decoration: BoxDecoration(
-                      color: sel ? catColor : catColor.withOpacity(0.1),
+                      color: sel ? catColor : catColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppRadius.xl),
                       border: Border.all(
                         color: sel
                             ? catColor
-                            : catColor.withOpacity(0.3),
+                            : catColor.withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),

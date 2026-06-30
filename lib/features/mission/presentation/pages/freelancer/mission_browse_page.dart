@@ -3,9 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../app/app_bar/app_section_bar.dart';
 import '../../../../../core/design/app_design_system.dart';
-import '../../../../../core/design/tokens/app_colors.dart';
 import '../../../data/models/mission.dart';
-import '../../../data/models/service_category.dart';
 import '../../mission_provider.dart';
 import '../../widgets/cards/variants/mission_browse_card.dart';
 import '../../widgets/shared/mission_shared_widgets.dart';

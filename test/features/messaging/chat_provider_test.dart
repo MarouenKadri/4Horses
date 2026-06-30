@@ -48,9 +48,6 @@ void main() {
     });
 
     test('forceRefresh recharge même si conversationId identique', () async {
-      var callCount = 0;
-      final repo = FakeMessagingRepository()
-        ..sendCallCount; // reset
       // Use a repo that counts getMessages calls via override
       final countingRepo = _CountingRepo();
       final provider = _makeProvider(repo: countingRepo);

@@ -183,7 +183,6 @@ class _FlatTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
-  final Widget? trailing;
   final Color? titleColor;
   final bool showChevron;
 
@@ -191,7 +190,6 @@ class _FlatTile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.onTap,
-    this.trailing,
     this.titleColor,
     this.showChevron = true,
   });
@@ -217,8 +215,7 @@ class _FlatTile extends StatelessWidget {
                     : context.accountMenuTitleStyle,
               ),
             ),
-            if (trailing != null) trailing!
-            else if (showChevron)
+            if (showChevron)
               Icon(
                 Icons.chevron_right_rounded,
                 size: 18,
@@ -236,9 +233,7 @@ class _FlatTile extends StatelessWidget {
 class _ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
     final profileProv = context.watch<ProfileProvider>();
-    final isFreelancerMode = auth.currentRole == UserRole.provider;
     final profile = profileProv.profile;
     final displayName = profile?.fullName.isNotEmpty == true
         ? profile!.fullName

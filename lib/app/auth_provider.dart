@@ -31,6 +31,7 @@ class AuthProvider extends ChangeNotifier {
 
   bool _isRegistering = false;
   bool _isLoadingProfile = false;
+  bool profileIncomplete = false;
   StreamSubscription<AuthState>? _authSub;
 
   AuthProvider() {
@@ -125,6 +126,7 @@ class AuthProvider extends ChangeNotifier {
           : baseRole;
 
       needsRoleSelection = false;
+      profileIncomplete = false;
       isLogged = true;
     } catch (e) {
       debugPrint('_loadProfile error: $e');
@@ -356,6 +358,7 @@ class AuthProvider extends ChangeNotifier {
           });
         } catch (e) {
           debugPrint('profiles upsert warning (non-blocking): $e');
+          profileIncomplete = true;
         }
         currentRole = data.userType == UserType.freelancer
             ? UserRole.provider
@@ -493,134 +496,39 @@ class AuthProvider extends ChangeNotifier {
     final user = _supabase.auth.currentUser;
     if (user == null) return 'Utilisateur non connecté';
 
+    _isRegistering = true;
+    try {
+      return await _deleteAccountInner(user, password);
+    } finally {
+      _isRegistering = false;
+    }
+  }
+
+  Future<String?> _deleteAccountInner(User user, String password) async {
     // 1. Re-authentifier — ignoré pour les comptes Google (pas de mot de passe)
     if (!isGoogleUser) {
       final email = user.email;
       if (email == null) return 'Email introuvable';
-      _isRegistering = true;
       try {
         await _supabase.auth.signInWithPassword(
           email: email,
           password: password,
         );
       } on AuthException {
-        _isRegistering = false;
         return 'Mot de passe incorrect';
       } catch (_) {
-        _isRegistering = false;
         return 'Mot de passe incorrect';
       }
-      _isRegistering = false;
     }
 
     final userId = user.id;
 
-    // 2. Supprimer les données via RPC (recommandé — gère aussi auth.users côté serveur)
-    //    Si la RPC n'existe pas, fallback manuel avec le bon ordre FK.
-    bool rpcOk = false;
+    // 2. Supprimer les données via RPC (SECURITY DEFINER — s'exécute côté serveur)
     try {
       await _supabase.rpc('delete_my_account');
-      rpcOk = true;
     } catch (rpcError) {
-      debugPrint('delete_my_account RPC unavailable, falling back: $rpcError');
-    }
-
-    if (!rpcOk) {
-      try {
-        // 1. Candidatures du freelancer
-        await _supabase.from('candidates').delete().eq('freelancer_id', userId);
-
-        // 2. IDs de mes missions (client)
-        final myMissionsRaw = await _supabase
-            .from('missions')
-            .select('id')
-            .eq('client_id', userId);
-        final myMissionIds = (myMissionsRaw as List)
-            .map((r) => r['id'] as String)
-            .toList();
-
-        if (myMissionIds.isNotEmpty) {
-          // 3. Candidatures sur mes missions
-          await _supabase
-              .from('candidates')
-              .delete()
-              .inFilter('mission_id', myMissionIds);
-          // 4. Avis liés à mes missions
-          await _supabase
-              .from('reviews')
-              .delete()
-              .inFilter('mission_id', myMissionIds);
-          // 5. Transactions liées à mes missions
-          await _supabase
-              .from('transactions')
-              .delete()
-              .inFilter('mission_id', myMissionIds);
-        }
-
-        // 6. Avis où je suis reviewer ou reviewee
-        await _supabase.from('reviews').delete().eq('reviewer_id', userId);
-        await _supabase.from('reviews').delete().eq('reviewee_id', userId);
-
-        // 7. Transactions de l'utilisateur
-        await _supabase.from('transactions').delete().eq('user_id', userId);
-
-        // 8. Messages & conversations
-        final convRaw = await _supabase
-            .from('conversations')
-            .select('id')
-            .or('client_id.eq.$userId,freelancer_id.eq.$userId');
-        final myConvIds = (convRaw as List)
-            .map((r) => r['id'] as String)
-            .toList();
-        if (myConvIds.isNotEmpty) {
-          await _supabase
-              .from('messages')
-              .delete()
-              .inFilter('conversation_id', myConvIds);
-        }
-        await _supabase.from('messages').delete().eq('sender_id', userId);
-        await _supabase.from('conversations').delete().eq('client_id', userId);
-        await _supabase
-            .from('conversations')
-            .delete()
-            .eq('freelancer_id', userId);
-
-        // 9. Notifications
-        await _supabase.from('notifications').delete().eq('user_id', userId);
-
-        // 10. Compétences (freelancer)
-        await _supabase.from('skills').delete().eq('freelancer_id', userId);
-
-        // 11. Likes sur mes publications + mes likes
-        final myPostsRaw = await _supabase
-            .from('posts')
-            .select('id')
-            .eq('author_id', userId);
-        final myPostIds = (myPostsRaw as List)
-            .map((r) => r['id'] as String)
-            .toList();
-        if (myPostIds.isNotEmpty) {
-          await _supabase
-              .from('post_likes')
-              .delete()
-              .inFilter('post_id', myPostIds);
-        }
-        await _supabase.from('post_likes').delete().eq('user_id', userId);
-
-        // 12. Publications (colonne author_id, pas user_id)
-        await _supabase.from('posts').delete().eq('author_id', userId);
-
-        // 13. Missions
-        await _supabase.from('missions').delete().eq('client_id', userId);
-
-        // 14. Profil
-        await _supabase.from('profiles').delete().eq('id', userId);
-
-        debugPrint('[DELETE] fallback complet');
-      } catch (e, st) {
-        debugPrint('[DELETE] FAILED: $e\n$st');
-        return 'Erreur lors de la suppression des données';
-      }
+      debugPrint('delete_my_account RPC failed: $rpcError');
+      return 'Erreur lors de la suppression du compte';
     }
 
     // 3. Déconnexion + nettoyage local

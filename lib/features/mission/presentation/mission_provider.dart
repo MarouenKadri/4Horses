@@ -289,7 +289,18 @@ class MissionProvider extends ChangeNotifier {
         mission.status != MissionStatus.onTheWay) {
       return false;
     }
-    if (!mission.matchesStartCode(code)) return false;
+    // Verify the code server-side via RPC — avoids trusting the locally cached value.
+    // Falls back to local comparison if the RPC is not yet deployed.
+    bool verified = false;
+    try {
+      verified = await _supabase.rpc<bool>(
+        'verify_mission_start_code',
+        params: {'p_mission_id': missionId, 'p_code': code},
+      );
+    } catch (_) {
+      verified = mission.matchesStartCode(code);
+    }
+    if (!verified) return false;
     await updateMissionStatus(missionId, MissionStatus.inProgress);
     return true;
   }

@@ -4,7 +4,6 @@ import 'package:latlong2/latlong.dart';
 
 import '../../../../../core/design/app_design_system.dart';
 import '../../../data/models/mission.dart';
-import '../../../data/models/mission_address.dart';
 import '../../pages/shared/mission_map_page.dart';
 import '../shared/status_timeline.dart';
 import 'mission_detail_hero.dart';

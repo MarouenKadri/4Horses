@@ -102,6 +102,7 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
     if (!mounted) return;
     setState(() => isOpeningChat = false);
 
+    if (!context.mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => buildChatPage(conversationId)),
@@ -311,6 +312,7 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
         _profileReviews = reviews;
         _hasLoadedReviews = true;
         _reviewsError = null;
+        _isLoadingReviews = false;
       });
     } catch (_) {
       if (!mounted) return;
@@ -318,10 +320,8 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
         _profileReviews = const [];
         _hasLoadedReviews = true;
         _reviewsError = 'Impossible de charger les avis';
+        _isLoadingReviews = false;
       });
-    } finally {
-      if (!mounted) return;
-      setState(() => _isLoadingReviews = false);
     }
   }
 
