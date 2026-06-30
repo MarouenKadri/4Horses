@@ -285,10 +285,10 @@ class _StoryCard extends StatelessWidget {
                       ),
                     ),
                     if (onProfileTap != null)
-                      const Icon(
+                      Icon(
                         Icons.chevron_right_rounded,
                         size: 14,
-                        color: Colors.white70,
+                        color: Colors.white.withValues(alpha: 0.70),
                       ),
                   ],
                 ),

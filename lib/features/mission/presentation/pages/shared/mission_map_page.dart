@@ -75,7 +75,7 @@ class _MissionMapPageState extends State<MissionMapPage> {
       backgroundColor: AppColors.snow,
       body: Stack(
         children: [
-          const Positioned.fill(child: ColoredBox(color: Color(0xFFF0EDE8))),
+          const Positioned.fill(child: ColoredBox(color: AppColors.mapSurface)),
           // ── Carte plein écran ──────────────────────────────────────────
           Positioned.fill(
             child: AppMap.preview(
@@ -93,7 +93,7 @@ class _MissionMapPageState extends State<MissionMapPage> {
               child: Card(
                 child: Padding(
                   padding: AppInsets.a16,
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(color: AppColors.primary),
                 ),
               ),
             ),

@@ -48,8 +48,8 @@ class FreelancerPreviewCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Color(0x22000000),
-                      Color(0xCC000000),
+                      AppColors.blackAlpha07,
+                      AppColors.blackAlpha80,
                     ],
                     stops: [0.35, 0.60, 1.0],
                   ),
@@ -103,7 +103,7 @@ class FreelancerPreviewCard extends StatelessWidget {
                         const Icon(
                           Icons.star_rounded,
                           size: 12,
-                          color: Color(0xFFFBBF24),
+                          color: AppColors.rating,
                         ),
                         const SizedBox(width: 3),
                         Text(

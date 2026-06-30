@@ -454,8 +454,8 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                 ),
                 if (widget.onProfileTap != null) ...[
                   AppGap.w6,
-                  const Icon(Icons.chevron_right_rounded,
-                      color: Colors.white70, size: 18),
+                  Icon(Icons.chevron_right_rounded,
+                      color: Colors.white.withValues(alpha: 0.70), size: 18),
                 ],
               ],
             ),
@@ -565,8 +565,8 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                         key: ValueKey(isLiked),
                         color: isLiked ? AppColors.pinkRed : Colors.white,
                         size: 26,
-                        shadows: const [
-                          Shadow(color: Colors.black54, blurRadius: 6),
+                        shadows: [
+                          Shadow(color: Colors.black.withValues(alpha: 0.54), blurRadius: 6),
                         ],
                       ),
                     ),
@@ -578,8 +578,8 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                             ? Colors.white
                             : Colors.white.withValues(alpha: AppStoryMetrics.viewerMetaAlpha),
                         fontWeight: FontWeight.w700,
-                        shadows: const [
-                          Shadow(color: Colors.black45, blurRadius: 4),
+                        shadows: [
+                          Shadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 4),
                         ],
                       ),
                     ),

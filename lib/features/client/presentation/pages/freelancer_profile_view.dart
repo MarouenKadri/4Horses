@@ -716,12 +716,12 @@ class _FreelancerPublicationsContentState
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.fromLTRB(5, 0, 5, 4),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
-                        stops: [0, 0.7],
-                        colors: [Colors.black45, Colors.transparent],
+                        stops: const [0, 0.7],
+                        colors: [Colors.black.withValues(alpha: 0.45), Colors.transparent],
                       ),
                     ),
                     child: Text(

@@ -63,7 +63,7 @@ class MessageTimeStatus extends StatelessWidget {
   };
 
   Color _statusColor(MessageStatus status) => switch (status) {
-    MessageStatus.read   => const Color(0xFFB8FFCF),
+    MessageStatus.read   => AppColors.messageReadBg,
     MessageStatus.failed => AppColors.error,
     _                    => _kWhite.withValues(alpha: 0.82),
   };
