@@ -175,15 +175,13 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
       _ => ('', ''),
     };
 
-    if (title.isNotEmpty) {
-      notifProvider.addNotification(
-        AppNotification(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          type: NotifType.mission,
-          title: title,
-          body: body,
-          timeAgo: 'A l\'instant',
-        ),
+    // Notifier le client via Supabase Realtime
+    if (title.isNotEmpty && _mission.client != null) {
+      notifProvider.sendNotification(
+        _mission.client!.id,
+        type: NotifType.mission,
+        title: title,
+        body: body,
       );
     }
 

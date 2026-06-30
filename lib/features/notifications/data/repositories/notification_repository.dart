@@ -9,6 +9,14 @@ abstract class NotificationRepository {
   Future<void> markRead(String notifId);
   Future<void> markAllRead(String userId);
   Future<void> delete(String notifId);
+  Future<void> sendNotification(
+    String targetUserId, {
+    required String type,
+    required String title,
+    required String body,
+    String? avatarUrl,
+    Map<String, dynamic>? data,
+  });
 }
 
 /// ─── Implémentation In-Memory (données de démo) ───────────────────────────
@@ -28,6 +36,16 @@ class InMemoryNotificationRepository implements NotificationRepository {
 
   @override
   Future<void> delete(String notifId) async {}
+
+  @override
+  Future<void> sendNotification(
+    String targetUserId, {
+    required String type,
+    required String title,
+    required String body,
+    String? avatarUrl,
+    Map<String, dynamic>? data,
+  }) async {}
 }
 
 /// ─── Données de démonstration ─────────────────────────────────────────────

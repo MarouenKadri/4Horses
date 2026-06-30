@@ -155,17 +155,13 @@ class _CandidatesPageState extends State<CandidatesPage> {
     );
     context.read<MissionProvider>().acceptCandidate(widget.missionId, presta);
 
-    // Notifier le prestataire
-    context.read<NotificationProvider>().addNotification(
-      AppNotification(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        type: NotifType.candidature,
-        title: 'Candidature acceptée',
-        body:
-            '${acceptedCandidate.name} a été sélectionné pour "${widget.missionTitle}".',
-        timeAgo: 'À l\'instant',
-        avatarUrl: acceptedCandidate.avatar,
-      ),
+    // Notifier le prestataire via Supabase — il recevra via Realtime
+    context.read<NotificationProvider>().sendNotification(
+      acceptedCandidate.id,
+      type: NotifType.candidature,
+      title: 'Candidature acceptée !',
+      body: 'Votre candidature pour "${widget.missionTitle}" a été acceptée.',
+      avatarUrl: acceptedCandidate.avatar,
     );
 
     setState(() {

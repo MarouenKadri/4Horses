@@ -67,4 +67,27 @@ class SupabaseNotificationRepository implements NotificationRepository {
     }
   }
 
+  @override
+  Future<void> sendNotification(
+    String targetUserId, {
+    required String type,
+    required String title,
+    required String body,
+    String? avatarUrl,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      await _supabase.from('notifications').insert({
+        'user_id': targetUserId,
+        'type': type,
+        'title': title,
+        'body': body,
+        if (avatarUrl != null) 'avatar_url': avatarUrl,
+        'is_read': false,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      debugPrint('sendNotification error: $e');
+    }
+  }
 }

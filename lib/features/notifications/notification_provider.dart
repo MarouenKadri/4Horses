@@ -105,6 +105,24 @@ class NotificationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // ─── Envoyer à un autre utilisateur (insert Supabase → Realtime) ──────────
+
+  Future<void> sendNotification(
+    String targetUserId, {
+    required NotifType type,
+    required String title,
+    required String body,
+    String? avatarUrl,
+  }) async {
+    await _repository.sendNotification(
+      targetUserId,
+      type: type.name,
+      title: title,
+      body: body,
+      avatarUrl: avatarUrl,
+    );
+  }
+
   // ─── Realtime ─────────────────────────────────────────────────────────────
 
   void _subscribeRealtime() {
