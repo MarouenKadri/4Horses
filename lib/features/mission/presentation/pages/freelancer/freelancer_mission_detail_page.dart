@@ -7,7 +7,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../core/design/app_design_system.dart';
 import '../../../../messaging/messaging_provider.dart';
 import '../../../../messaging/presentation/pages/chat_page.dart';
-import '../../../../notifications/notification_provider.dart';
 import '../../../../reviews/presentation/pages/client_review_page.dart';
 import '../../../data/models/mission.dart';
 import '../../mission_provider.dart';
@@ -17,7 +16,7 @@ import '../../widgets/shared/mission_finance_ui.dart';
 import '../../widgets/shared/mission_status_ui.dart';
 import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/detail/freelancer_detail_sections.dart';
-import '../../../profile/presentation/pages/freelancer/freelancer_activity_page.dart';
+import '../../../../profile/presentation/pages/freelancer/freelancer_activity_page.dart';
 import 'freelancer_tracking_page.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -497,9 +496,10 @@ class _FreelancerMissionDetailPageState
   void _promptContactRequest(dynamic client) {
     showAppDialog(
       context: context,
-      title: 'Demander à être contacté',
-      message:
-          'Le client n\'a pas encore ouvert de conversation. Voulez-vous lui envoyer une demande de contact pour la mission "${mission.title}" ?',
+      title: const Text('Demander à être contacté'),
+      content: Text(
+        'Le client n\'a pas encore ouvert de conversation. Voulez-vous lui envoyer une demande de contact pour la mission "${mission.title}" ?',
+      ),
       confirmLabel: 'Envoyer la demande',
       cancelLabel: 'Annuler',
       onConfirm: () => _sendContactRequest(client),
@@ -507,8 +507,6 @@ class _FreelancerMissionDetailPageState
   }
 
   Future<void> _sendContactRequest(dynamic client) async {
-    final freelancerName =
-        context.read<NotificationProvider>(); // just to check provider access
     final currentUser = Supabase.instance.client.auth.currentUser;
     final freelancerDisplayName = currentUser?.userMetadata?['first_name'] as String? ?? 'Le prestataire';
 
