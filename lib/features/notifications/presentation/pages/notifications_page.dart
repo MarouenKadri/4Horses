@@ -52,14 +52,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     ),
                   ),
                   if (unreadCount > 0)
-                    TextButton(
+                    AppButton(
+                      label: 'Tout lire',
                       onPressed: () => context.read<NotificationProvider>().markAllRead(),
-                      child: Text(
-                        'Tout lire',
-                        style: context.text.labelLarge?.copyWith(
-                          color: context.colors.textPrimary,
-                        ),
-                      ),
+                      variant: ButtonVariant.ghost,
+                      width: null,
+                      height: 36,
                     ),
                 ],
               ),

@@ -148,29 +148,11 @@ class ProfileSheetPrimaryAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
+    return AppButton(
+      label: label,
+      onPressed: onPressed,
+      variant: ButtonVariant.black,
       height: AppProfileMetrics.sheetPrimaryActionHeight,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: context.colors.textPrimary,
-          foregroundColor: context.colors.surface,
-          elevation: 0,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.full),
-          ),
-        ),
-        child: Text(
-          label,
-          style: context.text.titleSmall?.copyWith(
-            fontSize: AppFontSize.lg,
-            fontWeight: FontWeight.w600,
-            color: context.colors.surface,
-          ),
-        ),
-      ),
     );
   }
 }
@@ -187,17 +169,11 @@ class ProfileSheetSecondaryAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return AppButton(
+      label: label,
       onPressed: onTap,
-      style: TextButton.styleFrom(
-        foregroundColor: context.colors.textTertiary,
-        padding: AppInsets.h12v8,
-        textStyle: context.text.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w500,
-          color: context.colors.textTertiary,
-        ),
-      ),
-      child: Text(label),
+      variant: ButtonVariant.ghost,
+      height: 44,
     );
   }
 }
