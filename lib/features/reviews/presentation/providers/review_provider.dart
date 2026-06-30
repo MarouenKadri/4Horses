@@ -101,6 +101,29 @@ class ReviewProvider extends ChangeNotifier {
     }
   }
 
+  Future<String?> submitReview({
+    required String revieweeId,
+    required String reviewerName,
+    required String? reviewerAvatar,
+    required int rating,
+    required String missionId,
+    required String missionTitle,
+    String comment = '',
+  }) async {
+    final reviewerId = _userId;
+    if (reviewerId == null) return 'Non connecté';
+    return _reviewRepository.addReview(
+      revieweeId: revieweeId,
+      reviewerId: reviewerId,
+      reviewerName: reviewerName,
+      reviewerAvatar: reviewerAvatar,
+      rating: rating,
+      comment: comment,
+      missionId: missionId,
+      missionTitle: missionTitle,
+    );
+  }
+
   Future<void> loadReviewsForMode({required bool isFreelancer}) async {
     final userId = _userId;
     if (userId == null) {

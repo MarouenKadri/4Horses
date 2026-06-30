@@ -8,6 +8,8 @@ import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/shared/status_timeline.dart';
 import '../../../../../features/notifications/notification_provider.dart';
 import '../../../../../features/notifications/data/models/app_notification.dart';
+import '../../../../../features/reviews/presentation/providers/review_provider.dart';
+import '../../../../../features/profile/profile_provider.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// ✅ Inkern - MissionValidationPage (Client)
@@ -194,11 +196,29 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
     );
   }
 
-  void _validate() {
+  Future<void> _validate() async {
     final missionProvider = context.read<MissionProvider>();
     final notifProvider = context.read<NotificationProvider>();
+    final reviewProvider = context.read<ReviewProvider>();
+    final profile = context.read<ProfileProvider>().profile;
 
-    missionProvider.updateMissionStatus(widget.mission.id, MissionStatus.closed);
+    await missionProvider.updateMissionStatus(widget.mission.id, MissionStatus.closed);
+
+    // Soumettre l'avis si une note a été donnée
+    final presta = widget.mission.assignedPresta;
+    if (_starRating > 0 && presta != null) {
+      final err = await reviewProvider.submitReview(
+        revieweeId: presta.id,
+        reviewerName: profile?.fullName ?? 'Client',
+        reviewerAvatar: profile?.avatarUrl,
+        rating: _starRating,
+        missionId: widget.mission.id,
+        missionTitle: widget.mission.title,
+      );
+      if (err != null) debugPrint('submitReview warning (non-blocking): $err');
+    }
+
+    if (!mounted) return;
 
     notifProvider.addNotification(AppNotification(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
