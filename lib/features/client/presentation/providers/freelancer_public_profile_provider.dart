@@ -13,10 +13,11 @@ class FreelancerPublicProfileProvider extends ChangeNotifier {
 
   FreelancerPublicProfileProvider({
     GetFreelancerPublicProfile? getFreelancerPublicProfile,
-  }) : _getFreelancerPublicProfile = getFreelancerPublicProfile ??
-            GetFreelancerPublicProfile(
-              SupabaseFreelancerPublicProfileRepository(),
-            );
+  }) : _getFreelancerPublicProfile =
+           getFreelancerPublicProfile ??
+           GetFreelancerPublicProfile(
+             SupabaseFreelancerPublicProfileRepository(),
+           );
 
   Future<void> load(String? freelancerId) async {
     if (freelancerId == null || freelancerId.isEmpty) {

@@ -64,10 +64,10 @@ class ClientFinanceMethodsTab extends StatelessWidget {
       child: AddCardSheet(
         onCardAdded: (brand, last4, expiry) {
           context.read<PaymentMethodsProvider>().addCard(
-                brand: brand,
-                last4: last4,
-                expiry: expiry,
-              );
+            brand: brand,
+            last4: last4,
+            expiry: expiry,
+          );
         },
       ),
     );
@@ -90,18 +90,20 @@ class ClientFinanceMethodsTab extends StatelessWidget {
           ),
           child: Column(
             children: [
-              ...cards.asMap().entries.expand((entry) => [
-                    _CardRow(
-                      card: entry.value,
-                      onTap: () => _showCardOptions(context, entry.value),
+              ...cards.asMap().entries.expand(
+                (entry) => [
+                  _CardRow(
+                    card: entry.value,
+                    onTap: () => _showCardOptions(context, entry.value),
+                  ),
+                  if (entry.key < cards.length - 1)
+                    Divider(
+                      height: 1,
+                      indent: 68,
+                      color: context.colors.divider,
                     ),
-                    if (entry.key < cards.length - 1)
-                      Divider(
-                        height: 1,
-                        indent: 68,
-                        color: context.colors.divider,
-                      ),
-                  ]),
+                ],
+              ),
             ],
           ),
         ),

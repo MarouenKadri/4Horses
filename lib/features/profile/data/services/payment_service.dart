@@ -23,13 +23,13 @@ class StripeCard {
   });
 
   factory StripeCard.fromJson(Map<String, dynamic> j) => StripeCard(
-        id: j['id'] as String,
-        brand: j['brand'] as String? ?? 'card',
-        last4: j['last4'] as String? ?? '0000',
-        expMonth: j['expMonth'] as int? ?? 0,
-        expYear: j['expYear'] as int? ?? 0,
-        isDefault: j['isDefault'] as bool? ?? false,
-      );
+    id: j['id'] as String,
+    brand: j['brand'] as String? ?? 'card',
+    last4: j['last4'] as String? ?? '0000',
+    expMonth: j['expMonth'] as int? ?? 0,
+    expYear: j['expYear'] as int? ?? 0,
+    isDefault: j['isDefault'] as bool? ?? false,
+  );
 
   String get brandLabel {
     final b = brand.toLowerCase();
@@ -37,7 +37,8 @@ class StripeCard {
       'visa' => 'Visa',
       'mastercard' => 'Mastercard',
       'amex' => 'American Express',
-      _ => brand.isEmpty ? 'Carte' : brand[0].toUpperCase() + brand.substring(1),
+      _ =>
+        brand.isEmpty ? 'Carte' : brand[0].toUpperCase() + brand.substring(1),
     };
   }
 
@@ -56,9 +57,9 @@ class PaymentService {
   static String get _token => _supabase.auth.currentSession?.accessToken ?? '';
 
   static Map<String, String> get _headers => {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      };
+    'Authorization': 'Bearer $_token',
+    'Content-Type': 'application/json',
+  };
 
   static Future<void> _initStripeIfNeeded(Map<String, dynamic> data) async {
     final pubKey = data['publishableKey'] as String? ?? '';
@@ -140,7 +141,8 @@ class PaymentService {
     if (res.statusCode != 200) {
       String? err;
       try {
-        err = (jsonDecode(res.body) as Map<String, dynamic>)['error'] as String?;
+        err =
+            (jsonDecode(res.body) as Map<String, dynamic>)['error'] as String?;
       } catch (_) {}
       debugPrint('stripe-pay-mission error ${res.statusCode}: ${res.body}');
       throw Exception(err ?? 'Erreur paiement (${res.statusCode})');
@@ -182,21 +184,25 @@ class PaymentService {
   }) async {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) return;
-    await _supabase.from('profiles').update({
-      'bank_iban': iban.trim().toUpperCase(),
-      if (bic != null && bic.trim().isNotEmpty) 'bank_bic': bic.trim().toUpperCase(),
-      if (holder != null && holder.trim().isNotEmpty) 'bank_holder': holder.trim(),
-    }).eq('id', userId);
+    await _supabase
+        .from('profiles')
+        .update({
+          'bank_iban': iban.trim().toUpperCase(),
+          if (bic != null && bic.trim().isNotEmpty)
+            'bank_bic': bic.trim().toUpperCase(),
+          if (holder != null && holder.trim().isNotEmpty)
+            'bank_holder': holder.trim(),
+        })
+        .eq('id', userId);
   }
 
   static Future<void> deleteIban() async {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) return;
-    await _supabase.from('profiles').update({
-      'bank_iban': null,
-      'bank_bic': null,
-      'bank_holder': null,
-    }).eq('id', userId);
+    await _supabase
+        .from('profiles')
+        .update({'bank_iban': null, 'bank_bic': null, 'bank_holder': null})
+        .eq('id', userId);
   }
 
   // ── Transactions ──────────────────────────────────────────────────────────

@@ -18,7 +18,13 @@ class _FreelancerFinanceActivityTabState
   String _period = 'Ce mois';
 
   final _filters = ['Tout', 'Revenus', 'Retraits', 'Frais'];
-  final _periods = ['Cette semaine', 'Ce mois', '3 mois', 'Cette année', 'Tout'];
+  final _periods = [
+    'Cette semaine',
+    'Ce mois',
+    '3 mois',
+    'Cette année',
+    'Tout',
+  ];
 
   final List<Transaction> _txs = [
     Transaction(
@@ -108,17 +114,17 @@ class _FreelancerFinanceActivityTabState
   ];
 
   List<Transaction> get _filtered => _txs.where((tx) {
-        return switch (_filter) {
-          'Revenus' =>
-            tx.type == TransactionType.income ||
-                tx.type == TransactionType.bonus ||
-                tx.type == TransactionType.refund ||
-                tx.type == TransactionType.held,
-          'Retraits' => tx.type == TransactionType.withdrawal,
-          'Frais' => tx.type == TransactionType.fee,
-          _ => true,
-        };
-      }).toList();
+    return switch (_filter) {
+      'Revenus' =>
+        tx.type == TransactionType.income ||
+            tx.type == TransactionType.bonus ||
+            tx.type == TransactionType.refund ||
+            tx.type == TransactionType.held,
+      'Retraits' => tx.type == TransactionType.withdrawal,
+      'Frais' => tx.type == TransactionType.fee,
+      _ => true,
+    };
+  }).toList();
 
   double get _totalRevenu => _txs
       .where(
@@ -183,59 +189,56 @@ class _FreelancerFinanceActivityTabState
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
             sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final key = grouped.keys.elementAt(index);
-                  final list = grouped[key]!;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          bottom: 8,
-                          top: index == 0 ? 0 : 20,
-                        ),
-                        child: Text(
-                          key,
-                          style: context.text.labelSmall?.copyWith(
-                            color: context.colors.textTertiary,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final key = grouped.keys.elementAt(index);
+                final list = grouped[key]!;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: 8,
+                        top: index == 0 ? 0 : 20,
+                      ),
+                      child: Text(
+                        key,
+                        style: context.text.labelSmall?.copyWith(
+                          color: context.colors.textTertiary,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: context.colors.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: context.colors.border),
-                        ),
-                        child: Column(
-                          children: List.generate(
-                            list.length,
-                            (itemIndex) => Column(
-                              children: [
-                                _TxTile(
-                                  tx: list[itemIndex],
-                                  onTap: () =>
-                                      _showDetail(context, list[itemIndex]),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: context.colors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: context.colors.border),
+                      ),
+                      child: Column(
+                        children: List.generate(
+                          list.length,
+                          (itemIndex) => Column(
+                            children: [
+                              _TxTile(
+                                tx: list[itemIndex],
+                                onTap: () =>
+                                    _showDetail(context, list[itemIndex]),
+                              ),
+                              if (itemIndex < list.length - 1)
+                                Divider(
+                                  height: 1,
+                                  indent: 68,
+                                  color: context.colors.divider,
                                 ),
-                                if (itemIndex < list.length - 1)
-                                  Divider(
-                                    height: 1,
-                                    indent: 68,
-                                    color: context.colors.divider,
-                                  ),
-                              ],
-                            ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  );
-                },
-                childCount: grouped.length,
-              ),
+                    ),
+                  ],
+                );
+              }, childCount: grouped.length),
             ),
           ),
       ],
@@ -438,11 +441,19 @@ class _FreelancerFinanceActivityTabState
                 children: [
                   _DetailRow('Type', tx.type.label),
                   if (tx.clientName != null) ...[
-                    Divider(height: 1, indent: 16, color: context.colors.divider),
+                    Divider(
+                      height: 1,
+                      indent: 16,
+                      color: context.colors.divider,
+                    ),
                     _DetailRow('Client', tx.clientName!),
                   ],
                   if (tx.description != null) ...[
-                    Divider(height: 1, indent: 16, color: context.colors.divider),
+                    Divider(
+                      height: 1,
+                      indent: 16,
+                      color: context.colors.divider,
+                    ),
                     _DetailRow('Détail', tx.description!),
                   ],
                   Divider(height: 1, indent: 16, color: context.colors.divider),
@@ -576,15 +587,9 @@ class _BalanceCard extends StatelessWidget {
           AppGap.h16,
           Divider(height: 1, color: context.colors.divider),
           AppGap.h14,
-          _BalanceInfoRow(
-            label: 'En attente',
-            value: '100,00 €',
-          ),
+          _BalanceInfoRow(label: 'En attente', value: '100,00 €'),
           AppGap.h10,
-          _BalanceInfoRow(
-            label: 'Dernier retrait',
-            value: '200,00 €',
-          ),
+          _BalanceInfoRow(label: 'Dernier retrait', value: '200,00 €'),
         ],
       ),
     );
@@ -595,10 +600,7 @@ class _BalanceInfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _BalanceInfoRow({
-    required this.label,
-    required this.value,
-  });
+  const _BalanceInfoRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -694,7 +696,11 @@ class _FiltersHeader extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
       color: context.colors.background,
       child: Column(
@@ -781,9 +787,7 @@ class _SummaryStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-      ),
+      decoration: BoxDecoration(color: Colors.transparent),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -899,8 +903,8 @@ class _TxTile extends StatelessWidget {
 
   Color? _badgeColor(BuildContext context, Transaction tx) {
     return switch (tx.status) {
-      TransactionStatus.inDispute || TransactionStatus.failed =>
-        context.colors.error,
+      TransactionStatus.inDispute ||
+      TransactionStatus.failed => context.colors.error,
       TransactionStatus.awaitingRelease ||
       TransactionStatus.pending ||
       TransactionStatus.held => context.colors.textTertiary,
@@ -915,7 +919,9 @@ class _WithdrawSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: AppFormSheet(
         title: 'Retirer des fonds',
         color: context.colors.surface,

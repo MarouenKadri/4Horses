@@ -17,7 +17,6 @@ export 'profile_provider.dart';
 // ─── Widgets - Shared ─────────────────────────────────────────────────────────
 export 'presentation/pages/widgets/shared/user_common_widgets.dart';
 
-
 // ─── Pages - Shared ───────────────────────────────────────────────────────────
 export 'presentation/pages/shared/account_page.dart';
 export 'presentation/pages/shared/change_password_page.dart';

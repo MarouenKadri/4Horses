@@ -135,7 +135,8 @@ class _FreelancerActivityPageState extends State<FreelancerActivityPage> {
                       zoneRadius: _zoneRadius,
                       locationLatLng: null,
                       locationAddress: _locationAddress,
-                      onZoneChanged: (value) => setState(() => _zoneRadius = value),
+                      onZoneChanged: (value) =>
+                          setState(() => _zoneRadius = value),
                       onSkillToggle: (label) => setState(
                         () => _selectedSkills.contains(label)
                             ? _selectedSkills.remove(label)
@@ -162,19 +163,16 @@ class _FreelancerActivityPageState extends State<FreelancerActivityPage> {
   }
 
   String get _tabTitle => switch (_selectedTabIndex) {
-        1 => 'Mes publications',
-        _ => 'Mon activité',
-      };
+    1 => 'Mes publications',
+    _ => 'Mon activité',
+  };
 }
 
 class _AnimatedTabPane extends StatelessWidget {
   final bool visible;
   final Widget child;
 
-  const _AnimatedTabPane({
-    required this.visible,
-    required this.child,
-  });
+  const _AnimatedTabPane({required this.visible, required this.child});
 
   @override
   Widget build(BuildContext context) {

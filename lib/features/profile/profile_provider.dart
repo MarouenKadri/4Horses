@@ -84,9 +84,7 @@ class ProfileProvider extends ChangeNotifier {
         if (needsGenderBackfill) {
           patch['gender'] = mergedRow['gender'];
         }
-        unawaited(
-          _supabase.from('profiles').update(patch).eq('id', userId),
-        );
+        unawaited(_supabase.from('profiles').update(patch).eq('id', userId));
       }
     } catch (e) {
       debugPrint('loadProfile error: $e');
@@ -115,7 +113,10 @@ class ProfileProvider extends ChangeNotifier {
 
         final fallbackPayload = Map<String, dynamic>.from(payload)
           ..remove('service_categories');
-        await _supabase.from('profiles').update(fallbackPayload).eq('id', userId);
+        await _supabase
+            .from('profiles')
+            .update(fallbackPayload)
+            .eq('id', userId);
         await _persistServiceCategoriesInUserMetadata(
           updated.serviceCategories,
         );
@@ -147,16 +148,10 @@ class ProfileProvider extends ChangeNotifier {
         .toList(growable: false);
     try {
       await _supabase.auth.updateUser(
-        UserAttributes(
-          data: {
-            'service_categories': normalized,
-          },
-        ),
+        UserAttributes(data: {'service_categories': normalized}),
       );
     } catch (e) {
-      debugPrint(
-        'persistServiceCategoriesInUserMetadata error: $e',
-      );
+      debugPrint('persistServiceCategoriesInUserMetadata error: $e');
     }
   }
 
@@ -180,12 +175,11 @@ class ProfileProvider extends ChangeNotifier {
       if (search != null && search.isNotEmpty) {
         final q = search.toLowerCase();
         results = results.where((f) {
-          final name =
-              '${f['first_name'] ?? ''} ${f['last_name'] ?? ''}'.toLowerCase();
-          final categories =
-              ServiceCategoriesResolver.parse(
-                f['service_categories'],
-              ).join(' ').toLowerCase();
+          final name = '${f['first_name'] ?? ''} ${f['last_name'] ?? ''}'
+              .toLowerCase();
+          final categories = ServiceCategoriesResolver.parse(
+            f['service_categories'],
+          ).join(' ').toLowerCase();
           return name.contains(q) || categories.contains(q);
         }).toList();
       }
@@ -240,11 +234,16 @@ class ProfileProvider extends ChangeNotifier {
     try {
       final bytes = await imageFile.readAsBytes();
       final path = '$userId/avatar.jpg';
-      await _supabase.storage.from('avatars').uploadBinary(
-        path,
-        bytes,
-        fileOptions: const FileOptions(contentType: 'image/jpeg', upsert: true),
-      );
+      await _supabase.storage
+          .from('avatars')
+          .uploadBinary(
+            path,
+            bytes,
+            fileOptions: const FileOptions(
+              contentType: 'image/jpeg',
+              upsert: true,
+            ),
+          );
       final url = _supabase.storage.from('avatars').getPublicUrl(path);
       // Éviter que Flutter serve l'ancienne image depuis son cache mémoire
       if (profile?.avatarUrl != null) {
@@ -252,7 +251,10 @@ class ProfileProvider extends ChangeNotifier {
       }
       // Cache-buster stocké en DB — loadProfile() récupère aussi la bonne version
       final cacheBustedUrl = '$url?t=${DateTime.now().millisecondsSinceEpoch}';
-      await _supabase.from('profiles').update({'avatar_url': cacheBustedUrl}).eq('id', userId);
+      await _supabase
+          .from('profiles')
+          .update({'avatar_url': cacheBustedUrl})
+          .eq('id', userId);
       profile = profile?.copyWith(avatarUrl: cacheBustedUrl);
       return null;
     } catch (e) {

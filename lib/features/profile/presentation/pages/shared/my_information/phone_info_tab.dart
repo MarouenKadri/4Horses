@@ -64,7 +64,8 @@ class PhoneInfoTabState extends State<PhoneInfoTab> {
               ),
               AppGap.h16,
               const InlineHelper(
-                text: 'Ce numéro est utilisé pour les notifications importantes.',
+                text:
+                    'Ce numéro est utilisé pour les notifications importantes.',
               ),
             ],
           ),

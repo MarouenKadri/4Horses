@@ -3,13 +3,13 @@ import '../../../../core/design/app_design_system.dart';
 
 /// Types de transaction
 enum TransactionType {
-  income,      // Paiement reçu (versé)
-  held,        // Fonds sécurisés en attente de versement
-  released,    // Versement libéré après délai 24h
-  withdrawal,  // Retrait vers compte bancaire
-  refund,      // Remboursement
-  fee,         // Frais de service
-  bonus,       // Bonus/Prime
+  income, // Paiement reçu (versé)
+  held, // Fonds sécurisés en attente de versement
+  released, // Versement libéré après délai 24h
+  withdrawal, // Retrait vers compte bancaire
+  refund, // Remboursement
+  fee, // Frais de service
+  bonus, // Bonus/Prime
 }
 
 extension TransactionTypeExtension on TransactionType {
@@ -56,17 +56,17 @@ extension TransactionTypeExtension on TransactionType {
       case TransactionType.income:
         return AppColors.success;
       case TransactionType.held:
-        return Colors.orange;
+        return AppColors.warning;
       case TransactionType.released:
         return AppColors.success;
       case TransactionType.withdrawal:
         return AppColors.info;
       case TransactionType.refund:
-        return Colors.orange;
+        return AppColors.warning;
       case TransactionType.fee:
-        return Colors.red;
+        return AppColors.error;
       case TransactionType.bonus:
-        return Colors.purple;
+        return AppColors.primaryDark;
     }
   }
 
@@ -87,12 +87,12 @@ extension TransactionTypeExtension on TransactionType {
 
 /// Statut de transaction
 enum TransactionStatus {
-  completed,       // Versement effectué
-  held,            // Fonds sécurisés (Stripe hold)
+  completed, // Versement effectué
+  held, // Fonds sécurisés (Stripe hold)
   awaitingRelease, // Délai 24h en cours
-  inDispute,       // Litige — versement suspendu
-  pending,         // En cours de traitement
-  failed,          // Échoué
+  inDispute, // Litige — versement suspendu
+  pending, // En cours de traitement
+  failed, // Échoué
 }
 
 extension TransactionStatusExtension on TransactionStatus {
@@ -118,15 +118,15 @@ extension TransactionStatusExtension on TransactionStatus {
       case TransactionStatus.completed:
         return AppColors.success;
       case TransactionStatus.held:
-        return Colors.orange;
+        return AppColors.warning;
       case TransactionStatus.awaitingRelease:
-        return Colors.orange;
+        return AppColors.warning;
       case TransactionStatus.inDispute:
-        return Colors.red;
+        return AppColors.error;
       case TransactionStatus.pending:
-        return Colors.orange;
+        return AppColors.warning;
       case TransactionStatus.failed:
-        return Colors.red;
+        return AppColors.error;
     }
   }
 }

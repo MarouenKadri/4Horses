@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -11,9 +12,39 @@ import '../../../story/story.dart';
 import '../providers/freelancer_public_profile_provider.dart';
 
 export '../../../profile/presentation/pages/shared/base_profile_view.dart'
-    show ProfileStatData, VerifiedItemData, CancellationLevel, CancellationLevelExtension;
+    show ProfileStatData, VerifiedItemData;
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum CancellationLevel { never, rarely, sometimes, often }
+
+extension CancellationLevelExtension on CancellationLevel {
+  String get label {
+    switch (this) {
+      case CancellationLevel.never:
+        return "N'annule jamais";
+      case CancellationLevel.rarely:
+        return 'Annule rarement';
+      case CancellationLevel.sometimes:
+        return 'Annule parfois';
+      case CancellationLevel.often:
+        return 'Annule souvent';
+    }
+  }
+
+  int get reliabilityScore {
+    switch (this) {
+      case CancellationLevel.never:
+        return 100;
+      case CancellationLevel.rarely:
+        return 96;
+      case CancellationLevel.sometimes:
+        return 88;
+      case CancellationLevel.often:
+        return 74;
+    }
+  }
+}
 
 enum FreelancerContactMode { spontaneous, pendingCandidate, confirmedPresta }
 
@@ -76,8 +107,7 @@ class _FreelancerProfilePageState
       _profileProvider.profile?.avatarUrl ?? widget.freelancerAvatar;
 
   @override
-  double get profileRating =>
-      _profileProvider.profile?.rating ?? widget.rating;
+  double get profileRating => _profileProvider.profile?.rating ?? widget.rating;
 
   @override
   int get profileReviewsCount =>
@@ -99,11 +129,25 @@ class _FreelancerProfilePageState
   bool get showPublicationsTab => widget.freelancerId != null;
 
   @override
-  Widget? buildStoriesBar(BuildContext context) {
-    if (widget.freelancerId == null) return null;
-    return _FreelancerStoriesBar(
-      freelancerId: widget.freelancerId!,
-      selectedCategories: _profileProvider.profile?.serviceCategories ?? const [],
+  String get profileSubtitle => 'Membre depuis ${widget.memberSince}';
+
+  @override
+  String get profileBio => _bio;
+
+  @override
+  Widget? buildAvatarBadge(BuildContext context) {
+    if (_profileProvider.profile?.isVerified != true) return null;
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: context.colors.background,
+        shape: BoxShape.circle,
+      ),
+      child: const Icon(
+        Icons.verified_rounded,
+        size: 22,
+        color: AppColors.info,
+      ),
     );
   }
 
@@ -173,40 +217,53 @@ class _FreelancerProfilePageState
   // ── BaseProfileState overrides ──────────────────────────────────────────────
 
   @override
-  Widget buildHeroBadge(BuildContext context) =>
-      _HeroRateBadge(rate: _rate, context: context);
+  String? get profileMetaTrailing => '${_rate.toInt()}€/h';
 
   @override
   List<ProfileStatData> buildProfileStats() => [
-        ProfileStatData(
-          icon: Icons.workspace_premium_rounded,
-          value: _experienceStat,
-          label: 'Expérience',
-        ),
-        ProfileStatData(
-          icon: Icons.task_alt_rounded,
-          value: '$_missionsCount',
-          label: 'Missions',
-        ),
-        ProfileStatData(
-          icon: Icons.schedule_outlined,
-          value: _responseStat,
-          label: 'Réponse',
-        ),
-      ];
+    ProfileStatData(
+      icon: Icons.workspace_premium_rounded,
+      value: _experienceStat,
+      label: 'Expérience',
+    ),
+    ProfileStatData(
+      icon: Icons.task_alt_rounded,
+      value: '$_missionsCount',
+      label: 'Missions',
+    ),
+    ProfileStatData(
+      icon: Icons.schedule_outlined,
+      value: _responseStat,
+      label: 'Réponse',
+    ),
+  ];
 
   @override
   List<VerifiedItemData> get verifiedItems => [
-        const VerifiedItemData(label: "Pièce d'identité vérifiée", verified: true),
-        const VerifiedItemData(label: 'Adresse e-mail vérifiée', verified: true),
-        const VerifiedItemData(label: 'Numéro de téléphone vérifié', verified: true),
-        VerifiedItemData(
-          label: _cancellationLevel.label,
-          verified: _cancellationLevel == CancellationLevel.never ||
-              _cancellationLevel == CancellationLevel.rarely,
-          warning: _cancellationLevel == CancellationLevel.sometimes,
-        ),
-      ];
+    const VerifiedItemData(
+      label: "Pièce d'identité vérifiée",
+      verified: true,
+      icon: Icons.badge_outlined,
+    ),
+    const VerifiedItemData(
+      label: 'Adresse e-mail vérifiée',
+      verified: true,
+      icon: Icons.alternate_email_rounded,
+    ),
+    const VerifiedItemData(
+      label: 'Numéro de téléphone vérifié',
+      verified: true,
+      icon: Icons.phone_iphone_rounded,
+    ),
+    VerifiedItemData(
+      label: _cancellationLevel.label,
+      verified:
+          _cancellationLevel == CancellationLevel.never ||
+          _cancellationLevel == CancellationLevel.rarely,
+      warning: _cancellationLevel == CancellationLevel.sometimes,
+      icon: Icons.event_busy_rounded,
+    ),
+  ];
 
   @override
   Widget? buildProposalSection(BuildContext context) {
@@ -247,111 +304,93 @@ class _FreelancerProfilePageState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const ProfileSectionTitle(title: 'Présentation'),
-          AppGap.h12,
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.xl),
-              boxShadow: const [
-                BoxShadow(color: AppColors.blackAlpha03, blurRadius: 24, offset: Offset(0, 10)),
-              ],
-            ),
-            child: _bio.isNotEmpty
-                ? Text(
-                    _bio,
-                    style: context.text.bodyMedium
-                        ?.copyWith(height: 1.65, color: context.colors.textSecondary),
-                  )
-                : Text(
-                    "Ce prestataire n'a pas encore rédigé sa présentation.",
-                    style: context.text.bodyMedium
-                        ?.copyWith(height: 1.6, color: context.colors.textHint),
+          AppGap.h8,
+          _bio.isNotEmpty
+              ? Text(
+                  _bio,
+                  style: context.text.bodyMedium?.copyWith(
+                    height: 1.65,
+                    color: context.colors.textSecondary,
                   ),
-          ),
-          AppGap.h24,
+                )
+              : Text(
+                  "Ce prestataire n'a pas encore rédigé sa présentation.",
+                  style: context.text.bodyMedium?.copyWith(
+                    height: 1.6,
+                    color: context.colors.textHint,
+                  ),
+                ),
+          AppGap.h28,
           const ProfileSectionTitle(title: 'Localisation'),
-          AppGap.h12,
+          AppGap.h10,
           Container(
+            height: 182,
             decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.xl),
-              boxShadow: const [
-                BoxShadow(color: AppColors.blackAlpha03, blurRadius: 24, offset: Offset(0, 10)),
-              ],
+              borderRadius: BorderRadius.circular(AppRadius.cardLg),
+              border: Border.all(color: AppColors.gray50),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 182,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppRadius.cardLg),
-                      border: Border.all(color: AppColors.gray50),
-                    ),
-                    clipBehavior: Clip.hardEdge,
-                    child: FlutterMap(
-                      options: MapOptions(
-                        initialCenter: center,
-                        initialZoom: 12,
-                        interactionOptions: const InteractionOptions(
-                          flags: InteractiveFlag.none,
-                        ),
-                      ),
-                      children: [
-                        TileLayer(
-                          urlTemplate:
-                              'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
-                          subdomains: const ['a', 'b', 'c', 'd'],
-                          userAgentPackageName: 'com.example.homservice',
-                        ),
-                        MarkerLayer(
-                          markers: [
-                            Marker(
-                              point: center,
-                              width: 40,
-                              height: 40,
-                              child: const AppMapPin(color: AppColors.inkDark, size: 28),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (_address.isNotEmpty) ...[
-                    AppGap.h14,
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Icon(Icons.location_on_outlined,
-                              size: 16, color: context.colors.textHint),
-                        ),
-                        AppGap.w8,
-                        Expanded(
-                          child: Text(
-                            _address,
-                            style: context.text.titleSmall
-                                ?.copyWith(height: 1.35, fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ],
+            clipBehavior: Clip.hardEdge,
+            child: FlutterMap(
+              options: MapOptions(
+                initialCenter: center,
+                initialZoom: 12,
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.none,
+                ),
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate:
+                      'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+                  subdomains: const ['a', 'b', 'c', 'd'],
+                  userAgentPackageName: 'com.example.homservice',
+                ),
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: center,
+                      width: 40,
+                      height: 40,
+                      child: const _MapMarker(),
                     ),
                   ],
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          AppGap.h10,
+          if (_address.isNotEmpty) ...[
+            AppGap.h12,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Icon(
+                    Icons.location_on_outlined,
+                    size: 16,
+                    color: context.colors.textHint,
+                  ),
+                ),
+                AppGap.w8,
+                Expanded(
+                  child: Text(
+                    _address,
+                    style: context.text.titleSmall?.copyWith(
+                      height: 1.35,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          AppGap.h8,
           Text(
             "Zone d'intervention : ${_zoneRadius.toInt()} km autour de "
             "${_address.isNotEmpty ? _address : 'sa position'}",
-            style: context.text.labelSmall
-                ?.copyWith(color: context.colors.textSecondary),
+            style: context.text.labelSmall?.copyWith(
+              color: context.colors.textSecondary,
+            ),
           ),
         ],
       ),
@@ -370,9 +409,9 @@ class _FreelancerProfilePageState
   Future<String?> resolveConversationId(BuildContext context) async {
     if (widget.freelancerId == null) return null;
     return context.read<MessagingProvider>().getOrCreateConversation(
-          otherUserId: widget.freelancerId!,
-          iAmClient: true,
-        );
+      otherUserId: widget.freelancerId!,
+      iAmClient: true,
+    );
   }
 
   @override
@@ -381,7 +420,8 @@ class _FreelancerProfilePageState
         widget.contactMode == FreelancerContactMode.pendingCandidate;
     final isSpontaneous =
         widget.contactMode == FreelancerContactMode.spontaneous;
-    final isConfirmed = widget.contactMode == FreelancerContactMode.confirmedPresta;
+    final isConfirmed =
+        widget.contactMode == FreelancerContactMode.confirmedPresta;
     return ChatPage(
       conversationId: conversationId,
       contactUserId: widget.freelancerId,
@@ -398,121 +438,63 @@ class _FreelancerProfilePageState
     );
   }
 
-
+  // ── Helpers ─────────────────────────────────────────────────────────────────
 }
 
 // ── Widgets spécifiques freelancer ────────────────────────────────────────────
 
-class _HeroRateBadge extends StatelessWidget {
-  final double rate;
-  final BuildContext context;
-  const _HeroRateBadge({required this.rate, required this.context});
-
-  @override
-  Widget build(BuildContext ctx) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primaryDark],
-        ),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.35), width: 0.9),
-        boxShadow: const [
-          BoxShadow(color: AppColors.blackAlpha15, blurRadius: 12, offset: Offset(0, 5)),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.sell_rounded, size: 14, color: Colors.white),
-          const SizedBox(width: 6),
-          Text(
-            '${rate.toInt()}€/h',
-            style: ctx.text.labelLarge?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Stories bar (info tab) ────────────────────────────────────────────────────
-
-class _FreelancerStoriesBar extends StatefulWidget {
-  final String freelancerId;
-  final List<String> selectedCategories;
-
-  const _FreelancerStoriesBar({
-    required this.freelancerId,
-    required this.selectedCategories,
-  });
-
-  @override
-  State<_FreelancerStoriesBar> createState() => _FreelancerStoriesBarState();
-}
-
-class _FreelancerStoriesBarState extends State<_FreelancerStoriesBar> {
-  final Set<String> _viewed = {};
-
-  void _openViewer(BuildContext context, List<StoryGroup> groups, int index) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        opaque: false,
-        pageBuilder: (_, __, ___) => StoryViewerPage(
-          groups: groups,
-          initialIndex: index,
-          onViewed: (groupId) => setState(() => _viewed.add(groupId)),
-        ),
-        transitionsBuilder: (_, anim, __, child) =>
-            FadeTransition(opacity: anim, child: child),
-        transitionDuration: const Duration(milliseconds: 200),
-      ),
-    );
-  }
+class _MapMarker extends StatelessWidget {
+  const _MapMarker();
 
   @override
   Widget build(BuildContext context) {
-    final groups = context
-        .watch<StoryProvider>()
-        .storyGroupsForFreelancer(widget.freelancerId);
-    final entries = CategoryStoryEntries.build(
-      selectedCategories: widget.selectedCategories,
-      groups: groups,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: AppColors.inkDark,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2),
+            boxShadow: const [
+              BoxShadow(
+                color: Color.fromRGBO(16, 20, 24, 0.08),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.place_outlined,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+        CustomPaint(size: const Size(10, 6), painter: _PinTailPainter()),
+      ],
     );
-    if (entries.isEmpty) return const SizedBox.shrink();
-
-    final items = entries
-        .map((entry) {
-          final viewed = entry.hasStories ? _viewed.contains(entry.categoryId) : true;
-          return CategoryStoryStripItem(
-            categoryId: entry.categoryId,
-            label: entry.label,
-            count: entry.count,
-            viewed: viewed,
-            onTap: entry.hasStories
-                ? () {
-                    final index =
-                        groups.indexWhere((g) => g.groupId == entry.categoryId);
-                    if (index >= 0) _openViewer(context, groups, index);
-                  }
-                : null,
-          );
-        })
-        .toList(growable: false);
-
-    return CategoryStoryStrip(items: items);
   }
 }
 
-// ── Publications tab ──────────────────────────────────────────────────────────
+class _PinTailPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = AppColors.inkDark;
+    final path = ui.Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..lineTo(size.width, 0)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
+}
+
+// ── Stories bar (info tab) ────────────────────────────────────────────────────
 
 class _FreelancerPublicationsContent extends StatefulWidget {
   final String freelancerId;
@@ -525,8 +507,7 @@ class _FreelancerPublicationsContent extends StatefulWidget {
 
 class _FreelancerPublicationsContentState
     extends State<_FreelancerPublicationsContent> {
-  void _openViewer(
-      BuildContext context, List<StoryGroup> groups, Story story) {
+  void _openViewer(BuildContext context, List<StoryGroup> groups, Story story) {
     final groupIdx = groups.indexWhere((g) => g.stories.contains(story));
     Navigator.push(
       context,
@@ -551,43 +532,59 @@ class _FreelancerPublicationsContentState
     final stories = groups.expand((g) => g.stories).toList();
 
     if (provider.isLoading && stories.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 48),
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
 
     if (stories.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: context.colors.surfaceAlt,
-                shape: BoxShape.circle,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: context.colors.surfaceAlt,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.auto_stories_rounded,
+                  size: 26,
+                  color: context.colors.textSecondary,
+                ),
               ),
-              child: Icon(Icons.auto_stories_rounded,
-                  size: 26, color: context.colors.textSecondary),
-            ),
-            AppGap.h16,
-            Text(
-              'Aucune publication',
-              style: context.text.titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            AppGap.h6,
-            Text(
-              "Ce prestataire n'a pas encore publié de contenu.",
-              textAlign: TextAlign.center,
-              style: context.text.bodyMedium?.copyWith(
-                  color: context.colors.textSecondary, height: 1.4),
-            ),
-          ],
+              AppGap.h16,
+              Text(
+                'Aucune publication',
+                style: context.text.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              AppGap.h6,
+              Text(
+                "Ce prestataire n'a pas encore publié de contenu.",
+                textAlign: TextAlign.center,
+                style: context.text.bodyMedium?.copyWith(
+                  color: context.colors.textSecondary,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
 
     return GridView.builder(
+      // Rendu dans la Column scrollable du profil : hauteur intrinsèque
+      // obligatoire, le scroll est géré par le SingleChildScrollView parent.
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(2),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
@@ -609,14 +606,18 @@ class _FreelancerPublicationsContentState
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Container(
                         color: AppColors.secondary,
-                        child: const Icon(Icons.image_rounded,
-                            color: AppColors.primary),
+                        child: const Icon(
+                          Icons.image_rounded,
+                          color: AppColors.primary,
+                        ),
                       ),
                     )
                   : Container(
                       color: AppColors.secondary,
-                      child: const Icon(Icons.image_rounded,
-                          color: AppColors.primary),
+                      child: const Icon(
+                        Icons.image_rounded,
+                        color: AppColors.primary,
+                      ),
                     ),
               if (story.caption.isNotEmpty)
                 Align(
@@ -629,7 +630,10 @@ class _FreelancerPublicationsContentState
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         stops: const [0, 0.7],
-                        colors: [Colors.black.withValues(alpha: 0.45), Colors.transparent],
+                        colors: [
+                          Colors.black.withValues(alpha: 0.45),
+                          Colors.transparent,
+                        ],
                       ),
                     ),
                     child: Text(
@@ -637,7 +641,9 @@ class _FreelancerPublicationsContentState
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                          color: Colors.white, fontSize: AppFontSize.tiny),
+                        color: Colors.white,
+                        fontSize: AppFontSize.tiny,
+                      ),
                     ),
                   ),
                 ),

@@ -15,8 +15,8 @@ class SupabaseFreelancerPublicProfileRepository
   SupabaseFreelancerPublicProfileRepository({
     SupabaseClient? supabase,
     SupabaseReviewRepository? reviewRepository,
-  })  : _supabase = supabase ?? Supabase.instance.client,
-        _reviewRepository = reviewRepository ?? SupabaseReviewRepository();
+  }) : _supabase = supabase ?? Supabase.instance.client,
+       _reviewRepository = reviewRepository ?? SupabaseReviewRepository();
 
   @override
   Future<FreelancerPublicProfile?> getById(String freelancerId) async {
@@ -24,15 +24,16 @@ class SupabaseFreelancerPublicProfileRepository
       // Run profile fetch, reviews, and mission stats in parallel
       final results = await Future.wait([
         _supabase
-            .from('profiles')
-            .select(
-              'id, first_name, last_name, avatar_url, bio, address, hourly_rate, '
-              'is_verified, service_categories, rating, reviews_count, '
-              'completed_missions, response_time, created_at, latitude, '
-              'longitude, zone_radius',
-            )
-            .eq('id', freelancerId)
-            .maybeSingle() as Future<dynamic>,
+                .from('profiles')
+                .select(
+                  'id, first_name, last_name, avatar_url, bio, address, hourly_rate, '
+                  'is_verified, service_categories, rating, reviews_count, '
+                  'completed_missions, response_time, created_at, latitude, '
+                  'longitude, zone_radius',
+                )
+                .eq('id', freelancerId)
+                .maybeSingle()
+            as Future<dynamic>,
         _reviewRepository.getReceivedReviews(freelancerId),
         _fetchMissionStats(freelancerId),
       ]);
@@ -52,10 +53,10 @@ class SupabaseFreelancerPublicProfileRepository
       final rating = reviews.isEmpty
           ? (_readDouble(row['rating']) ?? 0)
           : reviews.fold<double>(
-                0,
-                (sum, r) => sum + r.satisfaction.toInt().toDouble(),
-              ) /
-              reviews.length;
+                  0,
+                  (sum, r) => sum + r.satisfaction.toInt().toDouble(),
+                ) /
+                reviews.length;
       final missionsCount =
           _readInt(row['completed_missions']) ?? missionStats.finished;
       final cancellationRate = missionStats.total > 0
@@ -108,7 +109,11 @@ class SupabaseFreelancerPublicProfileRepository
         }
         if (status == 'cancelled') cancelled++;
       }
-      return _MissionStats(total: list.length, finished: finished, cancelled: cancelled);
+      return _MissionStats(
+        total: list.length,
+        finished: finished,
+        cancelled: cancelled,
+      );
     } catch (e) {
       debugPrint('fetchMissionStats error: $e');
       return const _MissionStats(total: 0, finished: 0, cancelled: 0);

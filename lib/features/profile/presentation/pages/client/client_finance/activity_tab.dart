@@ -88,14 +88,12 @@ class _ClientFinanceActivityTabState extends State<ClientFinanceActivityTab> {
   ];
 
   List<_Tx> get _filtered => switch (_filter) {
-        'Paiements' => _txs
-            .where((tx) => tx.type == _T.payment && !tx.pending)
-            .toList(),
-        'Remboursements' =>
-          _txs.where((tx) => tx.type == _T.refund).toList(),
-        'En attente' => _txs.where((tx) => tx.pending).toList(),
-        _ => _txs,
-      };
+    'Paiements' =>
+      _txs.where((tx) => tx.type == _T.payment && !tx.pending).toList(),
+    'Remboursements' => _txs.where((tx) => tx.type == _T.refund).toList(),
+    'En attente' => _txs.where((tx) => tx.pending).toList(),
+    _ => _txs,
+  };
 
   double get _totalPaid => _txs
       .where((tx) => tx.type == _T.payment && !tx.pending)
@@ -132,59 +130,56 @@ class _ClientFinanceActivityTabState extends State<ClientFinanceActivityTab> {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
             sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final key = grouped.keys.elementAt(index);
-                  final list = grouped[key]!;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          bottom: 8,
-                          top: index == 0 ? 0 : 20,
-                        ),
-                        child: Text(
-                          key,
-                          style: context.text.labelSmall?.copyWith(
-                            color: context.colors.textTertiary,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final key = grouped.keys.elementAt(index);
+                final list = grouped[key]!;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: 8,
+                        top: index == 0 ? 0 : 20,
+                      ),
+                      child: Text(
+                        key,
+                        style: context.text.labelSmall?.copyWith(
+                          color: context.colors.textTertiary,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: context.colors.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: context.colors.border),
-                        ),
-                        child: Column(
-                          children: List.generate(
-                            list.length,
-                            (itemIndex) => Column(
-                              children: [
-                                _TxTile(
-                                  tx: list[itemIndex],
-                                  onTap: () =>
-                                      _showDetail(context, list[itemIndex]),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: context.colors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: context.colors.border),
+                      ),
+                      child: Column(
+                        children: List.generate(
+                          list.length,
+                          (itemIndex) => Column(
+                            children: [
+                              _TxTile(
+                                tx: list[itemIndex],
+                                onTap: () =>
+                                    _showDetail(context, list[itemIndex]),
+                              ),
+                              if (itemIndex < list.length - 1)
+                                Divider(
+                                  height: 1,
+                                  indent: 68,
+                                  color: context.colors.divider,
                                 ),
-                                if (itemIndex < list.length - 1)
-                                  Divider(
-                                    height: 1,
-                                    indent: 68,
-                                    color: context.colors.divider,
-                                  ),
-                              ],
-                            ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  );
-                },
-                childCount: grouped.length,
-              ),
+                    ),
+                  ],
+                );
+              }, childCount: grouped.length),
             ),
           ),
       ],
@@ -287,7 +282,11 @@ class _ClientFinanceActivityTabState extends State<ClientFinanceActivityTab> {
                 border: Border.all(color: context.colors.border),
               ),
               child: Text(
-                tx.pending ? 'En attente (24h)' : isRefund ? 'Remboursé' : 'Payé',
+                tx.pending
+                    ? 'En attente (24h)'
+                    : isRefund
+                    ? 'Remboursé'
+                    : 'Payé',
                 style: context.text.labelSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: context.colors.textSecondary,
@@ -424,7 +423,11 @@ class _ClientFiltersHeader extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
       color: context.colors.background,
       child: Column(
@@ -540,8 +543,8 @@ class _TxTile extends StatelessWidget {
     final subtitle = tx.pending
         ? '${tx.sub} · Versement au prestataire sous 24h'
         : isRefund
-            ? '${tx.sub} · Remboursement reçu'
-            : '${tx.sub} · ${tx.card}';
+        ? '${tx.sub} · Remboursement reçu'
+        : '${tx.sub} · ${tx.card}';
 
     return PaymentTxTile(
       icon: isRefund
@@ -551,12 +554,16 @@ class _TxTile extends StatelessWidget {
       subtitle: subtitle,
       amount: '${isRefund ? '+' : '−'}${tx.amount.toStringAsFixed(2)} €',
       isPositive: isRefund,
-      badge: tx.pending ? 'En attente' : isRefund ? 'Remboursé' : 'Payé',
+      badge: tx.pending
+          ? 'En attente'
+          : isRefund
+          ? 'Remboursé'
+          : 'Payé',
       badgeColor: tx.pending
           ? context.colors.textTertiary
           : isRefund
-              ? AppColors.primary
-              : context.colors.textTertiary,
+          ? AppColors.primary
+          : context.colors.textTertiary,
       onTap: onTap,
     );
   }

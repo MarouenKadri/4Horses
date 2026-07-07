@@ -14,10 +14,10 @@ class PaymentMethod {
   });
 
   PaymentMethod copyWith({bool? isDefault}) => PaymentMethod(
-        id: id,
-        brand: brand,
-        last4: last4,
-        expiry: expiry,
-        isDefault: isDefault ?? this.isDefault,
-      );
+    id: id,
+    brand: brand,
+    last4: last4,
+    expiry: expiry,
+    isDefault: isDefault ?? this.isDefault,
+  );
 }

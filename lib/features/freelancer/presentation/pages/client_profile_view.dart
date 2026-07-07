@@ -9,7 +9,39 @@ import '../../../profile/presentation/pages/shared/base_profile_view.dart';
 import '../../../profile/profile_provider.dart';
 
 export '../../../profile/presentation/pages/shared/base_profile_view.dart'
-    show ProfileStatData, VerifiedItemData, CancellationLevel, CancellationLevelExtension;
+    show ProfileStatData, VerifiedItemData;
+
+// ─── Enum (partagé avec freelancer_profile_view via base) ─────────────────────
+
+enum CancellationLevel { never, rarely, sometimes, often }
+
+extension CancellationLevelExtension on CancellationLevel {
+  String get label {
+    switch (this) {
+      case CancellationLevel.never:
+        return "N'annule jamais";
+      case CancellationLevel.rarely:
+        return 'Annule rarement';
+      case CancellationLevel.sometimes:
+        return 'Annule parfois';
+      case CancellationLevel.often:
+        return 'Annule souvent';
+    }
+  }
+
+  int get reliabilityScore {
+    switch (this) {
+      case CancellationLevel.never:
+        return 100;
+      case CancellationLevel.rarely:
+        return 96;
+      case CancellationLevel.sometimes:
+        return 88;
+      case CancellationLevel.often:
+        return 74;
+    }
+  }
+}
 
 // ─── Widget ───────────────────────────────────────────────────────────────────
 
@@ -83,7 +115,8 @@ class _ClientProfileViewState extends BaseProfileState<ClientProfileView> {
     return '2 ans';
   }
 
-  String get _reliabilityStat => '${widget.cancellationLevel.reliabilityScore}%';
+  String get _reliabilityStat =>
+      '${widget.cancellationLevel.reliabilityScore}%';
 
   // ── Lifecycle ───────────────────────────────────────────────────────────────
 
@@ -95,8 +128,9 @@ class _ClientProfileViewState extends BaseProfileState<ClientProfileView> {
 
   Future<void> _loadProfile() async {
     setState(() => _loadingProfile = true);
-    final loaded =
-        await context.read<ProfileProvider>().fetchProfileById(widget.clientId!);
+    final loaded = await context.read<ProfileProvider>().fetchProfileById(
+      widget.clientId!,
+    );
     if (!mounted) return;
     setState(() {
       _profile = loaded;
@@ -107,40 +141,55 @@ class _ClientProfileViewState extends BaseProfileState<ClientProfileView> {
   // ── BaseProfileState overrides ──────────────────────────────────────────────
 
   @override
-  Widget buildHeroBadge(BuildContext context) => const SizedBox.shrink();
-
-  @override
   List<ProfileStatData> buildProfileStats() => [
-        ProfileStatData(
-          icon: Icons.calendar_today_rounded,
-          value: _memberStat,
-          label: 'Membre',
-        ),
-        ProfileStatData(
-          icon: Icons.task_alt_rounded,
-          value: '${widget.missionsCount}',
-          label: 'Missions',
-        ),
-        ProfileStatData(
-          icon: Icons.verified_rounded,
-          value: _reliabilityStat,
-          label: 'Fiabilité',
-        ),
-      ];
+    ProfileStatData(
+      icon: Icons.calendar_today_rounded,
+      value: _memberStat,
+      label: 'Membre',
+    ),
+    ProfileStatData(
+      icon: Icons.task_alt_rounded,
+      value: '${widget.missionsCount}',
+      label: 'Missions',
+    ),
+    ProfileStatData(
+      icon: Icons.verified_rounded,
+      value: _reliabilityStat,
+      label: 'Fiabilité',
+    ),
+  ];
 
   @override
   List<VerifiedItemData> get verifiedItems => [
-        const VerifiedItemData(label: "Pièce d'identité vérifiée", verified: true),
-        const VerifiedItemData(label: 'Adresse e-mail vérifiée', verified: true),
-        const VerifiedItemData(label: 'Numéro de téléphone vérifié', verified: true),
-        const VerifiedItemData(label: 'Moyen de paiement vérifié', verified: true),
-        VerifiedItemData(
-          label: widget.cancellationLevel.label,
-          verified: widget.cancellationLevel == CancellationLevel.never ||
-              widget.cancellationLevel == CancellationLevel.rarely,
-          warning: widget.cancellationLevel == CancellationLevel.sometimes,
-        ),
-      ];
+    const VerifiedItemData(
+      label: "Pièce d'identité vérifiée",
+      verified: true,
+      icon: Icons.badge_outlined,
+    ),
+    const VerifiedItemData(
+      label: 'Adresse e-mail vérifiée',
+      verified: true,
+      icon: Icons.alternate_email_rounded,
+    ),
+    const VerifiedItemData(
+      label: 'Numéro de téléphone vérifié',
+      verified: true,
+      icon: Icons.phone_iphone_rounded,
+    ),
+    const VerifiedItemData(
+      label: 'Moyen de paiement vérifié',
+      verified: true,
+      icon: Icons.credit_card_rounded,
+    ),
+    VerifiedItemData(
+      label: widget.cancellationLevel.label,
+      verified:
+          widget.cancellationLevel == CancellationLevel.never ||
+          widget.cancellationLevel == CancellationLevel.rarely,
+      warning: widget.cancellationLevel == CancellationLevel.sometimes,
+      icon: Icons.event_busy_rounded,
+    ),
+  ];
 
   @override
   Widget? buildExtraSection(BuildContext context) {
@@ -150,22 +199,13 @@ class _ClientProfileViewState extends BaseProfileState<ClientProfileView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const ProfileSectionTitle(title: 'Présentation'),
-          AppGap.h12,
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.xl),
-              boxShadow: const [
-                BoxShadow(color: AppColors.blackAlpha03, blurRadius: 24, offset: Offset(0, 10)),
-              ],
-            ),
-            child: Text(
-              'Client actif sur la plateforme depuis ${widget.memberSince.toLowerCase()}, '
-              'avec ${widget.missionsCount} missions publiées.',
-              style: context.text.bodyMedium
-                  ?.copyWith(height: 1.65, color: context.colors.textSecondary),
+          AppGap.h8,
+          Text(
+            'Client actif sur la plateforme depuis ${widget.memberSince.toLowerCase()}, '
+            'avec ${widget.missionsCount} missions publiées.',
+            style: context.text.bodyMedium?.copyWith(
+              height: 1.65,
+              color: context.colors.textSecondary,
             ),
           ),
         ],
@@ -177,17 +217,16 @@ class _ClientProfileViewState extends BaseProfileState<ClientProfileView> {
   Future<String?> resolveConversationId(BuildContext context) async {
     if (widget.clientId == null) return null;
     return context.read<MessagingProvider>().getOrCreateConversation(
-          otherUserId: widget.clientId!,
-          iAmClient: false,
-        );
+      otherUserId: widget.clientId!,
+      iAmClient: false,
+    );
   }
 
   @override
   Widget buildChatPage(String? conversationId) => ChatPage(
-        conversationId: conversationId,
-        contactUserId: widget.clientId,
-        contactName: profileName,
-        contactAvatar: profileAvatar,
-      );
-
+    conversationId: conversationId,
+    contactUserId: widget.clientId,
+    contactName: profileName,
+    contactAvatar: profileAvatar,
+  );
 }

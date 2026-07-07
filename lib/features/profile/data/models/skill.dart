@@ -20,12 +20,7 @@ class Skill {
   });
 }
 
-enum SkillLevel {
-  debutant,
-  intermediaire,
-  confirme,
-  expert,
-}
+enum SkillLevel { debutant, intermediaire, confirme, expert }
 
 extension SkillLevelExtension on SkillLevel {
   String get label {
@@ -46,11 +41,11 @@ extension SkillLevelExtension on SkillLevel {
       case SkillLevel.debutant:
         return AppColors.info;
       case SkillLevel.intermediaire:
-        return Colors.orange;
+        return AppColors.warning;
       case SkillLevel.confirme:
         return AppColors.success;
       case SkillLevel.expert:
-        return Colors.purple;
+        return AppColors.primaryDark;
     }
   }
 

@@ -63,10 +63,7 @@ class _AnimatedTabPane extends StatelessWidget {
   final bool visible;
   final Widget child;
 
-  const _AnimatedTabPane({
-    required this.visible,
-    required this.child,
-  });
+  const _AnimatedTabPane({required this.visible, required this.child});
 
   @override
   Widget build(BuildContext context) {

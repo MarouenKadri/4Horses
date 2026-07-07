@@ -270,7 +270,9 @@ class PaymentTxTile extends StatelessWidget {
               height: AppPaymentMetrics.txLeadingBoxSize,
               decoration: BoxDecoration(
                 color: context.colors.surfaceAlt,
-                borderRadius: BorderRadius.circular(AppPaymentMetrics.txLeadingRadius),
+                borderRadius: BorderRadius.circular(
+                  AppPaymentMetrics.txLeadingRadius,
+                ),
               ),
               child: Icon(
                 icon,
@@ -372,9 +374,7 @@ class PaymentFilterPills extends StatelessWidget {
               ),
               padding: AppInsets.h16,
               decoration: BoxDecoration(
-                color: active
-                    ? context.colors.textPrimary
-                    : Colors.transparent,
+                color: active ? context.colors.textPrimary : Colors.transparent,
                 borderRadius: BorderRadius.circular(AppRadius.chip),
                 border: Border.all(
                   color: active
@@ -502,10 +502,7 @@ class _PipelineDot extends StatelessWidget {
       return Container(
         width: AppPaymentMetrics.pipelineDotSize,
         height: AppPaymentMetrics.pipelineDotSize,
-        decoration: BoxDecoration(
-          color: accent,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
       );
     }
     if (active) {
@@ -653,7 +650,9 @@ class _AddCardSheetState extends State<AddCardSheet> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     final digits = _numberCtrl.text.replaceAll(' ', '');
-    final last4 = digits.length >= 4 ? digits.substring(digits.length - 4) : digits;
+    final last4 = digits.length >= 4
+        ? digits.substring(digits.length - 4)
+        : digits;
     Navigator.pop(context);
     widget.onCardAdded(_brandLabel, last4, _expiryCtrl.text);
   }
@@ -678,15 +677,7 @@ class _AddCardSheetState extends State<AddCardSheet> {
           color: color,
           borderRadius: BorderRadius.circular(5),
         ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            letterSpacing: 0.5,
-          ),
-        ),
+        child: Text(label, style: context.paymentBrandBadgeStyle),
       ),
     );
   }
@@ -745,30 +736,36 @@ class _AddCardSheetState extends State<AddCardSheet> {
                         TextFormField(
                           controller: _numberCtrl,
                           keyboardType: TextInputType.number,
-                          style: TextStyle(
-                            fontSize: AppFontSize.body,
-                            color: context.colors.textPrimary,
+                          style: context.profileInputStyle.copyWith(
                             letterSpacing: 1.5,
                           ),
                           onChanged: _onNumberChanged,
-                          decoration: AppInputDecorations.profileField(
-                            context,
-                            hintText: '1234 5678 9012 3456',
-                            radius: 18,
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.only(left: 14, right: 10),
-                              child: Icon(Icons.credit_card_rounded,
-                                  size: 16, color: context.colors.textHint),
-                            ),
-                          ).copyWith(
-                            labelText: 'Numéro de carte',
-                            errorStyle: context.profileErrorStyle,
-                            suffixIcon: _brandBadge(),
-                          ),
+                          decoration:
+                              AppInputDecorations.profileField(
+                                context,
+                                hintText: '1234 5678 9012 3456',
+                                radius: 18,
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 14,
+                                    right: 10,
+                                  ),
+                                  child: Icon(
+                                    Icons.credit_card_rounded,
+                                    size: 16,
+                                    color: context.colors.textHint,
+                                  ),
+                                ),
+                              ).copyWith(
+                                labelText: 'Numéro de carte',
+                                errorStyle: context.profileErrorStyle,
+                                suffixIcon: _brandBadge(),
+                              ),
                           validator: (v) =>
-                              (v == null || v.replaceAll(' ', '').length < _maxDigits)
-                                  ? 'Numéro invalide'
-                                  : null,
+                              (v == null ||
+                                  v.replaceAll(' ', '').length < _maxDigits)
+                              ? 'Numéro invalide'
+                              : null,
                         ),
                         AppGap.h10,
                         Row(
@@ -779,22 +776,21 @@ class _AddCardSheetState extends State<AddCardSheet> {
                                 focusNode: _expiryFocus,
                                 keyboardType: TextInputType.number,
                                 maxLength: 5,
-                                style: TextStyle(
-                                  fontSize: AppFontSize.body,
-                                  color: context.colors.textPrimary,
-                                ),
+                                style: context.profileInputStyle,
                                 onChanged: _onExpiryChanged,
-                                decoration: AppInputDecorations.profileField(
-                                  context,
-                                  hintText: 'MM/AA',
-                                  radius: 18,
-                                ).copyWith(
-                                  labelText: 'Expiration',
-                                  counterText: '',
-                                  errorStyle: context.profileErrorStyle,
-                                ),
-                                validator: (v) =>
-                                    (v == null || v.length < 5) ? 'Invalide' : null,
+                                decoration:
+                                    AppInputDecorations.profileField(
+                                      context,
+                                      hintText: 'MM/AA',
+                                      radius: 18,
+                                    ).copyWith(
+                                      labelText: 'Expiration',
+                                      counterText: '',
+                                      errorStyle: context.profileErrorStyle,
+                                    ),
+                                validator: (v) => (v == null || v.length < 5)
+                                    ? 'Invalide'
+                                    : null,
                               ),
                             ),
                             AppGap.w10,
@@ -805,22 +801,22 @@ class _AddCardSheetState extends State<AddCardSheet> {
                                 keyboardType: TextInputType.number,
                                 maxLength: _cvvLen,
                                 obscureText: true,
-                                style: TextStyle(
-                                  fontSize: AppFontSize.body,
-                                  color: context.colors.textPrimary,
-                                ),
+                                style: context.profileInputStyle,
                                 onChanged: _onCvvChanged,
-                                decoration: AppInputDecorations.profileField(
-                                  context,
-                                  hintText: '•••',
-                                  radius: 18,
-                                ).copyWith(
-                                  labelText: 'CVV',
-                                  counterText: '',
-                                  errorStyle: context.profileErrorStyle,
-                                ),
+                                decoration:
+                                    AppInputDecorations.profileField(
+                                      context,
+                                      hintText: '•••',
+                                      radius: 18,
+                                    ).copyWith(
+                                      labelText: 'CVV',
+                                      counterText: '',
+                                      errorStyle: context.profileErrorStyle,
+                                    ),
                                 validator: (v) =>
-                                    (v == null || v.length < _cvvLen) ? 'Invalide' : null,
+                                    (v == null || v.length < _cvvLen)
+                                    ? 'Invalide'
+                                    : null,
                               ),
                             ),
                           ],
@@ -831,31 +827,39 @@ class _AddCardSheetState extends State<AddCardSheet> {
                           focusNode: _nameFocus,
                           textCapitalization: TextCapitalization.characters,
                           onChanged: (_) => setState(() {}),
-                          style: TextStyle(
-                            fontSize: AppFontSize.body,
-                            color: context.colors.textPrimary,
-                          ),
-                          decoration: AppInputDecorations.profileField(
-                            context,
-                            hintText: 'JEAN DUPONT',
-                            radius: 18,
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.only(left: 14, right: 10),
-                              child: Icon(Icons.person_outline_rounded,
-                                  size: 16, color: context.colors.textHint),
-                            ),
-                          ).copyWith(
-                            labelText: 'Titulaire de la carte',
-                            errorStyle: context.profileErrorStyle,
-                          ),
-                          validator: (v) =>
-                              (v == null || v.trim().isEmpty) ? 'Nom requis' : null,
+                          style: context.profileInputStyle,
+                          decoration:
+                              AppInputDecorations.profileField(
+                                context,
+                                hintText: 'JEAN DUPONT',
+                                radius: 18,
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 14,
+                                    right: 10,
+                                  ),
+                                  child: Icon(
+                                    Icons.person_outline_rounded,
+                                    size: 16,
+                                    color: context.colors.textHint,
+                                  ),
+                                ),
+                              ).copyWith(
+                                labelText: 'Titulaire de la carte',
+                                errorStyle: context.profileErrorStyle,
+                              ),
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? 'Nom requis'
+                              : null,
                         ),
                         AppGap.h16,
                         Row(
                           children: [
-                            Icon(Icons.lock_outline_rounded,
-                                size: 13, color: context.colors.textTertiary),
+                            Icon(
+                              Icons.lock_outline_rounded,
+                              size: 13,
+                              color: context.colors.textTertiary,
+                            ),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
@@ -930,10 +934,10 @@ class _LiveCardPreview extends StatelessWidget {
   }
 
   String get _brandLabel => switch (brand) {
-    _AddCardBrand.visa       => 'VISA',
+    _AddCardBrand.visa => 'VISA',
     _AddCardBrand.mastercard => 'MASTERCARD',
-    _AddCardBrand.amex       => 'AMEX',
-    _AddCardBrand.unknown    => '',
+    _AddCardBrand.amex => 'AMEX',
+    _AddCardBrand.unknown => '',
   };
 
   @override
@@ -979,28 +983,14 @@ class _LiveCardPreview extends StatelessWidget {
                       : Text(
                           key: ValueKey(brand),
                           _brandLabel,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.55),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
-                          ),
+                          style: context.paymentCardBrandStyle,
                         ),
                 ),
               ],
             ),
             const Spacer(),
             // ─── Numéro ────────────────────────────────────
-            Text(
-              _displayNumber,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 3,
-                fontFeatures: [FontFeature.tabularFigures()],
-              ),
-            ),
+            Text(_displayNumber, style: context.paymentCardNumberStyle),
             const SizedBox(height: 16),
             // ─── Expiry + nom ──────────────────────────────
             Row(
@@ -1009,37 +999,18 @@ class _LiveCardPreview extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'EXPIRE',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.35),
-                        fontSize: 8,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
+                    Text('EXPIRE', style: context.paymentCardMicroLabelStyle),
                     const SizedBox(height: 2),
-                    Text(
-                      displayExpiry,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1.5,
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
-                    ),
+                    Text(displayExpiry, style: context.paymentCardExpiryStyle),
                   ],
                 ),
                 Text(
                   displayName,
-                  style: TextStyle(
-                    color: name.trim().isEmpty
-                        ? Colors.white.withValues(alpha: 0.25)
-                        : Colors.white.withValues(alpha: 0.75),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 1.2,
-                  ),
+                  style: name.trim().isEmpty
+                      ? context.paymentCardNameStyle.copyWith(
+                          color: Colors.white.withValues(alpha: 0.25),
+                        )
+                      : context.paymentCardNameStyle,
                 ),
               ],
             ),

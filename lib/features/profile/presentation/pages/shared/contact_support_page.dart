@@ -59,7 +59,10 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
                 Navigator.pop(context);
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 15,
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -69,13 +72,18 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
                           color: selected
                               ? context.colors.textPrimary
                               : context.colors.textSecondary,
-                          fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                          fontWeight: selected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
                         ),
                       ),
                     ),
                     if (selected)
-                      Icon(Icons.check_rounded,
-                          size: 18, color: context.colors.textPrimary),
+                      Icon(
+                        Icons.check_rounded,
+                        size: 18,
+                        color: context.colors.textPrimary,
+                      ),
                   ],
                 ),
               ),
@@ -92,7 +100,10 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(seconds: 1));
     if (!mounted) return;
-    setState(() { _isLoading = false; _sent = true; });
+    setState(() {
+      _isLoading = false;
+      _sent = true;
+    });
     showAppSnackBar(
       context,
       'Message envoyé. Nous vous répondrons sous 24h.',
@@ -107,7 +118,10 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
       backgroundColor: context.colors.background,
       appBar: AppPageAppBar(
         leading: AppBackButtonLeading(onPressed: () => Navigator.pop(context)),
-        titleWidget: Text('Contacter le support', style: context.profilePageTitleStyle),
+        titleWidget: Text(
+          'Contacter le support',
+          style: context.profilePageTitleStyle,
+        ),
       ),
       bottomNavigationBar: AppActionFooter(
         child: AppButton(
@@ -161,7 +175,8 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
             ),
             AppGap.h16,
             _InlineHelper(
-              text: 'Notre équipe vous répondra par email sous 24 heures ouvrées.',
+              text:
+                  'Notre équipe vous répondra par email sous 24 heures ouvrées.',
             ),
             AppGap.h20,
             _InfoCard(),
@@ -225,10 +240,7 @@ class _SupportField extends StatelessWidget {
           16,
           maxLines > 1 ? 14 : 16,
         ),
-      ).copyWith(
-        labelText: label,
-        errorStyle: context.profileErrorStyle,
-      ),
+      ).copyWith(labelText: label, errorStyle: context.profileErrorStyle),
     );
   }
 }
@@ -278,8 +290,11 @@ class _InfoCard extends StatelessWidget {
           AppGap.h10,
           _channel(context, Icons.mail_outline_rounded, 'support@inkern.com'),
           AppGap.h6,
-          _channel(context, Icons.access_time_rounded,
-              'Lun – Ven, 9h – 18h (heure de Tunis)'),
+          _channel(
+            context,
+            Icons.access_time_rounded,
+            'Lun – Ven, 9h – 18h (heure de Tunis)',
+          ),
         ],
       ),
     );

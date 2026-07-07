@@ -120,31 +120,29 @@ class ProfileField extends StatelessWidget {
       canRequestFocus: canRequestFocus,
       onTap: onTap,
       onChanged: onChanged,
-      style: textStyle ??
+      style:
+          textStyle ??
           TextStyle(
             fontSize: AppFontSize.body,
             fontWeight: FontWeight.w400,
             color: context.colors.textPrimary,
           ),
-      decoration: AppInputDecorations.profileField(
-        context,
-        hintText: hintText,
-        radius: 18,
-        readOnly: readOnly,
-        prefixIcon: Icon(
-          icon,
-          size: 16,
-          color: context.colors.textHint,
-        ),
-        suffixIcon: suffixIcon,
-      ).copyWith(
-        labelText: label,
-        prefixIconConstraints: prefixIconConstraints,
-        suffixText: suffixText,
-        suffixStyle: suffixStyle,
-        contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-        errorStyle: context.profileErrorStyle,
-      ),
+      decoration:
+          AppInputDecorations.profileField(
+            context,
+            hintText: hintText,
+            radius: 18,
+            readOnly: readOnly,
+            prefixIcon: Icon(icon, size: 16, color: context.colors.textHint),
+            suffixIcon: suffixIcon,
+          ).copyWith(
+            labelText: label,
+            prefixIconConstraints: prefixIconConstraints,
+            suffixText: suffixText,
+            suffixStyle: suffixStyle,
+            contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+            errorStyle: context.profileErrorStyle,
+          ),
       validator: validator,
     );
   }

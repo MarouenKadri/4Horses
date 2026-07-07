@@ -36,10 +36,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       backgroundColor: context.colors.background,
       appBar: AppPageAppBar(
         leading: AppBackButtonLeading(onPressed: () => Navigator.pop(context)),
-        titleWidget: Text(
-          'Mot de passe',
-          style: context.profilePageTitleStyle,
-        ),
+        titleWidget: Text('Mot de passe', style: context.profilePageTitleStyle),
       ),
       bottomNavigationBar: AppActionFooter(
         child: AppButton(
@@ -110,8 +107,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    final error =
-        await context.read<AuthProvider>().updatePassword(_newCtrl.text.trim());
+    final error = await context.read<AuthProvider>().updatePassword(
+      _newCtrl.text.trim(),
+    );
     if (!mounted) return;
     if (error != null) {
       showAppSnackBar(context, error, type: SnackBarType.error);
@@ -157,28 +155,31 @@ class _PasswordField extends StatelessWidget {
         fontWeight: FontWeight.w400,
         color: context.colors.textPrimary,
       ),
-      decoration: AppInputDecorations.profileField(
-        context,
-        hintText: hintText ?? label,
-        radius: 18,
-        prefixIcon: Icon(
-          Icons.lock_outline_rounded,
-          size: 16,
-          color: context.colors.textHint,
-        ),
-      ).copyWith(
-        labelText: label,
-        contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-        errorStyle: context.profileErrorStyle,
-        suffixIcon: IconButton(
-          icon: Icon(
-            obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-            size: 19,
-            color: context.colors.textPrimary,
+      decoration:
+          AppInputDecorations.profileField(
+            context,
+            hintText: hintText ?? label,
+            radius: 18,
+            prefixIcon: Icon(
+              Icons.lock_outline_rounded,
+              size: 16,
+              color: context.colors.textHint,
+            ),
+          ).copyWith(
+            labelText: label,
+            contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+            errorStyle: context.profileErrorStyle,
+            suffixIcon: IconButton(
+              icon: Icon(
+                obscure
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                size: 19,
+                color: context.colors.textPrimary,
+              ),
+              onPressed: onToggle,
+            ),
           ),
-          onPressed: onToggle,
-        ),
-      ),
     );
   }
 }
@@ -236,13 +237,13 @@ class _PasswordStrengthTips extends StatelessWidget {
   Widget _tip(BuildContext context, String text) {
     return Row(
       children: [
-        Icon(Icons.check_circle_outline,
-            size: 16, color: context.colors.textSecondary),
-        AppGap.w8,
-        Text(
-          text,
-          style: context.text.bodySmall,
+        Icon(
+          Icons.check_circle_outline,
+          size: 16,
+          color: context.colors.textSecondary,
         ),
+        AppGap.w8,
+        Text(text, style: context.text.bodySmall),
       ],
     );
   }

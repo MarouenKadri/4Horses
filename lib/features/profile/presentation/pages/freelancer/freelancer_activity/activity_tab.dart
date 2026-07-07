@@ -217,7 +217,11 @@ class _SkillsCard extends StatelessWidget {
                   HapticFeedback.selectionClick();
                   onToggle(label);
                 },
-                child: AppPillChip(label: label, icon: icon, selected: selected),
+                child: AppPillChip(
+                  label: label,
+                  icon: icon,
+                  selected: selected,
+                ),
               );
             }).toList(),
           ),

@@ -13,16 +13,17 @@ class FreelancerArchivesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<MissionProvider>();
-    final missions = provider.freelancerMissions
-        .where(
-          (mission) => MissionStatusUi.belongsToTab(
-            status: mission.status,
-            role: MissionUiRole.freelancer,
-            tab: MissionUiTab.archived,
-          ),
-        )
-        .toList()
-      ..sort((a, b) => b.date.compareTo(a.date));
+    final missions =
+        provider.freelancerMissions
+            .where(
+              (mission) => MissionStatusUi.belongsToTab(
+                status: mission.status,
+                role: MissionUiRole.freelancer,
+                tab: MissionUiTab.archived,
+              ),
+            )
+            .toList()
+          ..sort((a, b) => b.date.compareTo(a.date));
 
     if (missions.isEmpty) {
       return Center(
@@ -53,10 +54,8 @@ class FreelancerArchivesTab extends StatelessWidget {
           role: MissionUiRole.freelancer,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => FreelancerMissionDetailPage(
-                mission: mission,
-                isOwn: true,
-              ),
+              builder: (_) =>
+                  FreelancerMissionDetailPage(mission: mission, isOwn: true),
             ),
           ),
         );

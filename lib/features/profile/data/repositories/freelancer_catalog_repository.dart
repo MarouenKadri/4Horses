@@ -4,11 +4,13 @@ abstract class FreelancerCatalogRepository {
   });
 }
 
-class InMemoryFreelancerCatalogRepository implements FreelancerCatalogRepository {
+class InMemoryFreelancerCatalogRepository
+    implements FreelancerCatalogRepository {
   final List<Map<String, dynamic>> _rows;
 
-  InMemoryFreelancerCatalogRepository([List<Map<String, dynamic>> rows = const []])
-    : _rows = rows;
+  InMemoryFreelancerCatalogRepository([
+    List<Map<String, dynamic>> rows = const [],
+  ]) : _rows = rows;
 
   @override
   Future<List<Map<String, dynamic>>> fetchFreelancers({
@@ -17,4 +19,3 @@ class InMemoryFreelancerCatalogRepository implements FreelancerCatalogRepository
     return _rows;
   }
 }
-

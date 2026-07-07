@@ -43,9 +43,11 @@ class _FreelancerMyPublicationsTabState
   }
 
   void _selectAll(List<Story> stories) {
-    setState(() => _selectedIds
-      ..clear()
-      ..addAll(stories.map((story) => story.id)));
+    setState(
+      () => _selectedIds
+        ..clear()
+        ..addAll(stories.map((story) => story.id)),
+    );
   }
 
   bool _isAllSelected(List<Story> stories) =>
@@ -104,7 +106,8 @@ class _FreelancerMyPublicationsTabState
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compactActions = _selectionMode && constraints.maxWidth < 380;
+              final compactActions =
+                  _selectionMode && constraints.maxWidth < 380;
 
               final title = Text(
                 _selectionMode
@@ -123,8 +126,9 @@ class _FreelancerMyPublicationsTabState
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   TextButton(
-                    onPressed:
-                        allSelected ? _exitSelection : () => _selectAll(stories),
+                    onPressed: allSelected
+                        ? _exitSelection
+                        : () => _selectAll(stories),
                     child: Text(allSelected ? 'Désélectionner' : 'Tout'),
                   ),
                   IconButton(
@@ -186,8 +190,9 @@ class _FreelancerMyPublicationsTabState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        onTap:
-                            allSelected ? _exitSelection : () => _selectAll(stories),
+                        onTap: allSelected
+                            ? _exitSelection
+                            : () => _selectAll(stories),
                         child: Row(
                           children: [
                             AnimatedContainer(

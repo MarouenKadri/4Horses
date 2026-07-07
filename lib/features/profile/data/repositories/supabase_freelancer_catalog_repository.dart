@@ -2,7 +2,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'freelancer_catalog_repository.dart';
 
-class SupabaseFreelancerCatalogRepository implements FreelancerCatalogRepository {
+class SupabaseFreelancerCatalogRepository
+    implements FreelancerCatalogRepository {
   final SupabaseClient _supabase;
 
   SupabaseFreelancerCatalogRepository({SupabaseClient? supabase})

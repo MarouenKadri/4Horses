@@ -3,21 +3,39 @@ import '../data/models/payment_method.dart';
 
 class PaymentMethodsProvider extends ChangeNotifier {
   final List<PaymentMethod> _cards = [
-    PaymentMethod(id: '1', brand: 'Visa', last4: '4242', expiry: '12/26', isDefault: true),
-    PaymentMethod(id: '2', brand: 'Mastercard', last4: '8888', expiry: '08/25', isDefault: false),
+    PaymentMethod(
+      id: '1',
+      brand: 'Visa',
+      last4: '4242',
+      expiry: '12/26',
+      isDefault: true,
+    ),
+    PaymentMethod(
+      id: '2',
+      brand: 'Mastercard',
+      last4: '8888',
+      expiry: '08/25',
+      isDefault: false,
+    ),
   ];
 
   List<PaymentMethod> get cards => List.unmodifiable(_cards);
 
-  void addCard({required String brand, required String last4, required String expiry}) {
+  void addCard({
+    required String brand,
+    required String last4,
+    required String expiry,
+  }) {
     final isFirst = _cards.isEmpty;
-    _cards.add(PaymentMethod(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      brand: brand,
-      last4: last4,
-      expiry: expiry,
-      isDefault: isFirst,
-    ));
+    _cards.add(
+      PaymentMethod(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        brand: brand,
+        last4: last4,
+        expiry: expiry,
+        isDefault: isFirst,
+      ),
+    );
     notifyListeners();
   }
 

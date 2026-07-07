@@ -24,7 +24,9 @@ class ProfileSheetSection extends StatelessWidget {
           Row(
             children: [
               AppSurfaceCard(
-                padding: const EdgeInsets.all(AppProfileMetrics.sectionBadgePadding),
+                padding: const EdgeInsets.all(
+                  AppProfileMetrics.sectionBadgePadding,
+                ),
                 color: context.colors.surfaceAlt,
                 borderRadius: BorderRadius.circular(AppRadius.small),
                 border: Border.all(color: context.colors.border, width: 1),
@@ -83,14 +85,8 @@ class VerificationStep extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: context.profilePrimaryLabelStyle,
-                ),
-                Text(
-                  subtitle,
-                  style: context.profileSecondaryLabelStyle,
-                ),
+                Text(title, style: context.profilePrimaryLabelStyle),
+                Text(subtitle, style: context.profileSecondaryLabelStyle),
               ],
             ),
           ),
@@ -108,9 +104,12 @@ InputDecoration profileSheetInputDecoration(
 }) {
   final borderColor = context.colors.border;
   final focusColor = context.colors.textPrimary;
-  final labelColor = readOnly ? context.colors.textHint : context.colors.textSecondary;
+  final labelColor = readOnly
+      ? context.colors.textHint
+      : context.colors.textSecondary;
 
-  OutlineInputBorder outline(Color color, [double width = 1]) => OutlineInputBorder(
+  OutlineInputBorder outline(Color color, [double width = 1]) =>
+      OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppProfileMetrics.sheetFieldRadius),
         borderSide: BorderSide(color: color, width: width),
       );
@@ -129,7 +128,10 @@ InputDecoration profileSheetInputDecoration(
     contentPadding: AppInsets.h16v18,
     filled: false,
     enabledBorder: outline(borderColor),
-    focusedBorder: outline(readOnly ? borderColor : focusColor, readOnly ? 1 : 1.2),
+    focusedBorder: outline(
+      readOnly ? borderColor : focusColor,
+      readOnly ? 1 : 1.2,
+    ),
     errorBorder: outline(context.colors.error),
     focusedErrorBorder: outline(context.colors.error, 1.2),
     disabledBorder: outline(borderColor),

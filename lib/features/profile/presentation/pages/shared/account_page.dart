@@ -47,10 +47,7 @@ class _AccountPageState extends State<AccountPage> {
         child: ListView(
           children: [
             _ProfileHeader(),
-            if (isFreelancer) ...[
-              AppGap.h24,
-              const _MyStoriesSection(),
-            ],
+            if (isFreelancer) ...[AppGap.h24, const _MyStoriesSection()],
             AppGap.h28,
             _FlatSection(
               label: 'Compte',
@@ -58,28 +55,41 @@ class _AccountPageState extends State<AccountPage> {
                 _FlatTile(
                   icon: Icons.badge_rounded,
                   title: 'Profil & coordonnées',
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const MyInformationPage())),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const MyInformationPage(),
+                    ),
+                  ),
                 ),
                 if (isFreelancer)
                   _FlatTile(
                     icon: Icons.work_history_rounded,
                     title: 'Tableau de bord',
-                    onTap: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const FreelancerActivityPage())),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const FreelancerActivityPage(),
+                      ),
+                    ),
                   ),
                 _FlatTile(
                   icon: Icons.history_rounded,
                   title: 'Missions archivées',
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const ArchivesPage())),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ArchivesPage()),
+                  ),
                 ),
                 _FlatTile(
                   icon: Icons.grade_rounded,
                   title: 'Avis & évaluations',
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) =>
-                          MyReviewsPage(isFreelancer: isFreelancer))),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MyReviewsPage(isFreelancer: isFreelancer),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -90,17 +100,23 @@ class _AccountPageState extends State<AccountPage> {
                 _FlatTile(
                   icon: Icons.credit_card_rounded,
                   title: 'Portefeuille & paiements',
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (_) => isFreelancer
-                              ? const FreelancerPaymentMethodsPage()
-                              : const ClientPaymentMethodsPage())),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => isFreelancer
+                          ? const FreelancerPaymentMethodsPage()
+                          : const ClientPaymentMethodsPage(),
+                    ),
+                  ),
                 ),
                 _FlatTile(
                   icon: Icons.lock_outline_rounded,
                   title: 'Changer le mot de passe',
                   onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const ChangePasswordPage())),
+                    MaterialPageRoute(
+                      builder: (_) => const ChangePasswordPage(),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -116,8 +132,12 @@ class _AccountPageState extends State<AccountPage> {
                 _FlatTile(
                   icon: Icons.mail_outline_rounded,
                   title: 'Contacter le support',
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const ContactSupportPage())),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ContactSupportPage(),
+                    ),
+                  ),
                 ),
                 _FlatTile(
                   icon: Icons.info_outline_rounded,
@@ -136,7 +156,10 @@ class _AccountPageState extends State<AccountPage> {
                   titleColor: context.colors.error,
                   showChevron: false,
                   onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const DeleteAccountPage())),
+                    MaterialPageRoute(
+                      builder: (_) => const DeleteAccountPage(),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -261,13 +284,17 @@ class _ProfileHeader extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: context.colors.surfaceAlt,
-                    border: Border.all(color: context.colors.border, width: 1.5),
+                    border: Border.all(
+                      color: context.colors.border,
+                      width: 1.5,
+                    ),
                   ),
                   child: CircleAvatar(
                     radius: 32,
                     backgroundColor: Colors.transparent,
-                    backgroundImage:
-                        avatarUrl != null ? NetworkImage(avatarUrl) : null,
+                    backgroundImage: avatarUrl != null
+                        ? NetworkImage(avatarUrl)
+                        : null,
                     child: avatarUrl == null
                         ? Text(
                             displayName.isNotEmpty
@@ -293,7 +320,9 @@ class _ProfileHeader extends StatelessWidget {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2.2, color: Colors.white),
+                            strokeWidth: 2.2,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -309,10 +338,15 @@ class _ProfileHeader extends StatelessWidget {
                         color: AppColors.ink,
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: context.colors.background, width: 2),
+                          color: context.colors.background,
+                          width: 2,
+                        ),
                       ),
-                      child: const Icon(Icons.camera_alt_rounded,
-                          size: 12, color: Colors.white),
+                      child: const Icon(
+                        Icons.camera_alt_rounded,
+                        size: 12,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 if (isVerified && !isUploading)
@@ -326,10 +360,15 @@ class _ProfileHeader extends StatelessWidget {
                         color: AppColors.successDark,
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: context.colors.background, width: 2),
+                          color: context.colors.background,
+                          width: 2,
+                        ),
                       ),
-                      child: const Icon(Icons.check_rounded,
-                          size: 10, color: Colors.white),
+                      child: const Icon(
+                        Icons.check_rounded,
+                        size: 10,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
               ],
@@ -355,7 +394,10 @@ class _ProfileHeader extends StatelessWidget {
     );
   }
 
-  Future<void> _pickAvatar(BuildContext context, ProfileProvider profileProv) async {
+  Future<void> _pickAvatar(
+    BuildContext context,
+    ProfileProvider profileProv,
+  ) async {
     final file = await ImagePickerService.showPicker(context);
     if (file == null) return;
     await profileProv.uploadAvatar(file);
@@ -390,11 +432,17 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
       setState(() => _error = 'Entrez votre mot de passe');
       return;
     }
-    setState(() { _isLoading = true; _error = null; });
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     final errorMsg = await auth.deleteAccount(_controller.text.trim());
     if (!mounted) return;
     if (errorMsg != null) {
-      setState(() { _isLoading = false; _error = errorMsg; });
+      setState(() {
+        _isLoading = false;
+        _error = errorMsg;
+      });
     } else {
       Navigator.of(context, rootNavigator: true).popUntil((r) => r.isFirst);
     }
@@ -409,7 +457,10 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: AppPageAppBar(
-        titleWidget: Text('Supprimer le compte', style: context.accountDialogTitleStyle),
+        titleWidget: Text(
+          'Supprimer le compte',
+          style: context.accountDialogTitleStyle,
+        ),
         centerTitle: true,
         leading: AppBackButtonLeading(onPressed: () => Navigator.pop(context)),
       ),
@@ -440,32 +491,46 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
                   ? 'Cochez la case ci-dessous pour confirmer la suppression.'
                   : 'Entrez votre mot de passe pour confirmer.',
               style: context.text.bodyMedium?.copyWith(
-                  color: context.colors.textSecondary),
+                color: context.colors.textSecondary,
+              ),
             ),
             AppGap.h14,
             if (!isGoogleUser) ...[
               TextField(
                 controller: _controller,
                 obscureText: _obscure,
-                onSubmitted: (_) { if (canDelete) _confirm(); },
-                style: context.text.bodyMedium?.copyWith(fontSize: AppFontSize.body),
-                decoration: AppInputDecorations.formField(
-                  context,
-                  hintText: 'Mot de passe',
-                  prefixIcon: Icon(Icons.lock_outline_rounded,
-                      size: 20, color: context.colors.textTertiary),
-                  contentPadding: AppInsets.h16v16,
-                ).copyWith(
-                  hintStyle: context.text.bodyLarge?.copyWith(
-                      color: context.colors.textHint, fontSize: AppFontSize.base),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscure ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                      size: 20, color: context.colors.textTertiary,
-                    ),
-                    onPressed: () => setState(() => _obscure = !_obscure),
-                  ),
+                onSubmitted: (_) {
+                  if (canDelete) _confirm();
+                },
+                style: context.text.bodyMedium?.copyWith(
+                  fontSize: AppFontSize.body,
                 ),
+                decoration:
+                    AppInputDecorations.formField(
+                      context,
+                      hintText: 'Mot de passe',
+                      prefixIcon: Icon(
+                        Icons.lock_outline_rounded,
+                        size: 20,
+                        color: context.colors.textTertiary,
+                      ),
+                      contentPadding: AppInsets.h16v16,
+                    ).copyWith(
+                      hintStyle: context.text.bodyLarge?.copyWith(
+                        color: context.colors.textHint,
+                        fontSize: AppFontSize.base,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscure
+                              ? Icons.visibility_off_rounded
+                              : Icons.visibility_rounded,
+                          size: 20,
+                          color: context.colors.textTertiary,
+                        ),
+                        onPressed: () => setState(() => _obscure = !_obscure),
+                      ),
+                    ),
               ),
               AppGap.h8,
             ],
@@ -493,7 +558,10 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
                             : (v) => setState(() => _confirmed = v ?? false),
                         activeColor: context.colors.error,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppDesign.radius4)),
+                          borderRadius: BorderRadius.circular(
+                            AppDesign.radius4,
+                          ),
+                        ),
                         side: BorderSide(
                           color: _confirmed
                               ? context.colors.error
@@ -562,24 +630,30 @@ class _MyStoriesSectionState extends State<_MyStoriesSection> {
       groups: groups,
     );
 
-    final items = entries.map((entry) {
-      final viewed = entry.hasStories ? _viewed.contains(entry.categoryId) : true;
-      return CategoryStoryStripItem(
-        categoryId: entry.categoryId,
-        label: entry.label,
-        count: entry.count,
-        viewed: viewed,
-        onTap: entry.hasStories
-            ? () {
-                final index =
-                    groups.indexWhere((g) => g.groupId == entry.categoryId);
-                if (index >= 0) _openViewer(context, groups, index);
-              }
-            : null,
-        onLongPress:
-            entry.hasStories ? () => _showOptions(context, entry.group!) : null,
-      );
-    }).toList(growable: false);
+    final items = entries
+        .map((entry) {
+          final viewed = entry.hasStories
+              ? _viewed.contains(entry.categoryId)
+              : true;
+          return CategoryStoryStripItem(
+            categoryId: entry.categoryId,
+            label: entry.label,
+            count: entry.count,
+            viewed: viewed,
+            onTap: entry.hasStories
+                ? () {
+                    final index = groups.indexWhere(
+                      (g) => g.groupId == entry.categoryId,
+                    );
+                    if (index >= 0) _openViewer(context, groups, index);
+                  }
+                : null,
+            onLongPress: entry.hasStories
+                ? () => _showOptions(context, entry.group!)
+                : null,
+          );
+        })
+        .toList(growable: false);
 
     return CategoryStoryStrip(
       addAction: CategoryStoryStripAddAction(
@@ -623,7 +697,8 @@ class _MyStoriesSectionState extends State<_MyStoriesSection> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: cat?.color.withValues(alpha: 0.12) ??
+                  color:
+                      cat?.color.withValues(alpha: 0.12) ??
                       context.colors.surfaceAlt,
                   shape: BoxShape.circle,
                 ),
@@ -693,8 +768,10 @@ class _MyStoriesSectionState extends State<_MyStoriesSection> {
   void _confirmDeleteCategory(BuildContext context, StoryGroup group) {
     showAppDialog(
       context: context,
-      title: Text('Supprimer "${group.groupName}"',
-          style: context.accountDialogTitleStyle),
+      title: Text(
+        'Supprimer "${group.groupName}"',
+        style: context.accountDialogTitleStyle,
+      ),
       content: Text(
         'Supprimer les ${group.stories.length} story${group.stories.length > 1 ? 's' : ''} de cette catégorie ? Action irréversible.',
       ),

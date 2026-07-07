@@ -215,7 +215,9 @@ class _IbanSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: AppFormSheet(
         title: isEdit ? 'Modifier l\'IBAN SEPA' : 'Ajouter un IBAN SEPA',
         color: context.colors.surface,
@@ -245,19 +247,23 @@ class _IbanSheet extends StatelessWidget {
                 color: context.colors.textPrimary,
                 letterSpacing: 1.5,
               ),
-              decoration: AppInputDecorations.profileField(
-                context,
-                hintText: 'FR76 3000 1007 94...',
-                radius: 18,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 14, right: 10),
-                  child: Icon(Icons.account_balance_rounded,
-                      size: 16, color: context.colors.textHint),
-                ),
-              ).copyWith(
-                labelText: 'IBAN',
-                errorStyle: context.profileErrorStyle,
-              ),
+              decoration:
+                  AppInputDecorations.profileField(
+                    context,
+                    hintText: 'FR76 3000 1007 94...',
+                    radius: 18,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(left: 14, right: 10),
+                      child: Icon(
+                        Icons.account_balance_rounded,
+                        size: 16,
+                        color: context.colors.textHint,
+                      ),
+                    ),
+                  ).copyWith(
+                    labelText: 'IBAN',
+                    errorStyle: context.profileErrorStyle,
+                  ),
             ),
             AppGap.h10,
             TextFormField(
@@ -266,19 +272,23 @@ class _IbanSheet extends StatelessWidget {
                 fontSize: AppFontSize.body,
                 color: context.colors.textPrimary,
               ),
-              decoration: AppInputDecorations.profileField(
-                context,
-                hintText: 'BNPAFRPP...',
-                radius: 18,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 14, right: 10),
-                  child: Icon(Icons.code_rounded,
-                      size: 16, color: context.colors.textHint),
-                ),
-              ).copyWith(
-                labelText: 'BIC / SWIFT (optionnel)',
-                errorStyle: context.profileErrorStyle,
-              ),
+              decoration:
+                  AppInputDecorations.profileField(
+                    context,
+                    hintText: 'BNPAFRPP...',
+                    radius: 18,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(left: 14, right: 10),
+                      child: Icon(
+                        Icons.code_rounded,
+                        size: 16,
+                        color: context.colors.textHint,
+                      ),
+                    ),
+                  ).copyWith(
+                    labelText: 'BIC / SWIFT (optionnel)',
+                    errorStyle: context.profileErrorStyle,
+                  ),
             ),
             AppGap.h10,
             TextFormField(
@@ -287,25 +297,32 @@ class _IbanSheet extends StatelessWidget {
                 fontSize: AppFontSize.body,
                 color: context.colors.textPrimary,
               ),
-              decoration: AppInputDecorations.profileField(
-                context,
-                hintText: 'Jean Dupont',
-                radius: 18,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 14, right: 10),
-                  child: Icon(Icons.person_outline_rounded,
-                      size: 16, color: context.colors.textHint),
-                ),
-              ).copyWith(
-                labelText: 'Titulaire du compte',
-                errorStyle: context.profileErrorStyle,
-              ),
+              decoration:
+                  AppInputDecorations.profileField(
+                    context,
+                    hintText: 'Jean Dupont',
+                    radius: 18,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(left: 14, right: 10),
+                      child: Icon(
+                        Icons.person_outline_rounded,
+                        size: 16,
+                        color: context.colors.textHint,
+                      ),
+                    ),
+                  ).copyWith(
+                    labelText: 'Titulaire du compte',
+                    errorStyle: context.profileErrorStyle,
+                  ),
             ),
             AppGap.h16,
             Row(
               children: [
-                Icon(Icons.lock_outline_rounded,
-                    size: 13, color: context.colors.textTertiary),
+                Icon(
+                  Icons.lock_outline_rounded,
+                  size: 13,
+                  color: context.colors.textTertiary,
+                ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
