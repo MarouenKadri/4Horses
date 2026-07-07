@@ -90,11 +90,7 @@ class _BudgetTypeCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 22,
-              color: context.colors.textSecondary,
-            ),
+            Icon(icon, size: 22, color: context.colors.textSecondary),
             AppGap.w16,
             Expanded(
               child: Column(

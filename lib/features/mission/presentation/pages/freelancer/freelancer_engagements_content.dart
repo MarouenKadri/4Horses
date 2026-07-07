@@ -31,8 +31,14 @@ class FreelancerEngagementsContent extends StatelessWidget {
             AppSegmentedTabBar(
               tabs: [
                 AppSegmentedTab(icon: Icons.send_rounded, label: 'Postulées'),
-                AppSegmentedTab(icon: Icons.check_circle_outline_rounded, label: 'Confirmées'),
-                AppSegmentedTab(icon: Icons.play_circle_outline_rounded, label: 'En cours'),
+                AppSegmentedTab(
+                  icon: Icons.check_circle_outline_rounded,
+                  label: 'Confirmées',
+                ),
+                AppSegmentedTab(
+                  icon: Icons.play_circle_outline_rounded,
+                  label: 'En cours',
+                ),
               ],
             ),
             Expanded(
@@ -55,8 +61,8 @@ enum _TabFilter { applied, confirmed, inProgress }
 
 extension _TabFilterX on _TabFilter {
   MissionUiTab get uiTab => switch (this) {
-    _TabFilter.applied    => MissionUiTab.applied,
-    _TabFilter.confirmed  => MissionUiTab.confirmed,
+    _TabFilter.applied => MissionUiTab.applied,
+    _TabFilter.confirmed => MissionUiTab.confirmed,
     _TabFilter.inProgress => MissionUiTab.inProgress,
   };
 }
@@ -106,9 +112,16 @@ class _MissionTabState extends State<_MissionTab> {
         SnackBar(
           content: const Row(
             children: [
-              Icon(Icons.check_circle_outline_rounded, color: Colors.white, size: 18),
+              Icon(
+                Icons.check_circle_outline_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
               SizedBox(width: 10),
-              Text('Candidature retirée', style: TextStyle(color: Colors.white)),
+              Text(
+                'Candidature retirée',
+                style: TextStyle(color: Colors.white),
+              ),
             ],
           ),
           backgroundColor: AppColors.success,
@@ -122,7 +135,10 @@ class _MissionTabState extends State<_MissionTab> {
             children: [
               Icon(Icons.error_outline_rounded, color: Colors.white, size: 18),
               SizedBox(width: 10),
-              Text('Erreur lors du retrait', style: TextStyle(color: Colors.white)),
+              Text(
+                'Erreur lors du retrait',
+                style: TextStyle(color: Colors.white),
+              ),
             ],
           ),
           backgroundColor: AppColors.error,
@@ -211,20 +227,21 @@ class _MissionTabState extends State<_MissionTab> {
   }
 
   IconData get _emptyIcon => switch (widget.filter) {
-    _TabFilter.applied    => Icons.send_outlined,
-    _TabFilter.confirmed  => Icons.check_circle_outline_rounded,
+    _TabFilter.applied => Icons.send_outlined,
+    _TabFilter.confirmed => Icons.check_circle_outline_rounded,
     _TabFilter.inProgress => Icons.work_outline_rounded,
   };
 
   String get _emptyTitle => switch (widget.filter) {
-    _TabFilter.applied    => 'Aucune candidature',
-    _TabFilter.confirmed  => 'Aucune mission confirmée',
+    _TabFilter.applied => 'Aucune candidature',
+    _TabFilter.confirmed => 'Aucune mission confirmée',
     _TabFilter.inProgress => 'Aucune mission en cours',
   };
 
   String get _emptySubtitle => switch (widget.filter) {
-    _TabFilter.applied    => 'Explorez les missions disponibles et postulez',
-    _TabFilter.confirmed  => 'Les missions où vous avez été sélectionné apparaîtront ici',
+    _TabFilter.applied => 'Explorez les missions disponibles et postulez',
+    _TabFilter.confirmed =>
+      'Les missions où vous avez été sélectionné apparaîtront ici',
     _TabFilter.inProgress => 'Vos missions du jour apparaîtront ici',
   };
 }

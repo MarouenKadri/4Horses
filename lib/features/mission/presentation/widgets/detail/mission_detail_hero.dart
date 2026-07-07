@@ -140,8 +140,9 @@ class _MissionDetailHeroState extends State<MissionDetailHero> {
                           height: 6,
                           decoration: BoxDecoration(
                             color: _index == i ? Colors.white : Colors.white38,
-                            borderRadius:
-                                BorderRadius.circular(AppRadius.micro),
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.micro,
+                            ),
                           ),
                         ),
                       ),
@@ -180,7 +181,8 @@ class _MissionImageViewerPage extends StatefulWidget {
   });
 
   @override
-  State<_MissionImageViewerPage> createState() => _MissionImageViewerPageState();
+  State<_MissionImageViewerPage> createState() =>
+      _MissionImageViewerPageState();
 }
 
 class _MissionImageViewerPageState extends State<_MissionImageViewerPage> {

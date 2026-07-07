@@ -27,10 +27,12 @@ class _CategoryMissionsPageState extends State<CategoryMissionsPage> {
     final today = DateTime(now.year, now.month, now.day);
 
     var list = all
-        .where((m) =>
-            (m.status == MissionStatus.waitingCandidates ||
-                m.status == MissionStatus.candidateReceived) &&
-            m.categoryId == widget.category.id)
+        .where(
+          (m) =>
+              (m.status == MissionStatus.waitingCandidates ||
+                  m.status == MissionStatus.candidateReceived) &&
+              m.categoryId == widget.category.id,
+        )
         .toList();
 
     if (_filter == _TimeFilter.today) {
@@ -119,10 +121,9 @@ class _CategoryMissionsPageState extends State<CategoryMissionsPage> {
                     ),
                   ],
                 )
-              : ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
                   itemCount: missions.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final mission = missions[index];
                     return MissionBrowseCard(
@@ -163,7 +164,10 @@ class _CategoryMissionsPageState extends State<CategoryMissionsPage> {
               onTap: () => setState(() => _filter = filter),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.inkDark : Colors.white,
                   borderRadius: BorderRadius.circular(999),

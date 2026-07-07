@@ -103,10 +103,7 @@ class DetailLuxuryPill extends StatelessWidget {
       borderRadius: BorderRadius.circular(999),
       border: Border.all(color: AppColors.inkDark, width: 0.5),
     ),
-    child: Text(
-      label,
-      style: context.missionPillStyle,
-    ),
+    child: Text(label, style: context.missionPillStyle),
   );
 }
 
@@ -154,18 +151,11 @@ class DetailSectionTitle extends StatelessWidget {
   final String title;
   final Widget? trailing;
 
-  const DetailSectionTitle({
-    super.key,
-    required this.title,
-    this.trailing,
-  });
+  const DetailSectionTitle({super.key, required this.title, this.trailing});
 
   @override
   Widget build(BuildContext context) {
-    final titleText = Text(
-      title,
-      style: context.missionSectionTitleStyle,
-    );
+    final titleText = Text(title, style: context.missionSectionTitleStyle);
 
     if (trailing == null) return titleText;
 
@@ -182,17 +172,11 @@ class DetailSectionTitle extends StatelessWidget {
 class DetailSectionLabel extends StatelessWidget {
   final String label;
 
-  const DetailSectionLabel({
-    super.key,
-    required this.label,
-  });
+  const DetailSectionLabel({super.key, required this.label});
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      label.toUpperCase(),
-      style: context.missionSectionLabelStyle,
-    );
+    return Text(label.toUpperCase(), style: context.missionSectionLabelStyle);
   }
 }
 
@@ -230,8 +214,9 @@ class DetailInfoRow extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 14),
     child: Row(
-      crossAxisAlignment:
-          twoLines ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+      crossAxisAlignment: twoLines
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center,
       children: [
         Icon(icon, size: 17, color: context.colors.textTertiary),
         AppGap.w14,
@@ -239,10 +224,7 @@ class DetailInfoRow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: context.missionSubtleCaptionStyle,
-              ),
+              Text(label, style: context.missionSubtleCaptionStyle),
               AppGap.h4,
               Text(
                 text,
@@ -339,10 +321,7 @@ class DetailTealButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (icon != null) ...[
-              Icon(icon, size: 18, color: fg),
-              AppGap.w8,
-            ],
+            if (icon != null) ...[Icon(icon, size: 18, color: fg), AppGap.w8],
             Text(
               label,
               style: context.missionButtonStyle.copyWith(
@@ -506,8 +485,8 @@ class DetailStatusBanner extends StatelessWidget {
     final iconColor = config.color == AppColors.error
         ? context.colors.error.withValues(alpha: 0.65)
         : config.color == AppColors.warning
-            ? context.colors.warning.withValues(alpha: 0.65)
-            : context.colors.textSecondary;
+        ? context.colors.warning.withValues(alpha: 0.65)
+        : context.colors.textSecondary;
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -535,10 +514,7 @@ class DetailStatusBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  config.title,
-                  style: context.missionPrimaryValueStyle,
-                ),
+                Text(config.title, style: context.missionPrimaryValueStyle),
                 AppGap.h4,
                 Text(
                   config.subtitle,
@@ -579,9 +555,10 @@ class _DetailPulsingDotState extends State<DetailPulsingDot>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..repeat(reverse: true);
-    _anim = Tween<double>(begin: 0.35, end: 1.0).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
-    );
+    _anim = Tween<double>(
+      begin: 0.35,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -784,9 +761,13 @@ class DetailDualPillBar extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(16, 12, 16, 16 + bottom),
       child: Row(
         children: [
-          Expanded(child: _Pill(icon: leftIcon, label: leftLabel, onTap: onLeft)),
+          Expanded(
+            child: _Pill(icon: leftIcon, label: leftLabel, onTap: onLeft),
+          ),
           const SizedBox(width: 12),
-          Expanded(child: _Pill(icon: rightIcon, label: rightLabel, onTap: onRight)),
+          Expanded(
+            child: _Pill(icon: rightIcon, label: rightLabel, onTap: onRight),
+          ),
         ],
       ),
     );

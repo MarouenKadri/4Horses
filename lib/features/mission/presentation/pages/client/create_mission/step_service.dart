@@ -36,8 +36,7 @@ class StepService extends StatelessWidget {
         children: [
           const MissionStepHeader(
             title: 'Quel service recherchez-vous ?',
-            subtitle:
-                'Choisissez votre catégorie puis un sous-service précis.',
+            subtitle: 'Choisissez votre catégorie puis un sous-service précis.',
           ),
           if (selectedMeta != null) ...[
             AppGap.h16,
@@ -65,18 +64,13 @@ class StepService extends StatelessWidget {
         serviceIcon: service['icon'] as IconData? ?? Icons.category_rounded,
         serviceColor: service['color'] as Color? ?? AppColors.primary,
         subServices: _readSubServices(service['subServices']),
-        selectedSubService:
-            selectedService == service['id'] ? selectedSubService : null,
+        selectedSubService: selectedService == service['id']
+            ? selectedSubService
+            : null,
         onSelected: (subService) {
-          onServiceSelected(
-            service['id'] as String,
-            subService,
-          );
+          onServiceSelected(service['id'] as String, subService);
           Navigator.pop(context);
-          Future.delayed(
-            const Duration(milliseconds: 240),
-            onCompleted,
-          );
+          Future.delayed(const Duration(milliseconds: 240), onCompleted);
         },
       ),
     );
@@ -248,7 +242,8 @@ class _SubServicesSheetState extends State<_SubServicesSheet> {
                       spacing: 8,
                       runSpacing: 8,
                       children: subServices.map((subService) {
-                        final isSelected = widget.selectedSubService == subService;
+                        final isSelected =
+                            widget.selectedSubService == subService;
                         return AppPillChip(
                           label: subService,
                           selected: isSelected,
@@ -294,9 +289,7 @@ class _SelectedServiceSummary extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: context.colors.border,
-        ),
+        border: Border.all(color: context.colors.border),
       ),
       child: Row(
         children: [
@@ -329,11 +322,7 @@ class _SelectedServiceSummary extends StatelessWidget {
               ],
             ),
           ),
-          Icon(
-            Icons.check_circle_rounded,
-            size: 18,
-            color: color,
-          ),
+          Icon(Icons.check_circle_rounded, size: 18, color: color),
         ],
       ),
     );
@@ -388,7 +377,11 @@ class _ServiceIconCell extends StatelessWidget {
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 1.5),
                   ),
-                  child: const Icon(Icons.check_rounded, color: Colors.white, size: 11),
+                  child: const Icon(
+                    Icons.check_rounded,
+                    color: Colors.white,
+                    size: 11,
+                  ),
                 ),
               ),
           ],

@@ -27,7 +27,10 @@ class MissionStatusChip extends StatelessWidget {
   });
 
   // Style summary : fond blanc + bordure subtile
-  factory MissionStatusChip.summary(BuildContext context, {required String label}) {
+  factory MissionStatusChip.summary(
+    BuildContext context, {
+    required String label,
+  }) {
     return MissionStatusChip(
       label: label,
       foreground: context.colors.textPrimary,
@@ -37,7 +40,10 @@ class MissionStatusChip extends StatelessWidget {
   }
 
   // Style archive : fond coloré résolu depuis le label
-  factory MissionStatusChip.archive(BuildContext context, {required String label}) {
+  factory MissionStatusChip.archive(
+    BuildContext context, {
+    required String label,
+  }) {
     final style = _resolveArchiveStyle(context, label);
     return MissionStatusChip(
       label: label,
@@ -51,17 +57,17 @@ class MissionStatusChip extends StatelessWidget {
   static _ChipStyle _resolveArchiveStyle(BuildContext context, String label) {
     return switch (label) {
       'Annulee' => _ChipStyle(
-          foreground: context.colors.error,
-          background: context.colors.errorLight,
-        ),
+        foreground: context.colors.error,
+        background: context.colors.errorLight,
+      ),
       'Paiement en attente' => _ChipStyle(
-          foreground: context.colors.textSecondary,
-          background: context.colors.surfaceAlt,
-        ),
+        foreground: context.colors.textSecondary,
+        background: context.colors.surfaceAlt,
+      ),
       _ => _ChipStyle(
-          foreground: context.colors.textSecondary,
-          background: context.colors.surfaceAlt,
-        ),
+        foreground: context.colors.textSecondary,
+        background: context.colors.surfaceAlt,
+      ),
     };
   }
 

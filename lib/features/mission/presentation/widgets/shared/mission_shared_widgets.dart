@@ -175,15 +175,12 @@ class InfoChip extends StatelessWidget {
 
 class BudgetBadge extends StatelessWidget {
   final BudgetInfo budget;
+
   /// large = true → badge hero dans les pages détail (fontSize 22)
   /// large = false → badge compact dans les cartes (fontSize 15)
   final bool large;
 
-  const BudgetBadge({
-    super.key,
-    required this.budget,
-    this.large = false,
-  });
+  const BudgetBadge({super.key, required this.budget, this.large = false});
 
   @override
   Widget build(BuildContext context) {
@@ -204,8 +201,11 @@ class BudgetBadge extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.request_quote_outlined,
-                size: large ? 16 : 14, color: context.colors.textSecondary),
+            Icon(
+              Icons.request_quote_outlined,
+              size: large ? 16 : 14,
+              color: context.colors.textSecondary,
+            ),
             SizedBox(width: large ? 6 : 5),
             Text(
               'Sur devis',
@@ -264,11 +264,12 @@ class BudgetText extends StatelessWidget {
     if (isQuote) {
       return Text(
         budget.displayText,
-        style: (large ? MissionCardFrame.captionStyle : MissionCardFrame.metaStyle)
-            .copyWith(
-              color: AppColors.cardCaption,
-              fontWeight: FontWeight.w600,
-            ),
+        style:
+            (large ? MissionCardFrame.captionStyle : MissionCardFrame.metaStyle)
+                .copyWith(
+                  color: AppColors.cardCaption,
+                  fontWeight: FontWeight.w600,
+                ),
       );
     }
 

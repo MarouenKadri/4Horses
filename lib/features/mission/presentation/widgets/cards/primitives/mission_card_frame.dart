@@ -15,6 +15,9 @@ class MissionCardFrame extends StatelessWidget {
   final Color color;
   final List<BoxShadow> shadows;
 
+  /// Liseré optionnel — pour les cartes plates (sans ombre) du feed.
+  final BoxBorder? border;
+
   // ── Typographie ──────────────────────────────────────────────────────────────
 
   /// Titre principal — catégorie ou intitulé mission
@@ -60,9 +63,12 @@ class MissionCardFrame extends StatelessWidget {
   // ── Spacing ──────────────────────────────────────────────────────────────────
 
   static const double paddingDefault = 18.0;
-  static const double radiusDefault  = 24.0;
-  static const double radiusLarge    = 26.0;
-  static const double radiusSmall    = 20.0;
+  static const double radiusDefault = 24.0;
+  static const double radiusLarge = 26.0;
+  static const double radiusSmall = 20.0;
+
+  /// Rayon des cartes plates du feed (aligné sur les tuiles stories).
+  static const double radiusFlat = 12.0;
 
   // ── Shadows ──────────────────────────────────────────────────────────────────
 
@@ -91,6 +97,7 @@ class MissionCardFrame extends StatelessWidget {
     this.radius = 24,
     this.color = Colors.white,
     this.shadows = defaultShadow,
+    this.border,
   });
 
   @override
@@ -105,6 +112,7 @@ class MissionCardFrame extends StatelessWidget {
             color: color,
             borderRadius: BorderRadius.circular(radius),
             boxShadow: shadows,
+            border: border,
           ),
           child: child,
         ),

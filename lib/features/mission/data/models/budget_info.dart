@@ -13,11 +13,7 @@ class BudgetInfo {
   /// Durée estimée en heures (uniquement pour le type horaire)
   final double? estimatedHours;
 
-  const BudgetInfo({
-    required this.type,
-    this.amount,
-    this.estimatedHours,
-  });
+  const BudgetInfo({required this.type, this.amount, this.estimatedHours});
 
   /// Texte affiché dans l'UI
   String get displayText {

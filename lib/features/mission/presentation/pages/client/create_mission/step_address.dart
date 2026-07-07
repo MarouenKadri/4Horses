@@ -156,7 +156,10 @@ class _StepAddressState extends State<StepAddress> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.center,
-                colors: [Colors.white.withValues(alpha: 0.14), Colors.transparent],
+                colors: [
+                  Colors.white.withValues(alpha: 0.14),
+                  Colors.transparent,
+                ],
               ),
             ),
             child: const SizedBox.expand(),
@@ -207,9 +210,11 @@ class _StepAddressState extends State<StepAddress> {
                                 padding: AppInsets.h16v12,
                                 child: Row(
                                   children: [
-                                    Icon(Icons.location_on_rounded,
-                                        size: 18,
-                                        color: AppColors.primary),
+                                    Icon(
+                                      Icons.location_on_rounded,
+                                      size: 18,
+                                      color: AppColors.primary,
+                                    ),
                                     AppGap.w12,
                                     Expanded(
                                       child: Column(
@@ -221,7 +226,11 @@ class _StepAddressState extends State<StepAddress> {
                                                 .split(',')
                                                 .first
                                                 .trim(),
-                                            style: TextStyle(fontSize: AppFontSize.baseHalf, fontWeight: FontWeight.w600, color: AppColors.inkDark),
+                                            style: TextStyle(
+                                              fontSize: AppFontSize.baseHalf,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.inkDark,
+                                            ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -232,7 +241,12 @@ class _StepAddressState extends State<StepAddress> {
                                                 .take(2)
                                                 .join(',')
                                                 .trim(),
-                                            style: context.text.labelMedium?.copyWith(color: context.colors.textTertiary),
+                                            style: context.text.labelMedium
+                                                ?.copyWith(
+                                                  color: context
+                                                      .colors
+                                                      .textTertiary,
+                                                ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -244,8 +258,7 @@ class _StepAddressState extends State<StepAddress> {
                               ),
                             ),
                             if (i < _suggestions.length - 1)
-                              Divider(
-                                  height: 1, color: context.colors.divider),
+                              Divider(height: 1, color: context.colors.divider),
                           ],
                         );
                       }).toList(),
@@ -315,55 +328,52 @@ class _SearchBar extends StatelessWidget {
       focusNode: focusNode,
       onChanged: onChanged,
       textInputAction: TextInputAction.search,
-      decoration: AppInputDecorations.profileField(
-        context,
-        hintText: 'Rechercher une adresse...',
-        radius: 18,
-        prefixIcon: isSearching
-            ? Padding(
-                padding: AppInsets.a14,
-                child: SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.primary,
+      decoration:
+          AppInputDecorations.profileField(
+            context,
+            hintText: 'Rechercher une adresse...',
+            radius: 18,
+            prefixIcon: isSearching
+                ? Padding(
+                    padding: AppInsets.a14,
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  )
+                : Icon(
+                    Icons.search_outlined,
+                    color: context.colors.textHint,
+                    size: 18,
                   ),
-                ),
-              )
-            : Icon(
-                Icons.search_outlined,
-                color: context.colors.textHint,
-                size: 18,
-              ),
-        suffixIcon: hasValue
-            ? IconButton(
-                icon: Icon(
-                  Icons.close_rounded,
-                  color: context.colors.textHint,
-                  size: 18,
-                ),
-                onPressed: onClear,
-              )
-            : null,
-      ).copyWith(
-        labelText: 'Adresse de la mission',
-        contentPadding: AppInsets.h16v16,
-        errorStyle: context.profileErrorStyle,
-      ),
+            suffixIcon: hasValue
+                ? IconButton(
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: context.colors.textHint,
+                      size: 18,
+                    ),
+                    onPressed: onClear,
+                  )
+                : null,
+          ).copyWith(
+            labelText: 'Adresse de la mission',
+            contentPadding: AppInsets.h16v16,
+            errorStyle: context.profileErrorStyle,
+          ),
     );
   }
 }
-
 
 class _SelectedAddressCard extends StatelessWidget {
   final String address;
   final VoidCallback onEdit;
 
-  const _SelectedAddressCard({
-    required this.address,
-    required this.onEdit,
-  });
+  const _SelectedAddressCard({required this.address, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -383,8 +393,11 @@ class _SelectedAddressCard extends StatelessWidget {
               color: AppColors.inkDark,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.check_rounded,
-                color: Colors.white, size: 18),
+            child: const Icon(
+              Icons.check_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
           ),
           AppGap.w14,
           Expanded(
@@ -407,8 +420,11 @@ class _SelectedAddressCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: Icon(Icons.edit_rounded,
-                size: 18, color: context.colors.textSecondary),
+            icon: Icon(
+              Icons.edit_rounded,
+              size: 18,
+              color: context.colors.textSecondary,
+            ),
             onPressed: onEdit,
           ),
         ],
@@ -416,4 +432,3 @@ class _SelectedAddressCard extends StatelessWidget {
     );
   }
 }
-

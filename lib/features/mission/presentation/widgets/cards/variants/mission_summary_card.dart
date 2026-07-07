@@ -46,10 +46,16 @@ class MissionSummaryCard extends StatelessWidget {
     );
 
     final metaItems = [
-      MissionMetaItem(icon: Icons.calendar_today_outlined, text: mission.formattedDate),
+      MissionMetaItem(
+        icon: Icons.calendar_today_outlined,
+        text: mission.formattedDate,
+      ),
       MissionMetaItem(icon: Icons.schedule_outlined, text: mission.timeSlot),
       if (showAddress)
-        MissionMetaItem(icon: Icons.location_on_outlined, text: mission.address.shortAddress),
+        MissionMetaItem(
+          icon: Icons.location_on_outlined,
+          text: mission.address.shortAddress,
+        ),
     ];
 
     return MissionCardFrame(
@@ -105,16 +111,10 @@ class MissionSummaryCard extends StatelessWidget {
               const SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerLeft,
-                child: MissionFinanceStatusBadge(
-                  mission: mission,
-                  role: role,
-                ),
+                child: MissionFinanceStatusBadge(mission: mission, role: role),
               ),
             ],
-            if (extra != null) ...[
-              const SizedBox(height: 12),
-              extra!,
-            ],
+            if (extra != null) ...[const SizedBox(height: 12), extra!],
           ],
         ),
       ),

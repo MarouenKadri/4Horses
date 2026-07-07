@@ -17,15 +17,9 @@ class MissionStepHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: context.missionStepTitleStyle,
-        ),
+        Text(title, style: context.missionStepTitleStyle),
         AppGap.h8,
-        Text(
-          subtitle,
-          style: context.missionStepSubtitleStyle,
-        ),
+        Text(subtitle, style: context.missionStepSubtitleStyle),
       ],
     );
   }
@@ -34,27 +28,18 @@ class MissionStepHeader extends StatelessWidget {
 class MissionStepHelper extends StatelessWidget {
   final String text;
 
-  const MissionStepHelper({
-    super.key,
-    required this.text,
-  });
+  const MissionStepHelper({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: context.missionStepHelperStyle,
-    );
+    return Text(text, style: context.missionStepHelperStyle);
   }
 }
 
 class MissionSectionLabel extends StatelessWidget {
   final String label;
 
-  const MissionSectionLabel({
-    super.key,
-    required this.label,
-  });
+  const MissionSectionLabel({super.key, required this.label});
 
   @override
   Widget build(BuildContext context) {

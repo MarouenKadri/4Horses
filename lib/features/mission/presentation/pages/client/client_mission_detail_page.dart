@@ -73,9 +73,9 @@ class _ClientMissionDetailPageState
   @override
   Mission syncMission(BuildContext ctx) {
     return ctx.watch<MissionProvider>().clientMissions.firstWhere(
-          (m) => m.id == widget.mission.id,
-          orElse: () => mission,
-        );
+      (m) => m.id == widget.mission.id,
+      orElse: () => mission,
+    );
   }
 
   @override
@@ -215,7 +215,8 @@ class _ClientMissionDetailPageState
     }
     if (mission.assignedPresta != null) {
       final presta = mission.assignedPresta!;
-      final contactable = mission.status != MissionStatus.awaitingRelease &&
+      final contactable =
+          mission.status != MissionStatus.awaitingRelease &&
           mission.status != MissionStatus.closed;
       return Column(
         children: [
@@ -251,10 +252,7 @@ class _ClientMissionDetailPageState
               (mission.status == MissionStatus.confirmed ||
                   mission.status == MissionStatus.onTheWay ||
                   mission.status == MissionStatus.inProgress))
-            ClientTrackingCard(
-              mission: mission,
-              onOpenTracking: _openTracking,
-            ),
+            ClientTrackingCard(mission: mission, onOpenTracking: _openTracking),
         ],
       );
     }
@@ -368,27 +366,25 @@ class _ClientMissionDetailPageState
   }
 
   void _openCandidates() => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CandidatesPage(
-            missionId: mission.id,
-            missionTitle: mission.title,
-            missionBudget: mission.budget.displayText,
-          ),
-        ),
-      );
+    context,
+    MaterialPageRoute(
+      builder: (_) => CandidatesPage(
+        missionId: mission.id,
+        missionTitle: mission.title,
+        missionBudget: mission.budget.displayText,
+      ),
+    ),
+  );
 
   void _openTracking() => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => TrackingPage(mission: mission)),
-      );
+    context,
+    MaterialPageRoute(builder: (_) => TrackingPage(mission: mission)),
+  );
 
   Future<void> _openValidationScreen() async => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MissionValidationPage(mission: mission),
-        ),
-      );
+    context,
+    MaterialPageRoute(builder: (_) => MissionValidationPage(mission: mission)),
+  );
 
   Future<void> _openChat(PrestaInfo presta) async {
     final conversationId = await context
@@ -410,10 +406,14 @@ class _ClientMissionDetailPageState
           isVerified: presta.isVerified,
           missionTitle: mission.title,
           isMissionConfirmed: const {
-            MissionStatus.confirmed, MissionStatus.onTheWay,
-            MissionStatus.inProgress, MissionStatus.completionRequested,
-            MissionStatus.completed, MissionStatus.paymentHeld,
-            MissionStatus.awaitingRelease, MissionStatus.closed,
+            MissionStatus.confirmed,
+            MissionStatus.onTheWay,
+            MissionStatus.inProgress,
+            MissionStatus.completionRequested,
+            MissionStatus.completed,
+            MissionStatus.paymentHeld,
+            MissionStatus.awaitingRelease,
+            MissionStatus.closed,
           }.contains(mission.status),
         ),
       ),
@@ -421,9 +421,9 @@ class _ClientMissionDetailPageState
   }
 
   Future<void> _editMission() async => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => PostMissionFlow(mission: mission)),
-      );
+    context,
+    MaterialPageRoute(builder: (_) => PostMissionFlow(mission: mission)),
+  );
 
   void _showCancelDialog() {
     showAppBottomSheet(
@@ -435,9 +435,9 @@ class _ClientMissionDetailPageState
         missionAmount: mission.budget.averageAmount,
         onConfirm: () {
           context.read<MissionProvider>().updateMissionStatus(
-                mission.id,
-                MissionStatus.cancelled,
-              );
+            mission.id,
+            MissionStatus.cancelled,
+          );
           Navigator.pop(context);
           Navigator.pop(context);
         },
@@ -457,9 +457,9 @@ class _ClientMissionDetailPageState
       confirmVariant: ButtonVariant.destructive,
       onConfirm: () {
         context.read<MissionProvider>().updateMissionStatus(
-              mission.id,
-              MissionStatus.inDispute,
-            );
+          mission.id,
+          MissionStatus.inDispute,
+        );
         Navigator.pop(context);
       },
     );

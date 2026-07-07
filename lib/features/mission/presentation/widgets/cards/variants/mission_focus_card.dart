@@ -39,10 +39,7 @@ class MissionFocusCard extends StatelessWidget {
         text: mission.formattedDate,
       ),
       if (mission.timeSlot.isNotEmpty)
-        MissionMetaItem(
-          icon: Icons.schedule_outlined,
-          text: mission.timeSlot,
-        ),
+        MissionMetaItem(icon: Icons.schedule_outlined, text: mission.timeSlot),
       if (mission.address.shortAddress.isNotEmpty)
         MissionMetaItem(
           icon: Icons.location_on_outlined,

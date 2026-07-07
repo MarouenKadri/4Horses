@@ -46,9 +46,9 @@ class _SpecialStatusBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = switch (status) {
-      MissionStatus.cancelled  => AppColors.error,
-      MissionStatus.inDispute  => AppColors.error,
-      _                        => context.colors.textTertiary,
+      MissionStatus.cancelled => AppColors.error,
+      MissionStatus.inDispute => AppColors.error,
+      _ => context.colors.textTertiary,
     };
 
     return Container(
@@ -58,11 +58,19 @@ class _SpecialStatusBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppDesign.radius12),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
-      child: Row(children: [
-        Icon(status.icon, color: color, size: 20),
-        AppGap.w12,
-        Text(status.label, style: context.text.bodyMedium?.copyWith(fontWeight: FontWeight.w700, color: color)),
-      ]),
+      child: Row(
+        children: [
+          Icon(status.icon, color: color, size: 20),
+          AppGap.w12,
+          Text(
+            status.label,
+            style: context.text.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -75,8 +83,7 @@ class _TimelineTrack extends StatelessWidget {
 
   int get _currentIndex {
     return switch (currentStatus) {
-      MissionStatus.waitingCandidates ||
-      MissionStatus.candidateReceived => 0,
+      MissionStatus.waitingCandidates || MissionStatus.candidateReceived => 0,
       MissionStatus.confirmed => 1,
       MissionStatus.onTheWay => 2,
       MissionStatus.inProgress => 3,
@@ -156,15 +163,22 @@ class _TimelineStep extends StatefulWidget {
   State<_TimelineStep> createState() => _TimelineStepState();
 }
 
-class _TimelineStepState extends State<_TimelineStep> with SingleTickerProviderStateMixin {
+class _TimelineStepState extends State<_TimelineStep>
+    with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<double> _anim;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
-    _anim = Tween<double>(begin: 0.85, end: 1.0).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _anim = Tween<double>(
+      begin: 0.85,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
     if (widget.isCurrent) _ctrl.repeat(reverse: true);
   }
 
@@ -183,7 +197,10 @@ class _TimelineStepState extends State<_TimelineStep> with SingleTickerProviderS
   }
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +210,8 @@ class _TimelineStepState extends State<_TimelineStep> with SingleTickerProviderS
         widget.isCurrent
             ? AnimatedBuilder(
                 animation: _anim,
-                builder: (_, __) => Transform.scale(scale: _anim.value, child: _buildCircle()),
+                builder: (_, __) =>
+                    Transform.scale(scale: _anim.value, child: _buildCircle()),
               )
             : _buildCircle(),
         AppGap.h6,
@@ -209,8 +227,8 @@ class _TimelineStepState extends State<_TimelineStep> with SingleTickerProviderS
               color: widget.isCurrent
                   ? context.colors.textPrimary
                   : widget.isDone
-                      ? context.colors.textSecondary
-                      : context.colors.textTertiary,
+                  ? context.colors.textSecondary
+                  : context.colors.textTertiary,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -226,10 +244,7 @@ class _TimelineStepState extends State<_TimelineStep> with SingleTickerProviderS
       return Container(
         width: 14,
         height: 14,
-        decoration: BoxDecoration(
-          color: _kTeal,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: _kTeal, shape: BoxShape.circle),
         child: const Icon(Icons.check_rounded, color: Colors.white, size: 9),
       );
     }
@@ -244,10 +259,7 @@ class _TimelineStepState extends State<_TimelineStep> with SingleTickerProviderS
           border: Border.all(color: _kTeal.withValues(alpha: 0.32)),
         ),
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: _kTeal,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: _kTeal, shape: BoxShape.circle),
         ),
       );
     }

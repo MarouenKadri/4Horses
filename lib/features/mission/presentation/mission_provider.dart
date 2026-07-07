@@ -25,7 +25,7 @@ class MissionProvider extends ChangeNotifier {
   String? get _userId => _supabase.auth.currentUser?.id;
 
   MissionProvider({MissionRepository? repository})
-      : _repository = repository ?? SupabaseMissionRepository() {
+    : _repository = repository ?? SupabaseMissionRepository() {
     _authSub = _supabase.auth.onAuthStateChange.listen((data) {
       if (data.event == AuthChangeEvent.signedIn) {
         _channel?.unsubscribe();
@@ -50,7 +50,8 @@ class MissionProvider extends ChangeNotifier {
 
   List<Mission> get clientMissions => List.unmodifiable(_clientMissions);
   List<Mission> get publicMissions => List.unmodifiable(_publicMissions);
-  List<Mission> get freelancerMissions => List.unmodifiable(_freelancerMissions);
+  List<Mission> get freelancerMissions =>
+      List.unmodifiable(_freelancerMissions);
 
   // ─── Init ─────────────────────────────────────────────────────────────────
 
@@ -105,9 +106,15 @@ class MissionProvider extends ChangeNotifier {
     final prevClient = List<Mission>.from(_clientMissions);
     final prevPublic = List<Mission>.from(_publicMissions);
     final prevFreelancer = List<Mission>.from(_freelancerMissions);
-    _clientMissions = _clientMissions.map((m) => m.id == updated.id ? updated : m).toList();
-    _publicMissions = _publicMissions.map((m) => m.id == updated.id ? updated : m).toList();
-    _freelancerMissions = _freelancerMissions.map((m) => m.id == updated.id ? updated : m).toList();
+    _clientMissions = _clientMissions
+        .map((m) => m.id == updated.id ? updated : m)
+        .toList();
+    _publicMissions = _publicMissions
+        .map((m) => m.id == updated.id ? updated : m)
+        .toList();
+    _freelancerMissions = _freelancerMissions
+        .map((m) => m.id == updated.id ? updated : m)
+        .toList();
     notifyListeners();
     try {
       await _repository.updateMission(updated);
@@ -176,7 +183,10 @@ class MissionProvider extends ChangeNotifier {
       final sameStatus = m.status == MissionStatus.confirmed;
       if (sameStatus && samePresta) return m;
       changed = true;
-      return m.copyWith(status: MissionStatus.confirmed, assignedPresta: presta);
+      return m.copyWith(
+        status: MissionStatus.confirmed,
+        assignedPresta: presta,
+      );
     }
 
     _clientMissions = _clientMissions.map(update).toList();
@@ -206,8 +216,14 @@ class MissionProvider extends ChangeNotifier {
 
   // ─── Candidature freelancer ───────────────────────────────────────────────
 
-  Future<void> submitProposal(Mission publicMission, {double price = 0, String message = ''}) async {
-    final alreadyApplied = _freelancerMissions.any((m) => m.id == publicMission.id);
+  Future<void> submitProposal(
+    Mission publicMission, {
+    double price = 0,
+    String message = '',
+  }) async {
+    final alreadyApplied = _freelancerMissions.any(
+      (m) => m.id == publicMission.id,
+    );
     if (alreadyApplied) return;
 
     final source = _publicMissions.firstWhere(
@@ -224,12 +240,16 @@ class MissionProvider extends ChangeNotifier {
     _freelancerMissions = _prependUniqueById(_freelancerMissions, applied);
 
     // 2. Mettre à jour le statut + compteur dans le fil public
-    _publicMissions = _publicMissions.map((m) => m.id == publicMission.id
-        ? m.copyWith(
-            status: MissionStatus.candidateReceived,
-            candidatesCount: nextCount,
-          )
-        : m).toList();
+    _publicMissions = _publicMissions
+        .map(
+          (m) => m.id == publicMission.id
+              ? m.copyWith(
+                  status: MissionStatus.candidateReceived,
+                  candidatesCount: nextCount,
+                )
+              : m,
+        )
+        .toList();
 
     // 3. Mettre à jour la liste client si la mission est présente
     //    (évite que le client soit bloqué sur waitingCandidates jusqu'au prochain refresh)
@@ -248,13 +268,29 @@ class MissionProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('submitProposal failed: $e');
       // Rollback
-      _freelancerMissions = _freelancerMissions.where((m) => m.id != publicMission.id).toList();
-      _publicMissions = _publicMissions.map((m) => m.id == publicMission.id
-          ? m.copyWith(status: source.status, candidatesCount: source.candidatesCount)
-          : m).toList();
-      _clientMissions = _clientMissions.map((m) => m.id == publicMission.id
-          ? m.copyWith(status: source.status, candidatesCount: source.candidatesCount)
-          : m).toList();
+      _freelancerMissions = _freelancerMissions
+          .where((m) => m.id != publicMission.id)
+          .toList();
+      _publicMissions = _publicMissions
+          .map(
+            (m) => m.id == publicMission.id
+                ? m.copyWith(
+                    status: source.status,
+                    candidatesCount: source.candidatesCount,
+                  )
+                : m,
+          )
+          .toList();
+      _clientMissions = _clientMissions
+          .map(
+            (m) => m.id == publicMission.id
+                ? m.copyWith(
+                    status: source.status,
+                    candidatesCount: source.candidatesCount,
+                  )
+                : m,
+          )
+          .toList();
       notifyListeners();
       rethrow;
     }
@@ -271,7 +307,9 @@ class MissionProvider extends ChangeNotifier {
       if (m.id != missionId) return m;
       return m.copyWith(candidatesCount: (m.candidatesCount - 1).clamp(0, 999));
     }).toList();
-    _freelancerMissions = _freelancerMissions.where((m) => m.id != missionId).toList();
+    _freelancerMissions = _freelancerMissions
+        .where((m) => m.id != missionId)
+        .toList();
     notifyListeners();
 
     try {
@@ -292,7 +330,9 @@ class MissionProvider extends ChangeNotifier {
     final prevClient = List<Mission>.from(_clientMissions);
     final exists = _clientMissions.any((m) => m.id == draft.id);
     if (exists) {
-      _clientMissions = _clientMissions.map((m) => m.id == draft.id ? draft : m).toList();
+      _clientMissions = _clientMissions
+          .map((m) => m.id == draft.id ? draft : m)
+          .toList();
     } else {
       _clientMissions = [draft, ..._clientMissions];
     }
@@ -310,7 +350,9 @@ class MissionProvider extends ChangeNotifier {
   Future<void> publishDraft(Mission mission) async {
     final prevClient = List<Mission>.from(_clientMissions);
     final prevPublic = List<Mission>.from(_publicMissions);
-    _clientMissions = _clientMissions.map((m) => m.id == mission.id ? mission : m).toList();
+    _clientMissions = _clientMissions
+        .map((m) => m.id == mission.id ? mission : m)
+        .toList();
     _publicMissions = _prependUniqueById(_publicMissions, mission);
     notifyListeners();
     try {

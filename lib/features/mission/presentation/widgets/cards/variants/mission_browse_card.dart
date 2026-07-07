@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/design/app_design_system.dart';
 import '../../../../data/models/mission.dart';
-import '../../shared/mission_shared_widgets.dart';
-import '../../freelancer_list_widgets.dart' show DistanceBadge;
-import '../primitives/mission_card_frame.dart';
-import '../primitives/mission_meta_row.dart';
+import '../../shared/mission_shared_widgets.dart' show BudgetText;
 
 // ─── Variant : Marketplace freelancer ────────────────────────────────────────
-// Responsabilité : afficher une mission disponible dans le marketplace.
-// Compose MissionCardFrame. Design riche : image, titre Playfair, client avatar,
-// badge distance ou "Déjà postulé".
+// Responsabilité : afficher une mission disponible dans le feed.
+// Rangée plate façon résultats TikTok, cohérente avec FreelancerListTile :
+// vignette à gauche · infos au centre · budget à droite · filet fin dessous.
 // ─────────────────────────────────────────────────────────────────────────────
 
 class MissionBrowseCard extends StatelessWidget {
@@ -26,60 +23,108 @@ class MissionBrowseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final distance = mission.address.distance;
+
     return Opacity(
       opacity: isApplied ? 0.72 : 1.0,
-      child: MissionCardFrame(
+      child: InkWell(
         onTap: onTap,
-        radius: MissionCardFrame.radiusDefault,
-        color: context.colors.surface,
-        shadows: MissionCardFrame.browseShadow,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (mission.images.isNotEmpty)
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(MissionCardFrame.radiusDefault),
-                ),
-                child: MissionImageHeader(
-                  images: mission.images,
-                  fallbackIcon: mission.categoryIcon,
-                  heroTag: 'mission-img-${mission.id}',
-                ),
-              ),
             Padding(
-              padding: const EdgeInsets.all(MissionCardFrame.paddingDefault),
-              child: Column(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _CategoryRow(mission: mission, isApplied: isApplied),
-                  AppGap.h14,
-                  Text(
-                    mission.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: MissionCardFrame.titleStyle,
+                  _Thumbnail(mission: mission),
+                  AppGap.w12,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                mission.categoryName.toUpperCase(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.text.labelSmall?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.6,
+                                  color: context.colors.textTertiary,
+                                ),
+                              ),
+                            ),
+                            if (distance != null)
+                              Text(
+                                ' · $distance',
+                                style: context.text.labelSmall?.copyWith(
+                                  color: context.colors.textTertiary,
+                                ),
+                              ),
+                          ],
+                        ),
+                        AppGap.h4,
+                        Text(
+                          mission.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.textPrimary,
+                            height: 1.25,
+                          ),
+                        ),
+                        AppGap.h4,
+                        Text(
+                          '${mission.formattedDate} · ${mission.address.shortAddress}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.bodySmall?.copyWith(
+                            color: context.colors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  AppGap.h10,
-                  Text(
-                    mission.description,
-                    style: MissionCardFrame.subtitleStyle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  AppGap.w12,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      BudgetText(budget: mission.budget),
+                      AppGap.h4,
+                      if (isApplied)
+                        Text(
+                          'Postulé',
+                          style: context.text.labelSmall?.copyWith(
+                            color: context.colors.textTertiary,
+                          ),
+                        )
+                      else if (mission.candidatesCount > 0)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.people_outline_rounded,
+                              size: 12,
+                              color: context.colors.textHint,
+                            ),
+                            AppGap.w3,
+                            Text(
+                              '${mission.candidatesCount}',
+                              style: context.text.labelSmall?.copyWith(
+                                color: context.colors.textTertiary,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
                   ),
-                  AppGap.h14,
-                  MissionMetaRow(items: [
-                    MissionMetaItem(icon: Icons.calendar_today_outlined, text: mission.formattedDate),
-                    MissionMetaItem(icon: Icons.schedule_outlined, text: mission.timeSlot),
-                    MissionMetaItem(icon: Icons.location_on_outlined, text: mission.address.shortAddress),
-                  ]),
-                  AppGap.h16,
-                  Divider(height: 1, color: context.colors.divider),
-                  AppGap.h16,
-                  _Footer(mission: mission),
                 ],
               ),
             ),
+            Divider(height: 1, indent: 84, color: context.colors.divider),
           ],
         ),
       ),
@@ -87,96 +132,34 @@ class MissionBrowseCard extends StatelessWidget {
   }
 }
 
-class _CategoryRow extends StatelessWidget {
+class _Thumbnail extends StatelessWidget {
   final Mission mission;
-  final bool isApplied;
 
-  const _CategoryRow({required this.mission, required this.isApplied});
+  const _Thumbnail({required this.mission});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: mission.categoryColor.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: mission.categoryColor.withValues(alpha: 0.14),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                mission.categoryIcon,
-                size: 14,
-                color: mission.categoryColor.withValues(alpha: 0.78),
-              ),
-              AppGap.w6,
-              Text(
-                mission.categoryName,
-                style: MissionCardFrame.metaStyle,
-              ),
-            ],
-          ),
+    return Hero(
+      tag: 'mission-img-${mission.id}',
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: SizedBox(
+          width: 72,
+          height: 72,
+          child: mission.images.isNotEmpty
+              ? Image.network(
+                  mission.images.first,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _fallback(context),
+                )
+              : _fallback(context),
         ),
-        const Spacer(),
-        if (isApplied)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: context.colors.border),
-            ),
-            child: Text(
-              'Déjà postulé',
-              style: MissionCardFrame.metaStyle,
-            ),
-          )
-        else if (mission.address.distance != null)
-          DistanceBadge(distance: mission.address.distance!, compact: true),
-      ],
+      ),
     );
   }
-}
 
-class _Footer extends StatelessWidget {
-  final Mission mission;
-
-  const _Footer({required this.mission});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        BudgetText(budget: mission.budget, large: true),
-        AppGap.w16,
-        if (mission.client != null) ...[
-          UserAvatar(
-            imageUrl: mission.client!.avatarUrl,
-            radius: 14,
-            showVerified: mission.client!.isVerified,
-          ),
-          AppGap.w8,
-          Flexible(
-            child: Text(
-              mission.client!.name,
-              style: MissionCardFrame.metaStyle,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-        const Spacer(),
-        Icon(Icons.people_outline_rounded, size: 14, color: context.colors.textHint),
-        AppGap.w4,
-        Text(
-          '${mission.candidatesCount}',
-          style: MissionCardFrame.metaStyle,
-        ),
-      ],
-    );
-  }
+  Widget _fallback(BuildContext context) => ColoredBox(
+        color: AppColors.secondary,
+        child: Icon(mission.categoryIcon, size: 26, color: AppColors.primary),
+      );
 }

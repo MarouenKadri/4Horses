@@ -47,10 +47,15 @@ class InMemoryMissionRepository implements MissionRepository {
   Future<void> updateStatus(String id, MissionStatus status) async {}
 
   @override
-  Future<void> submitProposal(String missionId, double price, String message) async {}
+  Future<void> submitProposal(
+    String missionId,
+    double price,
+    String message,
+  ) async {}
 
   @override
-  Future<List<Map<String, dynamic>>> fetchCandidates(String missionId) async => [];
+  Future<List<Map<String, dynamic>>> fetchCandidates(String missionId) async =>
+      [];
 
   @override
   Future<void> withdrawCandidacy(String missionId) async {}

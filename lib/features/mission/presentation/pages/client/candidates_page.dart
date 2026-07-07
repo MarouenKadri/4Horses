@@ -214,7 +214,9 @@ class _CandidatesPageState extends State<CandidatesPage> {
 
   List<Candidate> get _sortedCandidates {
     final sorted = List<Candidate>.from(_candidates);
-    sorted.sort((a, b) => _statusRank(a.status).compareTo(_statusRank(b.status)));
+    sorted.sort(
+      (a, b) => _statusRank(a.status).compareTo(_statusRank(b.status)),
+    );
     return sorted;
   }
 
@@ -353,7 +355,11 @@ class _CandidatesPageState extends State<CandidatesPage> {
           // ─── Liste des candidats ───
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator(color: context.colors.primary))
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: context.colors.primary,
+                    ),
+                  )
                 : displayCandidates.isEmpty
                 ? Center(
                     child: Column(
@@ -396,7 +402,8 @@ class _CandidatesPageState extends State<CandidatesPage> {
   }
 
   void _openProfile(Candidate candidate) {
-    final isPending = candidate.status == CandidateStatus.enAttente && !_hasAcceptedCandidate;
+    final isPending =
+        candidate.status == CandidateStatus.enAttente && !_hasAcceptedCandidate;
     final isAccepted = candidate.status == CandidateStatus.accepte;
 
     Navigator.push(
@@ -413,8 +420,8 @@ class _CandidatesPageState extends State<CandidatesPage> {
           contactMode: isPending
               ? FreelancerContactMode.pendingCandidate
               : isAccepted
-                  ? FreelancerContactMode.confirmedPresta
-                  : FreelancerContactMode.spontaneous,
+              ? FreelancerContactMode.confirmedPresta
+              : FreelancerContactMode.spontaneous,
           candidatePrice: candidate.proposedPrice,
           onCandidateAccepted: isPending
               ? () => _acceptCandidate(candidate)
@@ -520,9 +527,8 @@ class _CandidateCard extends StatelessWidget {
                                   child: Text(
                                     candidate.name,
                                     overflow: TextOverflow.ellipsis,
-                                    style: context.missionEntityNameStyle.copyWith(
-                                      fontSize: AppFontSize.title,
-                                    ),
+                                    style: context.missionEntityNameStyle
+                                        .copyWith(fontSize: AppFontSize.title),
                                   ),
                                 ),
                                 _OfferStatusChip(status: candidate.status),
@@ -618,20 +624,20 @@ class _OfferStatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final (label, bg, fg) = switch (status) {
       CandidateStatus.enAttente => (
-          'EN ATTENTE',
-          AppColors.gray50,
-          AppColors.gray600,
-        ),
+        'EN ATTENTE',
+        AppColors.gray50,
+        AppColors.gray600,
+      ),
       CandidateStatus.accepte => (
-          'CHOISIE',
-          AppColors.successLight,
-          AppColors.successDark,
-        ),
+        'CHOISIE',
+        AppColors.successLight,
+        AppColors.successDark,
+      ),
       CandidateStatus.refuse => (
-          'REFUSÉE',
-          AppColors.gray50,
-          AppColors.gray400,
-        ),
+        'REFUSÉE',
+        AppColors.gray50,
+        AppColors.gray400,
+      ),
     };
 
     return Container(
@@ -691,10 +697,10 @@ class _PaymentSheetState extends State<_PaymentSheet> {
       child: AddCardSheet(
         onCardAdded: (brand, last4, expiry) {
           context.read<PaymentMethodsProvider>().addCard(
-                brand: brand,
-                last4: last4,
-                expiry: expiry,
-              );
+            brand: brand,
+            last4: last4,
+            expiry: expiry,
+          );
           final cards = context.read<PaymentMethodsProvider>().cards;
           setState(() => _selectedCardIdx = cards.length - 1);
         },
@@ -714,7 +720,10 @@ class _PaymentSheetState extends State<_PaymentSheet> {
   Widget build(BuildContext context) {
     final cards = context.watch<PaymentMethodsProvider>().cards;
     final defaultIdx = cards.indexWhere((c) => c.isDefault);
-    final selectedIdx = (_selectedCardIdx ?? defaultIdx).clamp(0, cards.isEmpty ? 0 : cards.length - 1);
+    final selectedIdx = (_selectedCardIdx ?? defaultIdx).clamp(
+      0,
+      cards.isEmpty ? 0 : cards.length - 1,
+    );
     final bottom = MediaQuery.of(context).padding.bottom;
 
     return Container(
@@ -743,12 +752,16 @@ class _PaymentSheetState extends State<_PaymentSheet> {
           // ─── Titre ───
           Text(
             'Finaliser le paiement',
-            style: context.text.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+            style: context.text.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
           AppGap.h2,
           Text(
             widget.missionTitle,
-            style: context.text.bodySmall?.copyWith(color: context.colors.textTertiary),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.textTertiary,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -900,7 +913,9 @@ class _PaymentSheetState extends State<_PaymentSheet> {
                               decoration: BoxDecoration(
                                 color: context.colors.surfaceAlt,
                                 borderRadius: BorderRadius.circular(11),
-                                border: Border.all(color: context.colors.border),
+                                border: Border.all(
+                                  color: context.colors.border,
+                                ),
                               ),
                               child: const Icon(
                                 Icons.credit_card_rounded,

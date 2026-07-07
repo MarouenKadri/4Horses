@@ -134,8 +134,7 @@ class _StepTarifState extends State<StepTarif> {
           if (widget.hourlyRate > 0)
             Center(
               child: MissionStepHelper(
-                text:
-                    'Total estime : ${total.round()} EUR',
+                text: 'Total estime : ${total.round()} EUR',
               ),
             ),
         ],
@@ -220,31 +219,35 @@ class _AmountInput extends StatelessWidget {
         color: context.colors.textPrimary,
         letterSpacing: -1,
       ),
-      decoration: AppInputDecorations.profileField(
-        context,
-        hintText: '0',
-        radius: 18,
-      ).copyWith(
-        labelText: label,
-        hintStyle: context.text.displayMedium?.copyWith(
-          color: context.colors.textHint,
-          fontSize: AppFontSize.d3,
-          fontWeight: useLightHint ? FontWeight.w300 : FontWeight.w600,
-          letterSpacing: -1,
-        ),
-        contentPadding: const EdgeInsets.fromLTRB(16, 18, 0, 18),
-        suffixIcon: Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: Text(
-            suffix,
-            style: context.missionStepMutedStyle.copyWith(
-              fontSize: AppFontSize.base,
+      decoration:
+          AppInputDecorations.profileField(
+            context,
+            hintText: '0',
+            radius: 18,
+          ).copyWith(
+            labelText: label,
+            hintStyle: context.text.displayMedium?.copyWith(
+              color: context.colors.textHint,
+              fontSize: AppFontSize.d3,
+              fontWeight: useLightHint ? FontWeight.w300 : FontWeight.w600,
+              letterSpacing: -1,
             ),
+            contentPadding: const EdgeInsets.fromLTRB(16, 18, 0, 18),
+            suffixIcon: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Text(
+                suffix,
+                style: context.missionStepMutedStyle.copyWith(
+                  fontSize: AppFontSize.base,
+                ),
+              ),
+            ),
+            suffixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
+            errorStyle: context.profileErrorStyle,
           ),
-        ),
-        suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-        errorStyle: context.profileErrorStyle,
-      ),
       onChanged: onChanged,
     );
   }
@@ -274,7 +277,9 @@ class _RateChip extends StatelessWidget {
               : context.colors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? context.colors.textPrimary : context.colors.border,
+            color: selected
+                ? context.colors.textPrimary
+                : context.colors.border,
           ),
         ),
         child: Text(

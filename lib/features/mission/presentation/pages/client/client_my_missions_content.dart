@@ -59,8 +59,8 @@ enum _ClientTabFilter { published, confirmed, inProgress }
 
 extension _ClientTabFilterX on _ClientTabFilter {
   MissionUiTab get uiTab => switch (this) {
-    _ClientTabFilter.published  => MissionUiTab.published,
-    _ClientTabFilter.confirmed  => MissionUiTab.confirmed,
+    _ClientTabFilter.published => MissionUiTab.published,
+    _ClientTabFilter.confirmed => MissionUiTab.confirmed,
     _ClientTabFilter.inProgress => MissionUiTab.inProgress,
   };
 }
@@ -85,11 +85,15 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
   }
 
   List<Mission> _filter(List<Mission> all) {
-    return all.where((m) => MissionStatusUi.missionBelongsToTab(
-      mission: m,
-      role: MissionUiRole.client,
-      tab: widget.filter.uiTab,
-    )).toList();
+    return all
+        .where(
+          (m) => MissionStatusUi.missionBelongsToTab(
+            mission: m,
+            role: MissionUiRole.client,
+            tab: widget.filter.uiTab,
+          ),
+        )
+        .toList();
   }
 
   @override
@@ -122,12 +126,13 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
                   showAddress: true,
                   onTap: () => Navigator.push(
                     context,
-                    slideUpRoute(page: ClientMissionDetailPage(mission: missions[index])),
+                    slideUpRoute(
+                      page: ClientMissionDetailPage(mission: missions[index]),
+                    ),
                   ),
                   extra: widget.filter == _ClientTabFilter.published
                       ? _CandidatesBadge(count: missions[index].candidatesCount)
                       : null,
-
                 ),
               ),
             ),
@@ -135,20 +140,22 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
   }
 
   IconData get _emptyIcon => switch (widget.filter) {
-    _ClientTabFilter.published  => Icons.assignment_outlined,
-    _ClientTabFilter.confirmed  => Icons.check_circle_outline_rounded,
+    _ClientTabFilter.published => Icons.assignment_outlined,
+    _ClientTabFilter.confirmed => Icons.check_circle_outline_rounded,
     _ClientTabFilter.inProgress => Icons.work_outline_rounded,
   };
 
   String get _emptyTitle => switch (widget.filter) {
-    _ClientTabFilter.published  => 'Aucune mission publiée',
-    _ClientTabFilter.confirmed  => 'Aucune mission confirmée',
+    _ClientTabFilter.published => 'Aucune mission publiée',
+    _ClientTabFilter.confirmed => 'Aucune mission confirmée',
     _ClientTabFilter.inProgress => 'Aucune mission en cours',
   };
 
   String get _emptySubtitle => switch (widget.filter) {
-    _ClientTabFilter.published  => 'Créez une mission pour trouver un prestataire',
-    _ClientTabFilter.confirmed  => 'Les missions avec un prestataire choisi apparaîtront ici',
+    _ClientTabFilter.published =>
+      'Créez une mission pour trouver un prestataire',
+    _ClientTabFilter.confirmed =>
+      'Les missions avec un prestataire choisi apparaîtront ici',
     _ClientTabFilter.inProgress => 'Vos missions du jour apparaîtront ici',
   };
 }
@@ -177,9 +184,13 @@ class _CandidatesBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            hasOffers ? Icons.people_alt_rounded : Icons.hourglass_empty_rounded,
+            hasOffers
+                ? Icons.people_alt_rounded
+                : Icons.hourglass_empty_rounded,
             size: 14,
-            color: hasOffers ? context.colors.primary : context.colors.textTertiary,
+            color: hasOffers
+                ? context.colors.primary
+                : context.colors.textTertiary,
           ),
           const SizedBox(width: 6),
           Text(
@@ -189,7 +200,9 @@ class _CandidatesBadge extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: hasOffers ? context.colors.primary : context.colors.textTertiary,
+              color: hasOffers
+                  ? context.colors.primary
+                  : context.colors.textTertiary,
             ),
           ),
         ],
@@ -197,4 +210,3 @@ class _CandidatesBadge extends StatelessWidget {
     );
   }
 }
-

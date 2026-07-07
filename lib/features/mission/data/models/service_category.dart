@@ -33,120 +33,262 @@ class ServiceCategory {
   static const String allFilterLabel = 'Toutes';
 
   static const List<ServiceCategory> all = [
-    menage, jardinage, bricolage, plomberie, electricite, maconnerie, mecanique,
-    gardeEnfant, aidePersonnesAgees, demenagement, petsitting, cours, autre,
+    menage,
+    jardinage,
+    bricolage,
+    plomberie,
+    electricite,
+    maconnerie,
+    mecanique,
+    gardeEnfant,
+    aidePersonnesAgees,
+    demenagement,
+    petsitting,
+    cours,
+    autre,
   ];
 
   static const ServiceCategory menage = ServiceCategory(
-    id: 'menage', name: 'Ménage', icon: Icons.cleaning_services_rounded, color: AppColors.categoryMenage,
+    id: 'menage',
+    name: 'Ménage',
+    icon: Icons.cleaning_services_rounded,
+    color: AppColors.categoryMenage,
     sortOrder: 1,
     isPopular: true,
     description: 'Services de nettoyage et entretien de la maison',
-    subServices: ['Ménage complet', 'Nettoyage cuisine', 'Nettoyage salle de bain', 'Vitres', 'Repassage', 'Nettoyage fin de chantier', 'Nettoyage après déménagement'],
+    subServices: [
+      'Ménage complet',
+      'Nettoyage cuisine',
+      'Nettoyage salle de bain',
+      'Vitres',
+      'Repassage',
+      'Nettoyage fin de chantier',
+      'Nettoyage après déménagement',
+    ],
     popularTags: ['régulier', 'ponctuel', 'produits fournis', 'écologique'],
     aliases: ['nettoyage', 'housekeeping'],
   );
 
   static const ServiceCategory jardinage = ServiceCategory(
-    id: 'jardinage', name: 'Jardinage', icon: Icons.grass_rounded, color: AppColors.categoryJardinage,
+    id: 'jardinage',
+    name: 'Jardinage',
+    icon: Icons.grass_rounded,
+    color: AppColors.categoryJardinage,
     sortOrder: 2,
     isPopular: true,
     description: 'Entretien de jardins, terrasses et espaces verts',
-    subServices: ['Tonte pelouse', 'Taille haies', 'Désherbage', 'Plantation', 'Élagage', 'Arrosage', 'Entretien potager', 'Évacuation déchets verts'],
-    popularTags: ['petit jardin', 'grand terrain', 'outils fournis', 'régulier'],
+    subServices: [
+      'Tonte pelouse',
+      'Taille haies',
+      'Désherbage',
+      'Plantation',
+      'Élagage',
+      'Arrosage',
+      'Entretien potager',
+      'Évacuation déchets verts',
+    ],
+    popularTags: [
+      'petit jardin',
+      'grand terrain',
+      'outils fournis',
+      'régulier',
+    ],
     aliases: ['jardin', 'espaces verts'],
   );
 
   static const ServiceCategory bricolage = ServiceCategory(
-    id: 'bricolage', name: 'Bricolage', icon: Icons.handyman_rounded, color: AppColors.categoryBricolage,
+    id: 'bricolage',
+    name: 'Bricolage',
+    icon: Icons.handyman_rounded,
+    color: AppColors.categoryBricolage,
     sortOrder: 3,
     isPopular: true,
     description: 'Petits travaux et réparations diverses',
-    subServices: ['Montage meubles', 'Petites réparations', 'Peinture', 'Pose étagères', 'Fixations murales', 'Pose rideaux/stores', 'Petite menuiserie'],
+    subServices: [
+      'Montage meubles',
+      'Petites réparations',
+      'Peinture',
+      'Pose étagères',
+      'Fixations murales',
+      'Pose rideaux/stores',
+      'Petite menuiserie',
+    ],
     popularTags: ['IKEA', 'rapide', 'outillage complet'],
     aliases: ['brico', 'petits travaux', 'handyman'],
   );
 
   static const ServiceCategory plomberie = ServiceCategory(
-    id: 'plomberie', name: 'Plomberie', icon: Icons.plumbing_rounded, color: AppColors.categoryPlomberie,
+    id: 'plomberie',
+    name: 'Plomberie',
+    icon: Icons.plumbing_rounded,
+    color: AppColors.categoryPlomberie,
     sortOrder: 4,
     isPopular: true,
     description: 'Réparations et installations sanitaires',
-    subServices: ['Fuite d\'eau', 'Débouchage', 'Installation robinet', 'Réparation WC', 'Chauffe-eau', 'Raccordement', 'Remplacement joints'],
+    subServices: [
+      'Fuite d\'eau',
+      'Débouchage',
+      'Installation robinet',
+      'Réparation WC',
+      'Chauffe-eau',
+      'Raccordement',
+      'Remplacement joints',
+    ],
     popularTags: ['urgence', 'devis gratuit', 'garantie'],
     aliases: ['plombier'],
   );
 
   static const ServiceCategory electricite = ServiceCategory(
-    id: 'electricite', name: 'Électricité', icon: Icons.electrical_services_rounded, color: AppColors.categoryElectricite,
+    id: 'electricite',
+    name: 'Électricité',
+    icon: Icons.electrical_services_rounded,
+    color: AppColors.categoryElectricite,
     sortOrder: 5,
     isPopular: true,
     description: 'Installations et dépannages électriques',
-    subServices: ['Prise électrique', 'Interrupteur', 'Luminaire', 'Dépannage', 'Tableau électrique', 'Mise aux normes', 'Installation domotique', 'Passage de câbles'],
+    subServices: [
+      'Prise électrique',
+      'Interrupteur',
+      'Luminaire',
+      'Dépannage',
+      'Tableau électrique',
+      'Mise aux normes',
+      'Installation domotique',
+      'Passage de câbles',
+    ],
     popularTags: ['certifié', 'mise aux normes', 'urgence'],
     aliases: ['électricité', 'electricien', 'elec'],
   );
 
   static const ServiceCategory maconnerie = ServiceCategory(
-    id: 'maconnerie', name: 'Maçonnerie', icon: Icons.foundation_rounded, color: AppColors.categoryMaconnerie,
+    id: 'maconnerie',
+    name: 'Maçonnerie',
+    icon: Icons.foundation_rounded,
+    color: AppColors.categoryMaconnerie,
     sortOrder: 6,
     isPopular: true,
     description: 'Travaux de maçonnerie, carrelage et revêtements',
-    subServices: ['Carrelage', 'Dallage', 'Pose de parquet', 'Enduit / crépi', 'Petite maçonnerie', 'Réparation mur / sol', 'Ragréage', 'Montage cloison'],
+    subServices: [
+      'Carrelage',
+      'Dallage',
+      'Pose de parquet',
+      'Enduit / crépi',
+      'Petite maçonnerie',
+      'Réparation mur / sol',
+      'Ragréage',
+      'Montage cloison',
+    ],
     popularTags: ['intérieur', 'extérieur', 'rénovation', 'neuf'],
     aliases: ['maçon', 'carrelage', 'travaux'],
   );
 
   static const ServiceCategory mecanique = ServiceCategory(
-    id: 'mecanique', name: 'Mécanique', icon: Icons.build_rounded, color: AppColors.categoryMecanique,
+    id: 'mecanique',
+    name: 'Mécanique',
+    icon: Icons.build_rounded,
+    color: AppColors.categoryMecanique,
     sortOrder: 7,
     isPopular: true,
     description: 'Entretien et réparation automobile',
-    subServices: ['Vidange', 'Changement de pneus', 'Freins', 'Batterie', 'Courroie de distribution', 'Diagnostic électronique', 'Révision complète', 'Carrosserie mineure'],
+    subServices: [
+      'Vidange',
+      'Changement de pneus',
+      'Freins',
+      'Batterie',
+      'Courroie de distribution',
+      'Diagnostic électronique',
+      'Révision complète',
+      'Carrosserie mineure',
+    ],
     popularTags: ['à domicile', 'toutes marques', 'urgence', 'devis gratuit'],
     aliases: ['mécanicien', 'voiture', 'auto', 'garage'],
   );
 
   static const ServiceCategory gardeEnfant = ServiceCategory(
-    id: 'garde_enfant', name: 'Garde enfant', icon: Icons.child_care_rounded, color: AppColors.categoryGardeEnfant,
+    id: 'garde_enfant',
+    name: 'Garde enfant',
+    icon: Icons.child_care_rounded,
+    color: AppColors.categoryGardeEnfant,
     sortOrder: 8,
     isPopular: true,
     description: 'Garde d\'enfants à domicile ou en sortie',
-    subServices: ['Garde à domicile', 'Sortie d\'école', 'Garde le soir', 'Garde le week-end', 'Baby-sitting ponctuel', 'Aide aux devoirs', 'Activités enfants'],
+    subServices: [
+      'Garde à domicile',
+      'Sortie d\'école',
+      'Garde le soir',
+      'Garde le week-end',
+      'Baby-sitting ponctuel',
+      'Aide aux devoirs',
+      'Activités enfants',
+    ],
     popularTags: ['0-3 ans', '3-6 ans', '6-12 ans', 'diplômé', 'expérimenté'],
     aliases: ['baby-sitting', 'babysitting', 'garde enfants', 'nounou'],
   );
 
   static const ServiceCategory aidePersonnesAgees = ServiceCategory(
-    id: 'aide_personnes_agees', name: 'Aide séniors', icon: Icons.elderly_rounded, color: AppColors.categoryAidePersonnesAgees,
+    id: 'aide_personnes_agees',
+    name: 'Aide séniors',
+    icon: Icons.elderly_rounded,
+    color: AppColors.categoryAidePersonnesAgees,
     sortOrder: 9,
     isPopular: true,
     description: 'Accompagnement et aide à domicile pour personnes âgées',
-    subServices: ['Aide à la toilette', 'Préparation des repas', 'Courses', 'Accompagnement médical', 'Compagnie / visite', 'Aide au ménage', 'Aide administrative'],
+    subServices: [
+      'Aide à la toilette',
+      'Préparation des repas',
+      'Courses',
+      'Accompagnement médical',
+      'Compagnie / visite',
+      'Aide au ménage',
+      'Aide administrative',
+    ],
     popularTags: ['domicile', 'régulier', 'ponctuel', 'diplômé'],
     aliases: ['senior', 'personnes âgées', 'aide domicile', 'auxiliaire vie'],
   );
 
   static const ServiceCategory demenagement = ServiceCategory(
-    id: 'demenagement', name: 'Déménagement', icon: Icons.local_shipping_rounded, color: AppColors.categoryDemenagement,
+    id: 'demenagement',
+    name: 'Déménagement',
+    icon: Icons.local_shipping_rounded,
+    color: AppColors.categoryDemenagement,
     sortOrder: 10,
     description: 'Aide au déménagement et transport',
-    subServices: ['Aide déménagement', 'Transport meubles', 'Emballage', 'Montage/démontage', 'Portage', 'Location camion avec chauffeur'],
+    subServices: [
+      'Aide déménagement',
+      'Transport meubles',
+      'Emballage',
+      'Montage/démontage',
+      'Portage',
+      'Location camion avec chauffeur',
+    ],
     popularTags: ['petit volume', 'grand volume', 'avec véhicule', 'muscles'],
     aliases: ['transport', 'déménagement'],
   );
 
   static const ServiceCategory petsitting = ServiceCategory(
-    id: 'petsitting', name: 'Pet-sitting', icon: Icons.pets_rounded, color: AppColors.categoryPetsitting,
+    id: 'petsitting',
+    name: 'Pet-sitting',
+    icon: Icons.pets_rounded,
+    color: AppColors.categoryPetsitting,
     sortOrder: 11,
     description: 'Garde et promenade d\'animaux de compagnie',
-    subServices: ['Garde chien', 'Garde chat', 'Promenade', 'Visite à domicile', 'Garde NAC', 'Garde longue durée'],
+    subServices: [
+      'Garde chien',
+      'Garde chat',
+      'Promenade',
+      'Visite à domicile',
+      'Garde NAC',
+      'Garde longue durée',
+    ],
     popularTags: ['expérimenté', 'à domicile', 'chez le pet-sitter'],
     aliases: ['animaux', 'pet sitting', 'garde animaux'],
   );
 
   static const ServiceCategory autre = ServiceCategory(
-    id: 'autre', name: 'Autre', icon: Icons.more_horiz_rounded, color: AppColors.categoryAutre,
+    id: 'autre',
+    name: 'Autre',
+    icon: Icons.more_horiz_rounded,
+    color: AppColors.categoryAutre,
     sortOrder: 13,
     description: 'Tout autre service non listé',
     subServices: ['Service à définir'],
@@ -154,10 +296,22 @@ class ServiceCategory {
   );
 
   static const ServiceCategory cours = ServiceCategory(
-    id: 'cours', name: 'Cours', icon: Icons.school_rounded, color: AppColors.categoryCours,
+    id: 'cours',
+    name: 'Cours',
+    icon: Icons.school_rounded,
+    color: AppColors.categoryCours,
     sortOrder: 12,
     description: 'Cours particuliers et soutien scolaire',
-    subServices: ['Mathématiques', 'Français', 'Anglais', 'Physique-Chimie', 'SVT', 'Musique', 'Informatique', 'Langues étrangères'],
+    subServices: [
+      'Mathématiques',
+      'Français',
+      'Anglais',
+      'Physique-Chimie',
+      'SVT',
+      'Musique',
+      'Informatique',
+      'Langues étrangères',
+    ],
     popularTags: ['primaire', 'collège', 'lycée', 'supérieur', 'adulte'],
     aliases: ['soutien scolaire', 'prof'],
   );
@@ -227,13 +381,19 @@ class ServiceCategory {
     return all.where((cat) {
       if (_normalizeLookup(cat.name).contains(lowerQuery)) return true;
       if (_normalizeLookup(cat.description).contains(lowerQuery)) return true;
-      if (cat.subServices.any((s) => _normalizeLookup(s).contains(lowerQuery))) {
+      if (cat.subServices.any(
+        (s) => _normalizeLookup(s).contains(lowerQuery),
+      )) {
         return true;
       }
-      if (cat.popularTags.any((tag) => _normalizeLookup(tag).contains(lowerQuery))) {
+      if (cat.popularTags.any(
+        (tag) => _normalizeLookup(tag).contains(lowerQuery),
+      )) {
         return true;
       }
-      return cat.aliases.any((alias) => _normalizeLookup(alias).contains(lowerQuery));
+      return cat.aliases.any(
+        (alias) => _normalizeLookup(alias).contains(lowerQuery),
+      );
     }).toList();
   }
 

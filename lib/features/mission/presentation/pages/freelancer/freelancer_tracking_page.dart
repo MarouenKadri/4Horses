@@ -50,9 +50,9 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
   }
 
   void _initBroadcastChannel() {
-    _broadcastChannel = Supabase.instance.client
-        .channel('tracking:${_mission.id}')
-      ..subscribe();
+    _broadcastChannel = Supabase.instance.client.channel(
+      'tracking:${_mission.id}',
+    )..subscribe();
   }
 
   @override
@@ -86,15 +86,16 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
       _onNewPosition(LatLng(pos.latitude, pos.longitude), moveMap: true);
     } catch (_) {}
 
-    _positionSub = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 10,
-      ),
-    ).listen((pos) {
-      if (!mounted) return;
-      _onNewPosition(LatLng(pos.latitude, pos.longitude));
-    });
+    _positionSub =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 10,
+          ),
+        ).listen((pos) {
+          if (!mounted) return;
+          _onNewPosition(LatLng(pos.latitude, pos.longitude));
+        });
   }
 
   void _onNewPosition(LatLng latlng, {bool moveMap = false}) {
@@ -108,11 +109,16 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
       event: 'position',
       payload: {'lat': latlng.latitude, 'lng': latlng.longitude},
     );
-    Supabase.instance.client.from('missions').update({
-      'tracking_lat': latlng.latitude,
-      'tracking_lng': latlng.longitude,
-      'tracking_updated_at': DateTime.now().toIso8601String(),
-    }).eq('id', _mission.id).then((_) {}).catchError((_) {});
+    Supabase.instance.client
+        .from('missions')
+        .update({
+          'tracking_lat': latlng.latitude,
+          'tracking_lng': latlng.longitude,
+          'tracking_updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', _mission.id)
+        .then((_) {})
+        .catchError((_) {});
   }
 
   // ── Géocodage ────────────────────────────────────────────────
@@ -161,17 +167,17 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
 
     final (title, body) = switch (newStatus) {
       MissionStatus.onTheWay => (
-          'Prestataire en route',
-          '${_mission.assignedPresta?.name ?? 'Votre prestataire'} est en route pour "${_mission.title}"',
-        ),
+        'Prestataire en route',
+        '${_mission.assignedPresta?.name ?? 'Votre prestataire'} est en route pour "${_mission.title}"',
+      ),
       MissionStatus.inProgress => (
-          'Mission demarree',
-          '"${_mission.title}" est maintenant en cours',
-        ),
+        'Mission demarree',
+        '"${_mission.title}" est maintenant en cours',
+      ),
       MissionStatus.completionRequested => (
-          'Fin de mission signalee',
-          '"${_mission.title}" attend maintenant la reponse du client',
-        ),
+        'Fin de mission signalee',
+        '"${_mission.title}" attend maintenant la reponse du client',
+      ),
       _ => ('', ''),
     };
 
@@ -196,13 +202,17 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
       child: _StartCodeSheet(
         missionTitle: _mission.title,
         onSubmit: (code) async {
-          final ok = await context
-              .read<MissionProvider>()
-              .unlockMissionStart(_mission.id, code);
+          final ok = await context.read<MissionProvider>().unlockMissionStart(
+            _mission.id,
+            code,
+          );
           if (!mounted) return ok;
           if (ok) {
-            showAppSnackBar(context, 'Code valide. Mission demarree.',
-                icon: Icons.check_circle_rounded);
+            showAppSnackBar(
+              context,
+              'Code valide. Mission demarree.',
+              icon: Icons.check_circle_rounded,
+            );
           }
           return ok;
         },
@@ -211,13 +221,13 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
   }
 
   String get _pageTitle => switch (_mission.status) {
-        MissionStatus.confirmed => 'Pret pour le code',
-        MissionStatus.onTheWay => 'En route',
-        MissionStatus.inProgress => 'Mission en cours',
-        MissionStatus.completionRequested => 'Fin signalee',
-        MissionStatus.awaitingRelease => 'Mission terminee',
-        _ => 'Suivi de mission',
-      };
+    MissionStatus.confirmed => 'Pret pour le code',
+    MissionStatus.onTheWay => 'En route',
+    MissionStatus.inProgress => 'Mission en cours',
+    MissionStatus.completionRequested => 'Fin signalee',
+    MissionStatus.awaitingRelease => 'Mission terminee',
+    _ => 'Suivi de mission',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -252,18 +262,27 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
               left: 16,
               right: 16,
               child: AppSurfaceCard(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 color: context.colors.errorLight,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: AppShadows.card,
                 child: Row(
                   children: [
-                    const Icon(Icons.location_off_rounded, size: 18, color: AppColors.error),
+                    const Icon(
+                      Icons.location_off_rounded,
+                      size: 18,
+                      color: AppColors.error,
+                    ),
                     AppGap.w8,
                     Expanded(
                       child: Text(
                         'Localisation non disponible. Vérifiez les permissions.',
-                        style: context.text.bodySmall?.copyWith(color: AppColors.error),
+                        style: context.text.bodySmall?.copyWith(
+                          color: AppColors.error,
+                        ),
                       ),
                     ),
                   ],
@@ -308,7 +327,9 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
                 boxShadow: AppShadows.card,
                 child: Text(
                   _pageTitle,
-                  style: context.text.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                  style: context.text.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
@@ -349,9 +370,9 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
                       : null,
                   onEnterStartCode:
                       _mission.status == MissionStatus.confirmed ||
-                              _mission.status == MissionStatus.onTheWay
-                          ? _openStartCodeSheet
-                          : null,
+                          _mission.status == MissionStatus.onTheWay
+                      ? _openStartCodeSheet
+                      : null,
                   startCodeHint: _mission.startCode,
                   onCopyHint: _mission.startCode == null
                       ? null
@@ -501,7 +522,11 @@ class _FreelancerTrackingPanel extends StatelessWidget {
                 color: mission.status.color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: Icon(mission.status.icon, color: mission.status.color, size: 28),
+              child: Icon(
+                mission.status.icon,
+                color: mission.status.color,
+                size: 28,
+              ),
             ),
             AppGap.w14,
             Expanded(
@@ -510,13 +535,16 @@ class _FreelancerTrackingPanel extends StatelessWidget {
                 children: [
                   Text(
                     mission.title,
-                    style: context.text.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                    style: context.text.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   AppGap.h4,
                   Row(
                     children: [
                       MissionStatusBadge(status: mission.status, compact: true),
-                      if (etaLabel != null && mission.status == MissionStatus.onTheWay) ...[
+                      if (etaLabel != null &&
+                          mission.status == MissionStatus.onTheWay) ...[
                         AppGap.w10,
                         Text(
                           etaLabel!,
@@ -592,7 +620,11 @@ class _FreelancerTrackingPanel extends StatelessWidget {
         AppGap.h16,
         Row(
           children: [
-            const Icon(Icons.location_on_rounded, size: 16, color: AppColors.error),
+            const Icon(
+              Icons.location_on_rounded,
+              size: 16,
+              color: AppColors.error,
+            ),
             AppGap.w6,
             Expanded(
               child: Text(

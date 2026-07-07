@@ -127,12 +127,20 @@ class _MissionMapPageState extends State<MissionMapPage> {
                 color: Colors.white.withValues(alpha: 0.88),
                 shape: BoxShape.circle,
                 boxShadow: const [
-                  BoxShadow(color: Colors.black12, blurRadius: 18, offset: Offset(0, 8)),
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 18,
+                    offset: Offset(0, 8),
+                  ),
                 ],
               ),
               child: IconButton(
                 padding: EdgeInsets.zero,
-                icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textTertiary),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 18,
+                  color: context.colors.textTertiary,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -170,7 +178,10 @@ class _AddressCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.78),
             borderRadius: const BorderRadius.all(Radius.circular(24)),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.72), width: 0.8),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.72),
+              width: 0.8,
+            ),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
@@ -184,7 +195,11 @@ class _AddressCard extends StatelessWidget {
             children: [
               const Padding(
                 padding: EdgeInsets.only(top: 4),
-                child: Icon(Icons.location_on_outlined, color: AppColors.mapPin, size: 18),
+                child: Icon(
+                  Icons.location_on_outlined,
+                  color: AppColors.mapPin,
+                  size: 18,
+                ),
               ),
               AppGap.w12,
               Expanded(

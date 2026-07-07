@@ -49,7 +49,10 @@ class FreelancerClientCard extends StatelessWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: context.colors.border, width: 1.5),
+                    border: Border.all(
+                      color: context.colors.border,
+                      width: 1.5,
+                    ),
                   ),
                   clipBehavior: Clip.hardEdge,
                   child: client.avatarUrl.isNotEmpty
@@ -166,37 +169,37 @@ class FreelancerLocationShareCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final config = switch (status) {
       MissionStatus.confirmed => (
-          icon: Icons.navigation_rounded,
-          title: 'Code client requis',
-          subtitle:
-              'Quand vous arrivez, demandez le code de demarrage au client pour lancer officiellement la mission.',
-          cta: 'Lancer le suivi',
-          accent: AppColors.secondary,
-        ),
+        icon: Icons.navigation_rounded,
+        title: 'Code client requis',
+        subtitle:
+            'Quand vous arrivez, demandez le code de demarrage au client pour lancer officiellement la mission.',
+        cta: 'Lancer le suivi',
+        accent: AppColors.secondary,
+      ),
       MissionStatus.onTheWay => (
-          icon: Icons.location_searching_rounded,
-          title: 'En route vers la mission',
-          subtitle:
-              'Une fois arrive, entrez le code donne par le client pour demarrer la mission.',
-          cta: 'Gerer le suivi',
-          accent: AppColors.primary,
-        ),
+        icon: Icons.location_searching_rounded,
+        title: 'En route vers la mission',
+        subtitle:
+            'Une fois arrive, entrez le code donne par le client pour demarrer la mission.',
+        cta: 'Gerer le suivi',
+        accent: AppColors.primary,
+      ),
       MissionStatus.inProgress => (
-          icon: Icons.my_location_rounded,
-          title: 'Position active sur mission',
-          subtitle:
-              'Le client peut verifier que vous etes bien sur place pendant l intervention.',
-          cta: 'Voir le pilotage',
-          accent: AppColors.primary,
-        ),
+        icon: Icons.my_location_rounded,
+        title: 'Position active sur mission',
+        subtitle:
+            'Le client peut verifier que vous etes bien sur place pendant l intervention.',
+        cta: 'Voir le pilotage',
+        accent: AppColors.primary,
+      ),
       _ => (
-          icon: Icons.location_disabled_rounded,
-          title: 'Partage de position indisponible',
-          subtitle:
-              'Le suivi live apparait uniquement pour une mission confirmee ou en cours.',
-          cta: 'Voir le pilotage',
-          accent: context.colors.textTertiary,
-        ),
+        icon: Icons.location_disabled_rounded,
+        title: 'Partage de position indisponible',
+        subtitle:
+            'Le suivi live apparait uniquement pour une mission confirmee ou en cours.',
+        cta: 'Voir le pilotage',
+        accent: context.colors.textTertiary,
+      ),
     };
 
     return DetailSectionCard(
@@ -216,15 +219,9 @@ class FreelancerLocationShareCard extends StatelessWidget {
             ),
           ),
           AppGap.h8,
-          Text(
-            config.title,
-            style: context.missionPrimaryValueStyle,
-          ),
+          Text(config.title, style: context.missionPrimaryValueStyle),
           AppGap.h14,
-          Text(
-            config.subtitle,
-            style: context.missionEmphasisBodyStyle,
-          ),
+          Text(config.subtitle, style: context.missionEmphasisBodyStyle),
           AppGap.h16,
           Container(
             width: double.infinity,
@@ -254,10 +251,7 @@ class FreelancerLocationShareCard extends StatelessWidget {
             ),
           ),
           AppGap.h16,
-          DetailTealButton(
-            label: config.cta,
-            onTap: onOpenMissionPilot,
-          ),
+          DetailTealButton(label: config.cta, onTap: onOpenMissionPilot),
         ],
       ),
     );
@@ -449,7 +443,9 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
   }
 
   void _onMsg() {
-    if (mounted) setState(() => _messageLength = widget.messageController.text.length);
+    if (mounted) {
+      setState(() => _messageLength = widget.messageController.text.length);
+    }
   }
 
   @override
@@ -463,7 +459,8 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
     final h = MediaQuery.of(context).size.height;
     final bottomPad = MediaQuery.of(context).padding.bottom;
     final priceText = widget.priceController.text;
-    final canSubmit = priceText.isNotEmpty &&
+    final canSubmit =
+        priceText.isNotEmpty &&
         int.tryParse(priceText) != null &&
         int.parse(priceText) > 0;
 
@@ -544,26 +541,27 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                         letterSpacing: -1.2,
                         color: context.colors.textPrimary,
                       ),
-                      decoration: AppInputDecorations.formField(
-                        context,
-                        hintText: '0',
-                        hintStyle: context.text.displayMedium?.copyWith(
-                          fontSize: 38,
-                          fontWeight: FontWeight.w300,
-                          letterSpacing: -1.2,
-                          color: context.colors.border,
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                        noBorder: true,
-                        fillColor: Colors.transparent,
-                      ).copyWith(
-                        prefixText: '€ ',
-                        prefixStyle: context.text.headlineLarge?.copyWith(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w300,
-                          color: context.colors.textPrimary,
-                        ),
-                      ),
+                      decoration:
+                          AppInputDecorations.formField(
+                            context,
+                            hintText: '0',
+                            hintStyle: context.text.displayMedium?.copyWith(
+                              fontSize: 38,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: -1.2,
+                              color: context.colors.border,
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            noBorder: true,
+                            fillColor: Colors.transparent,
+                          ).copyWith(
+                            prefixText: '€ ',
+                            prefixStyle: context.text.headlineLarge?.copyWith(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w300,
+                              color: context.colors.textPrimary,
+                            ),
+                          ),
                     ),
                     AppGap.h8,
                     Wrap(
@@ -626,8 +624,12 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                       maxLines: 5,
                       maxLength: 400,
                       buildCounter:
-                          (_, {required currentLength, required isFocused, maxLength}) =>
-                              null,
+                          (
+                            _, {
+                            required currentLength,
+                            required isFocused,
+                            maxLength,
+                          }) => null,
                       style: context.missionBodyStyle.copyWith(height: 1.5),
                       decoration: AppInputDecorations.formField(
                         context,
@@ -665,9 +667,9 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                 isEnabled: canSubmit,
                 onPressed: canSubmit
                     ? () => widget.onSubmit(
-                          double.parse(widget.priceController.text),
-                          widget.messageController.text,
-                        )
+                        double.parse(widget.priceController.text),
+                        widget.messageController.text,
+                      )
                     : null,
               ),
             ),

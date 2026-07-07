@@ -73,10 +73,7 @@ class MissionArchiveCard extends StatelessWidget {
               const SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerLeft,
-                child: MissionFinanceStatusBadge(
-                  mission: mission,
-                  role: role,
-                ),
+                child: MissionFinanceStatusBadge(mission: mission, role: role),
               ),
             ],
           ],

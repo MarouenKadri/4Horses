@@ -40,7 +40,8 @@ class StepDate extends StatelessWidget {
           const SizedBox(height: 30),
           Row(
             children: quickDates.map((date) {
-              final isSelected = selectedDate?.day == date.day &&
+              final isSelected =
+                  selectedDate?.day == date.day &&
                   selectedDate?.month == date.month &&
                   selectedDate?.year == date.year;
               final isToday = date.day == now.day && date.month == now.month;
@@ -50,13 +51,21 @@ class StepDate extends StatelessWidget {
                   onTap: () {
                     HapticFeedback.selectionClick();
                     onDateSelected(date);
-                    Future.delayed(const Duration(milliseconds: 150), onCompleted);
+                    Future.delayed(
+                      const Duration(milliseconds: 150),
+                      onCompleted,
+                    );
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
                     curve: Curves.easeOut,
-                    margin: EdgeInsets.only(right: date != quickDates.last ? 10 : 0),
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 6),
+                    margin: EdgeInsets.only(
+                      right: date != quickDates.last ? 10 : 0,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: context.colors.surface,
                       borderRadius: BorderRadius.circular(18),
@@ -70,7 +79,9 @@ class StepDate extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          isToday ? 'AUJ.' : _dayName(date.weekday).toUpperCase(),
+                          isToday
+                              ? 'AUJ.'
+                              : _dayName(date.weekday).toUpperCase(),
                           style: context.missionStepSectionLabelStyle.copyWith(
                             fontSize: AppFontSize.tinyHalf,
                             fontWeight: FontWeight.w500,
@@ -129,7 +140,7 @@ class StepDate extends StatelessWidget {
                 builder: (ctx, child) => Theme(
                   data: Theme.of(ctx).copyWith(
                     colorScheme: const ColorScheme.light(
-                      primary: AppColors.primary,
+                      primary: AppColors.stepBlue,
                       onPrimary: Colors.white,
                       surface: Colors.white,
                       onSurface: AppColors.inkDark,
@@ -153,9 +164,19 @@ class StepDate extends StatelessWidget {
   String _dayName(int w) =>
       ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'][w - 1];
   String _monthName(int m) => [
-        'jan', 'fev', 'mar', 'avr', 'mai', 'juin',
-        'juil', 'aout', 'sep', 'oct', 'nov', 'dec'
-      ][m - 1];
+    'jan',
+    'fev',
+    'mar',
+    'avr',
+    'mai',
+    'juin',
+    'juil',
+    'aout',
+    'sep',
+    'oct',
+    'nov',
+    'dec',
+  ][m - 1];
 }
 
 /// ─────────────────────────────────────────────────────────────
@@ -208,37 +229,38 @@ class StepTime extends StatelessWidget {
             mainAxisSpacing: 10,
             childAspectRatio: 1.55,
             children: quickTimes.map((time) {
-              final isSelected = selectedTime?.hour == time.hour &&
+              final isSelected =
+                  selectedTime?.hour == time.hour &&
                   selectedTime?.minute == time.minute;
-              return Opacity(
-                opacity: 1,
-                child: GestureDetector(
-                  onTap: () {
-                          HapticFeedback.selectionClick();
-                          onTimeSelected(time);
-                          Future.delayed(const Duration(milliseconds: 180), onCompleted);
-                        },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOut,
-                    decoration: BoxDecoration(
+              return GestureDetector(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  onTimeSelected(time);
+                  Future.delayed(
+                    const Duration(milliseconds: 180),
+                    onCompleted,
+                  );
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOut,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? context.colors.textPrimary.withValues(alpha: 0.08)
+                        : context.colors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
                       color: isSelected
-                          ? context.colors.textPrimary.withValues(alpha: 0.08)
-                          : context.colors.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isSelected
-                            ? context.colors.textPrimary
-                            : context.colors.border,
-                        width: isSelected ? 1.5 : 1,
-                      ),
+                          ? context.colors.textPrimary
+                          : context.colors.border,
+                      width: isSelected ? 1.5 : 1,
                     ),
-                    child: Center(
-                      child: Text(
-                        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-                        style: context.missionButtonStyle.copyWith(
-                          color: context.colors.textPrimary,
-                        ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+                      style: context.missionButtonStyle.copyWith(
+                        color: context.colors.textPrimary,
                       ),
                     ),
                   ),

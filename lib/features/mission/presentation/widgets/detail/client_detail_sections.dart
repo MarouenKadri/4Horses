@@ -130,15 +130,9 @@ class ClientPrestaCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Convenu',
-                    style: context.missionDarkOverlineStyle,
-                  ),
+                  Text('Convenu', style: context.missionDarkOverlineStyle),
                   AppGap.h4,
-                  Text(
-                    agreedPrice,
-                    style: context.missionDarkValueStyle,
-                  ),
+                  Text(agreedPrice, style: context.missionDarkValueStyle),
                 ],
               ),
             ),
@@ -154,7 +148,10 @@ class ClientPrestaCard extends StatelessWidget {
                   height: 56,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: context.colors.border, width: 1.6),
+                    border: Border.all(
+                      color: context.colors.border,
+                      width: 1.6,
+                    ),
                   ),
                   clipBehavior: Clip.hardEdge,
                   child: presta.avatarUrl.isNotEmpty
@@ -273,44 +270,44 @@ class ClientTrackingCard extends StatelessWidget {
     final startCode = mission.startCode;
     final config = switch (mission.status) {
       MissionStatus.confirmed => (
-          icon: Icons.schedule_send_rounded,
-          title: 'Code de demarrage pret',
-          subtitle:
-              'Communiquez ce code a $prestaName uniquement quand il arrive pour lancer la mission.',
-          accent: context.colors.textTertiary,
-          cta: 'Voir le suivi',
-        ),
+        icon: Icons.schedule_send_rounded,
+        title: 'Code de demarrage pret',
+        subtitle:
+            'Communiquez ce code a $prestaName uniquement quand il arrive pour lancer la mission.',
+        accent: context.colors.textTertiary,
+        cta: 'Voir le suivi',
+      ),
       MissionStatus.onTheWay => (
-          icon: Icons.navigation_rounded,
-          title: '$prestaName est en route',
-          subtitle:
-              'Le suivi en direct doit vous permettre de voir sa progression jusqu a l adresse.',
-          accent: AppColors.secondary,
-          cta: 'Ouvrir le suivi',
-        ),
+        icon: Icons.navigation_rounded,
+        title: '$prestaName est en route',
+        subtitle:
+            'Le suivi en direct doit vous permettre de voir sa progression jusqu a l adresse.',
+        accent: AppColors.secondary,
+        cta: 'Ouvrir le suivi',
+      ),
       MissionStatus.inProgress => (
-          icon: Icons.my_location_rounded,
-          title: 'Prestataire sur place',
-          subtitle:
-              '$prestaName est actuellement sur la mission. Le suivi reste visible pendant l intervention.',
-          accent: AppColors.primary,
-          cta: 'Voir la position',
-        ),
+        icon: Icons.my_location_rounded,
+        title: 'Prestataire sur place',
+        subtitle:
+            '$prestaName est actuellement sur la mission. Le suivi reste visible pendant l intervention.',
+        accent: AppColors.primary,
+        cta: 'Voir la position',
+      ),
       MissionStatus.completionRequested => (
-          icon: Icons.task_alt_rounded,
-          title: 'Le prestataire a signale la fin',
-          subtitle:
-              'Verifiez la prestation puis confirmez la mission ou signalez un probleme.',
-          accent: AppColors.warning,
-          cta: 'Verifier la mission',
-        ),
+        icon: Icons.task_alt_rounded,
+        title: 'Le prestataire a signale la fin',
+        subtitle:
+            'Verifiez la prestation puis confirmez la mission ou signalez un probleme.',
+        accent: AppColors.warning,
+        cta: 'Verifier la mission',
+      ),
       _ => (
-          icon: Icons.location_disabled_rounded,
-          title: 'Suivi indisponible',
-          subtitle: 'Aucune position live a afficher pour cette mission.',
-          accent: context.colors.textTertiary,
-          cta: null,
-        ),
+        icon: Icons.location_disabled_rounded,
+        title: 'Suivi indisponible',
+        subtitle: 'Aucune position live a afficher pour cette mission.',
+        accent: context.colors.textTertiary,
+        cta: null,
+      ),
     };
 
     return DetailSectionCard(
@@ -330,15 +327,9 @@ class ClientTrackingCard extends StatelessWidget {
             ),
           ),
           AppGap.h8,
-          Text(
-            config.title,
-            style: context.missionPrimaryValueStyle,
-          ),
+          Text(config.title, style: context.missionPrimaryValueStyle),
           AppGap.h14,
-          Text(
-            config.subtitle,
-            style: context.missionEmphasisBodyStyle,
-          ),
+          Text(config.subtitle, style: context.missionEmphasisBodyStyle),
           if (startCode != null &&
               (mission.status == MissionStatus.confirmed ||
                   mission.status == MissionStatus.onTheWay)) ...[
@@ -378,9 +369,7 @@ class ClientTrackingCard extends StatelessWidget {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(999),
                       onTap: () async {
-                        await Clipboard.setData(
-                          ClipboardData(text: startCode),
-                        );
+                        await Clipboard.setData(ClipboardData(text: startCode));
                         if (context.mounted) {
                           showAppSnackBar(
                             context,
@@ -449,8 +438,8 @@ class ClientTrackingCard extends StatelessWidget {
                     mission.status == MissionStatus.confirmed
                         ? 'Le suivi apparaitra automatiquement quand le prestataire demarrera le trajet.'
                         : mission.status == MissionStatus.completionRequested
-                            ? 'La mission est en attente de votre retour avant de passer au paiement.'
-                            : 'Le tracking live est prevu ici pour suivre le trajet du prestataire.',
+                        ? 'La mission est en attente de votre retour avant de passer au paiement.'
+                        : 'Le tracking live est prevu ici pour suivre le trajet du prestataire.',
                     style: context.missionEmphasisBodyStyle.copyWith(
                       fontSize: AppFontSize.smHalf,
                       height: 1.35,
@@ -462,10 +451,7 @@ class ClientTrackingCard extends StatelessWidget {
           ),
           if (config.cta != null) ...[
             AppGap.h16,
-            DetailTealButton(
-              label: config.cta!,
-              onTap: onOpenTracking,
-            ),
+            DetailTealButton(label: config.cta!, onTap: onOpenTracking),
           ],
         ],
       ),
@@ -557,10 +543,7 @@ class ClientCompletionRequestedCard extends StatelessWidget {
               ),
               AppGap.w10,
               Expanded(
-                child: DetailTealButton(
-                  label: 'Confirmer',
-                  onTap: onConfirm,
-                ),
+                child: DetailTealButton(label: 'Confirmer', onTap: onConfirm),
               ),
             ],
           ),
@@ -623,7 +606,12 @@ class ClientActionSheet extends StatelessWidget {
             title: 'Modifier la mission',
             onTap: onEdit,
           ),
-          Divider(height: 1, indent: 20, endIndent: 20, color: Colors.white.withValues(alpha: 0.12)),
+          Divider(
+            height: 1,
+            indent: 20,
+            endIndent: 20,
+            color: Colors.white.withValues(alpha: 0.12),
+          ),
         ],
         AppActionSheetItem(
           icon: Icons.ios_share_outlined,
@@ -631,7 +619,12 @@ class ClientActionSheet extends StatelessWidget {
           onTap: onShare,
         ),
         if (canCancel) ...[
-          Divider(height: 1, indent: 20, endIndent: 20, color: Colors.white.withValues(alpha: 0.12)),
+          Divider(
+            height: 1,
+            indent: 20,
+            endIndent: 20,
+            color: Colors.white.withValues(alpha: 0.12),
+          ),
           AppActionSheetItem(
             icon: Icons.delete_outline,
             title: 'Annuler la mission',

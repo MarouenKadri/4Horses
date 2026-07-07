@@ -57,17 +57,36 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.mission.title, style: context.text.displaySmall),
+                        Text(
+                          widget.mission.title,
+                          style: context.text.displaySmall,
+                        ),
                         if (presta != null) ...[
                           AppGap.h12,
-                          Row(children: [
-                            UserAvatar(imageUrl: presta.avatarUrl, radius: 22, showVerified: presta.isVerified),
-                            AppGap.w12,
-                            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(presta.name, style: context.text.titleSmall),
-                              RatingWidget(rating: presta.rating, reviewsCount: presta.reviewsCount, compact: true),
-                            ]),
-                          ]),
+                          Row(
+                            children: [
+                              UserAvatar(
+                                imageUrl: presta.avatarUrl,
+                                radius: 22,
+                                showVerified: presta.isVerified,
+                              ),
+                              AppGap.w12,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    presta.name,
+                                    style: context.text.titleSmall,
+                                  ),
+                                  RatingWidget(
+                                    rating: presta.rating,
+                                    reviewsCount: presta.reviewsCount,
+                                    compact: true,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ],
                       ],
                     ),
@@ -88,11 +107,20 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(children: [
-                          const Icon(Icons.payments_rounded, size: 20, color: AppColors.primary),
-                          AppGap.w8,
-                          Text('Récapitulatif du paiement', style: context.text.titleSmall),
-                        ]),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.payments_rounded,
+                              size: 20,
+                              color: AppColors.primary,
+                            ),
+                            AppGap.w8,
+                            Text(
+                              'Récapitulatif du paiement',
+                              style: context.text.titleSmall,
+                            ),
+                          ],
+                        ),
                         AppGap.h16,
                         _PaymentRow(
                           label: 'Montant total bloqué',
@@ -129,7 +157,10 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Notez la prestation (optionnel)', style: context.text.titleSmall),
+                        Text(
+                          'Notez la prestation (optionnel)',
+                          style: context.text.titleSmall,
+                        ),
                         AppGap.h12,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -137,11 +168,17 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
                             return GestureDetector(
                               onTap: () => setState(() => _starRating = i + 1),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 6),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
                                 child: Icon(
-                                  i < _starRating ? Icons.star_rounded : Icons.star_border_rounded,
+                                  i < _starRating
+                                      ? Icons.star_rounded
+                                      : Icons.star_border_rounded,
                                   size: 40,
-                                  color: i < _starRating ? AppColors.rating : context.colors.border,
+                                  color: i < _starRating
+                                      ? AppColors.rating
+                                      : context.colors.border,
                                 ),
                               ),
                             );
@@ -152,7 +189,10 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
                           Center(
                             child: Text(
                               _ratingLabel(_starRating),
-                              style: context.text.bodyMedium?.copyWith(fontWeight: FontWeight.w600, color: AppColors.primary),
+                              style: context.text.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primary,
+                              ),
                             ),
                           ),
                         ],
@@ -174,7 +214,12 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
   Widget _buildActionBar(BuildContext context) {
     return AppSection(
       color: context.colors.surface,
-      padding: EdgeInsets.fromLTRB(20, 12, 20, 12 + MediaQuery.of(context).padding.bottom),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        12,
+        20,
+        12 + MediaQuery.of(context).padding.bottom,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -202,7 +247,10 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
     final reviewProvider = context.read<ReviewProvider>();
     final profile = context.read<ProfileProvider>().profile;
 
-    await missionProvider.updateMissionStatus(widget.mission.id, MissionStatus.closed);
+    await missionProvider.updateMissionStatus(
+      widget.mission.id,
+      MissionStatus.closed,
+    );
 
     // Soumettre l'avis si une note a été donnée
     final presta = widget.mission.assignedPresta;
@@ -220,13 +268,16 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
 
     if (!mounted) return;
 
-    notifProvider.addNotification(AppNotification(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      type: NotifType.payment,
-      title: 'Paiement reçu',
-      body: 'Vous avez reçu ${_prestaAmount.round()} € pour la mission "${widget.mission.title}".',
-      timeAgo: 'À l\'instant',
-    ));
+    notifProvider.addNotification(
+      AppNotification(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        type: NotifType.payment,
+        title: 'Paiement reçu',
+        body:
+            'Vous avez reçu ${_prestaAmount.round()} € pour la mission "${widget.mission.title}".',
+        timeAgo: 'À l\'instant',
+      ),
+    );
 
     Navigator.pop(context);
   }
@@ -246,15 +297,21 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
         final missionProvider = context.read<MissionProvider>();
         final notifProvider = context.read<NotificationProvider>();
 
-        missionProvider.updateMissionStatus(widget.mission.id, MissionStatus.inDispute);
+        missionProvider.updateMissionStatus(
+          widget.mission.id,
+          MissionStatus.inDispute,
+        );
 
-        notifProvider.addNotification(AppNotification(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          type: NotifType.mission,
-          title: 'Litige ouvert',
-          body: 'Un litige a été ouvert pour la mission "${widget.mission.title}".',
-          timeAgo: 'À l\'instant',
-        ));
+        notifProvider.addNotification(
+          AppNotification(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            type: NotifType.mission,
+            title: 'Litige ouvert',
+            body:
+                'Un litige a été ouvert pour la mission "${widget.mission.title}".',
+            timeAgo: 'À l\'instant',
+          ),
+        );
 
         Navigator.pop(context);
       },
@@ -278,7 +335,12 @@ class _PaymentRow extends StatelessWidget {
   final bool bold;
   final Color? color;
 
-  const _PaymentRow({required this.label, required this.amount, this.bold = false, this.color});
+  const _PaymentRow({
+    required this.label,
+    required this.amount,
+    this.bold = false,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -286,12 +348,23 @@ class _PaymentRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: context.text.bodyMedium?.copyWith(fontWeight: bold ? FontWeight.w600 : null)),
+        Text(
+          label,
+          style: context.text.bodyMedium?.copyWith(
+            fontWeight: bold ? FontWeight.w600 : null,
+          ),
+        ),
         Text(
           '${amount.round()} €',
           style: bold
-              ? context.text.headlineMedium?.copyWith(fontWeight: FontWeight.w800, color: effectiveColor)
-              : context.text.titleMedium?.copyWith(fontWeight: FontWeight.w700, color: effectiveColor),
+              ? context.text.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: effectiveColor,
+                )
+              : context.text.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: effectiveColor,
+                ),
         ),
       ],
     );

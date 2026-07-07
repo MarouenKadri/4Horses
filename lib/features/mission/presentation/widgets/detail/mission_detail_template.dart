@@ -172,26 +172,14 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
     );
   }
 
+  // Sections à plat sur fond blanc — même langage que les profils :
+  // pas de carte-boîte, la map garde seulement son cadre arrondi.
   Widget _buildMap(BuildContext context) {
-    return Container(
-      margin: AppInsets.h16,
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 26,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: canSeeFullAddress
-            ? _buildFullMap(context)
-            : _buildLockedAddress(context),
-      ),
+    return Padding(
+      padding: AppInsets.h16,
+      child: canSeeFullAddress
+          ? _buildFullMap(context)
+          : _buildLockedAddress(context),
     );
   }
 
@@ -246,13 +234,6 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
                         color: context.colors.border,
                         width: 0.8,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.07),
-                          blurRadius: 18,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
                     ),
                     child: Icon(
                       Icons.search_rounded,
@@ -294,13 +275,13 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
 
   Widget _buildLockedAddress(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: context.colors.border.withValues(alpha: 0.4),
+              color: context.colors.surfaceAlt,
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -339,34 +320,13 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
   Widget _buildDescription(BuildContext context) {
     return Padding(
       padding: AppInsets.h16,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.blackAlpha03,
-              blurRadius: 24,
-              offset: Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Description',
-              style: context.missionSectionTitleStyle,
-            ),
-            AppGap.h12,
-            Text(
-              mission.description,
-              style: context.missionBodyStyle,
-            ),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Description', style: context.missionSectionTitleStyle),
+          AppGap.h8,
+          Text(mission.description, style: context.missionBodyStyle),
+        ],
       ),
     );
   }

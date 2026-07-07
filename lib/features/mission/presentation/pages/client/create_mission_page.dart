@@ -57,13 +57,14 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
   double _fixedBudget = 0;
 
   // ─── Step indices ────────────────────────────────────────
-  static const int _kService    = 0;
-  static const int _kDate       = 1;
-  static const int _kTime       = 2;
-  static const int _kAddress    = 3;
-  static const int _kDetails    = 4;
+  static const int _kService = 0;
+  static const int _kDate = 1;
+  static const int _kTime = 2;
+  static const int _kAddress = 3;
+  static const int _kDetails = 4;
   static const int _kBudgetType = 5;
-  static const int _kTarif      = 6;
+  static const int _kTarif = 6;
+
   String? get _resolvedPreAssignedFreelancerId {
     final raw = widget.preAssignedFreelancerId?.trim();
     if (raw == null || raw.isEmpty) return null;
@@ -110,13 +111,19 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
   }
 
   void _saveDraftIfNeeded() {
-    if (_submitted || widget.mission != null || _selectedService == null) return;
+    if (_submitted || widget.mission != null || _selectedService == null) {
+      return;
+    }
     final now = DateTime.now();
     final budget = _buildBudget();
-    final serviceLabel = missionServices.firstWhere(
-      (s) => s['id'] == _selectedService,
-      orElse: () => <String, dynamic>{'name': _selectedService ?? 'Service'},
-    )['name'] as String;
+    final serviceLabel =
+        missionServices.firstWhere(
+              (s) => s['id'] == _selectedService,
+              orElse: () => <String, dynamic>{
+                'name': _selectedService ?? 'Service',
+              },
+            )['name']
+            as String;
 
     final draft = Mission(
       id: const Uuid().v4(),
@@ -132,7 +139,10 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
                   ? _address.split(',').first.trim()
                   : _address,
             )
-          : const MissionAddress(fullAddress: 'Non renseignée', shortAddress: ''),
+          : const MissionAddress(
+              fullAddress: 'Non renseignée',
+              shortAddress: '',
+            ),
       budget: budget,
       status: MissionStatus.draft,
       images: List<String>.from(_photos),
@@ -163,15 +173,18 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
       return BudgetInfo(type: BudgetType.fixed, amount: _fixedBudget);
     } else if (_budgetType == CreateBudgetType.hourly) {
       return BudgetInfo(
-          type: BudgetType.hourly,
-          amount: _hourlyRate,
-          estimatedHours: _estimatedHours);
+        type: BudgetType.hourly,
+        amount: _hourlyRate,
+        estimatedHours: _estimatedHours,
+      );
     }
     return const BudgetInfo(type: BudgetType.quote);
   }
 
   double get _totalBudget {
-    if (_budgetType == CreateBudgetType.hourly) return _hourlyRate * _estimatedHours;
+    if (_budgetType == CreateBudgetType.hourly) {
+      return _hourlyRate * _estimatedHours;
+    }
     if (_budgetType == CreateBudgetType.fixed) return _fixedBudget;
     return 0;
   }
@@ -232,13 +245,16 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
   @override
   Widget build(BuildContext context) {
     final isLastStep = _currentStep == missionSteps.length - 1;
-    final serviceLabel = missionServices.firstWhere(
-      (s) => s['id'] == _selectedService,
-      orElse: () => <String, dynamic>{'name': 'Nouvelle mission'},
-    )['name'] as String;
+    final serviceLabel =
+        missionServices.firstWhere(
+              (s) => s['id'] == _selectedService,
+              orElse: () => <String, dynamic>{'name': 'Nouvelle mission'},
+            )['name']
+            as String;
     final headerTitle = widget.mission != null
         ? (_selectedSubService ?? serviceLabel)
-        : (_selectedSubService ?? (_selectedService != null ? serviceLabel : 'Nouvelle mission'));
+        : (_selectedSubService ??
+              (_selectedService != null ? serviceLabel : 'Nouvelle mission'));
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -265,80 +281,78 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                // 0 — Service
-                StepService(
-                  services: missionServices,
-                  selectedService: _selectedService,
-                  selectedSubService: _selectedSubService,
-                  onServiceSelected: (service, sub) {
-                    setState(() {
-                      _selectedService = service;
-                      _selectedSubService = sub;
-                    });
-                  },
-                  onCompleted: _nextStep,
-                ),
-                // 1 — Date
-                StepDate(
-                  selectedDate: _selectedDate,
-                  onDateSelected: (d) => setState(() => _selectedDate = d),
-                  onCompleted: _nextStep,
-                ),
-                // 2 — Heure
-                StepTime(
-                  selectedDate: _selectedDate,
-                  selectedTime: _selectedTime,
-                  onTimeSelected: (t) => setState(() => _selectedTime = t),
-                  onCompleted: _nextStep,
-                ),
-                // 3 — Adresse
-                StepAddress(
-                  address: _address,
-                  onAddressChanged: (v) => setState(() => _address = v),
-                ),
-                // 4 — Détails
-                StepDetails(
-                  description: _description,
-                  photos: _photos,
-                  onDescriptionChanged: (v) =>
-                      setState(() => _description = v),
-                  onPhotosChanged: (p) => setState(() => _photos = p),
-                ),
-                // 5 — Type de budget
-                StepBudgetType(
-                  budgetType: _budgetType,
-                  onBudgetTypeChanged: (t) =>
-                      setState(() => _budgetType = t),
-                  onCompleted: _nextStep,
-                ),
-                // 6 — Tarif
-                StepTarif(
-                  budgetType: _budgetType,
-                  hourlyRate: _hourlyRate,
-                  estimatedHours: _estimatedHours,
-                  fixedBudget: _fixedBudget,
-                  onHourlyRateChanged: (r) =>
-                      setState(() => _hourlyRate = r),
-                  onEstimatedHoursChanged: (h) =>
-                      setState(() => _estimatedHours = h),
-                  onFixedBudgetChanged: (b) =>
-                      setState(() => _fixedBudget = b),
-                ),
-                // 7 — Récapitulatif
-                StepSummary(
-                  service: _selectedService,
-                  subService: _selectedSubService,
-                  date: _selectedDate,
-                  time: _selectedTime,
-                  address: _address,
-                  description: _description,
-                  photos: _photos,
-                  budgetType: _budgetType,
-                  totalBudget: _totalBudget,
-                  estimatedHours: _estimatedHours,
-                  services: missionServices,
-                  isEdit: widget.mission != null,
-                ),
+                  // 0 — Service
+                  StepService(
+                    services: missionServices,
+                    selectedService: _selectedService,
+                    selectedSubService: _selectedSubService,
+                    onServiceSelected: (service, sub) {
+                      setState(() {
+                        _selectedService = service;
+                        _selectedSubService = sub;
+                      });
+                    },
+                    onCompleted: _nextStep,
+                  ),
+                  // 1 — Date
+                  StepDate(
+                    selectedDate: _selectedDate,
+                    onDateSelected: (d) => setState(() => _selectedDate = d),
+                    onCompleted: _nextStep,
+                  ),
+                  // 2 — Heure
+                  StepTime(
+                    selectedDate: _selectedDate,
+                    selectedTime: _selectedTime,
+                    onTimeSelected: (t) => setState(() => _selectedTime = t),
+                    onCompleted: _nextStep,
+                  ),
+                  // 3 — Adresse
+                  StepAddress(
+                    address: _address,
+                    onAddressChanged: (v) => setState(() => _address = v),
+                  ),
+                  // 4 — Détails
+                  StepDetails(
+                    description: _description,
+                    photos: _photos,
+                    onDescriptionChanged: (v) =>
+                        setState(() => _description = v),
+                    onPhotosChanged: (p) => setState(() => _photos = p),
+                  ),
+                  // 5 — Type de budget
+                  StepBudgetType(
+                    budgetType: _budgetType,
+                    onBudgetTypeChanged: (t) => setState(() => _budgetType = t),
+                    onCompleted: _nextStep,
+                  ),
+                  // 6 — Tarif
+                  StepTarif(
+                    budgetType: _budgetType,
+                    hourlyRate: _hourlyRate,
+                    estimatedHours: _estimatedHours,
+                    fixedBudget: _fixedBudget,
+                    onHourlyRateChanged: (r) => setState(() => _hourlyRate = r),
+                    onEstimatedHoursChanged: (h) =>
+                        setState(() => _estimatedHours = h),
+                    onFixedBudgetChanged: (b) =>
+                        setState(() => _fixedBudget = b),
+                  ),
+                  // 7 — Récapitulatif
+                  StepSummary(
+                    service: _selectedService,
+                    subService: _selectedSubService,
+                    date: _selectedDate,
+                    time: _selectedTime,
+                    address: _address,
+                    description: _description,
+                    photos: _photos,
+                    budgetType: _budgetType,
+                    totalBudget: _totalBudget,
+                    estimatedHours: _estimatedHours,
+                    services: missionServices,
+                    isEdit: widget.mission != null,
+                  ),
                 ],
               ),
             ),
@@ -371,7 +385,8 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
         child: SizedBox(
           width: double.infinity,
           child: AppButton(
-            label: widget.mission != null &&
+            label:
+                widget.mission != null &&
                     widget.mission!.status != MissionStatus.draft
                 ? 'Enregistrer les modifications'
                 : 'Publier la mission',
@@ -413,18 +428,20 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
   Future<void> _submitMission() async {
     final isEdit = widget.mission != null;
     final original = widget.mission;
-    final isPublishingDraft =
-        isEdit && original!.status == MissionStatus.draft;
+    final isPublishingDraft = isEdit && original!.status == MissionStatus.draft;
     final now = DateTime.now();
     final preAssignedFreelancerId = _resolvedPreAssignedFreelancerId;
     final hasPreAssignedFreelancer = preAssignedFreelancerId != null;
 
     final budget = _buildBudget();
-    final serviceLabel = missionServices
-        .firstWhere((s) => s['id'] == _selectedService,
-            orElse: () =>
-                <String, dynamic>{'name': _selectedService ?? 'Service'})
-        ['name'] as String;
+    final serviceLabel =
+        missionServices.firstWhere(
+              (s) => s['id'] == _selectedService,
+              orElse: () => <String, dynamic>{
+                'name': _selectedService ?? 'Service',
+              },
+            )['name']
+            as String;
 
     final mission = Mission(
       id: isEdit ? original!.id : const Uuid().v4(),
@@ -445,8 +462,8 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
       status: (isEdit && !isPublishingDraft)
           ? original!.status
           : hasPreAssignedFreelancer
-              ? MissionStatus.confirmed
-              : MissionStatus.waitingCandidates,
+          ? MissionStatus.confirmed
+          : MissionStatus.waitingCandidates,
       images: List<String>.from(_photos),
       createdAt: isEdit ? original!.createdAt : now,
       candidatesCount: isEdit ? original!.candidatesCount : 0,
@@ -454,12 +471,12 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
       assignedPresta: isEdit
           ? original!.assignedPresta
           : hasPreAssignedFreelancer
-              ? PrestaInfo(
-                  id: preAssignedFreelancerId,
-                  name: widget.preAssignedFreelancerName ?? '',
-                  avatarUrl: widget.preAssignedFreelancerAvatar ?? '',
-                )
-              : null,
+          ? PrestaInfo(
+              id: preAssignedFreelancerId,
+              name: widget.preAssignedFreelancerName ?? '',
+              avatarUrl: widget.preAssignedFreelancerAvatar ?? '',
+            )
+          : null,
       rating: isEdit ? original!.rating : null,
     );
 
@@ -506,7 +523,10 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
 
     if (!mounted) return;
     final title = mission.title;
-    Navigator.pop(context, isEdit && !isPublishingDraft ? null : 'published:${mission.id}:$title');
+    Navigator.pop(
+      context,
+      isEdit && !isPublishingDraft ? null : 'published:${mission.id}:$title',
+    );
   }
 }
 
@@ -544,10 +564,10 @@ class _MissionPaymentSheetState extends State<_MissionPaymentSheet> {
       child: AddCardSheet(
         onCardAdded: (brand, last4, expiry) {
           context.read<PaymentMethodsProvider>().addCard(
-                brand: brand,
-                last4: last4,
-                expiry: expiry,
-              );
+            brand: brand,
+            last4: last4,
+            expiry: expiry,
+          );
           final cards = context.read<PaymentMethodsProvider>().cards;
           setState(() => _selectedCardIdx = cards.length - 1);
         },
@@ -566,7 +586,10 @@ class _MissionPaymentSheetState extends State<_MissionPaymentSheet> {
   Widget build(BuildContext context) {
     final cards = context.watch<PaymentMethodsProvider>().cards;
     final defaultIdx = cards.indexWhere((c) => c.isDefault);
-    final selectedIdx = (_selectedCardIdx ?? defaultIdx).clamp(0, cards.isEmpty ? 0 : cards.length - 1);
+    final selectedIdx = (_selectedCardIdx ?? defaultIdx).clamp(
+      0,
+      cards.isEmpty ? 0 : cards.length - 1,
+    );
     final bottom = MediaQuery.of(context).padding.bottom;
 
     return Container(
@@ -592,12 +615,16 @@ class _MissionPaymentSheetState extends State<_MissionPaymentSheet> {
           ),
           Text(
             'Finaliser le paiement',
-            style: context.text.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+            style: context.text.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
           AppGap.h2,
           Text(
             widget.missionTitle,
-            style: context.text.bodySmall?.copyWith(color: context.colors.textTertiary),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.textTertiary,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -623,7 +650,10 @@ class _MissionPaymentSheetState extends State<_MissionPaymentSheet> {
                   child: widget.freelancerAvatar.isNotEmpty
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.network(widget.freelancerAvatar, fit: BoxFit.cover),
+                          child: Image.network(
+                            widget.freelancerAvatar,
+                            fit: BoxFit.cover,
+                          ),
                         )
                       : Center(
                           child: Text(
@@ -720,64 +750,93 @@ class _MissionPaymentSheetState extends State<_MissionPaymentSheet> {
             ),
             child: Column(
               children: [
-                ...cards.asMap().entries.expand((entry) => [
-                  InkWell(
-                    onTap: () => setState(() => _selectedCardIdx = entry.key),
-                    borderRadius: BorderRadius.circular(18),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: context.colors.surfaceAlt,
-                              borderRadius: BorderRadius.circular(11),
-                              border: Border.all(color: context.colors.border),
+                ...cards.asMap().entries.expand(
+                  (entry) => [
+                    InkWell(
+                      onTap: () => setState(() => _selectedCardIdx = entry.key),
+                      borderRadius: BorderRadius.circular(18),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: context.colors.surfaceAlt,
+                                borderRadius: BorderRadius.circular(11),
+                                border: Border.all(
+                                  color: context.colors.border,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.credit_card_rounded,
+                                size: 18,
+                                color: AppColors.textSecondary,
+                              ),
                             ),
-                            child: const Icon(Icons.credit_card_rounded, size: 18, color: AppColors.textSecondary),
-                          ),
-                          AppGap.w12,
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${entry.value.brand} •••• ${entry.value.last4}',
-                                  style: context.text.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: context.colors.textPrimary,
+                            AppGap.w12,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${entry.value.brand} •••• ${entry.value.last4}',
+                                    style: context.text.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: context.colors.textPrimary,
+                                    ),
                                   ),
-                                ),
-                                AppGap.h2,
-                                Text(
-                                  'Expire ${entry.value.expiry}',
-                                  style: context.text.bodySmall?.copyWith(color: context.colors.textTertiary),
-                                ),
-                              ],
+                                  AppGap.h2,
+                                  Text(
+                                    'Expire ${entry.value.expiry}',
+                                    style: context.text.bodySmall?.copyWith(
+                                      color: context.colors.textTertiary,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          if (selectedIdx == entry.key)
-                            const Icon(Icons.check_circle_rounded, size: 18, color: AppColors.ink)
-                          else
-                            Icon(Icons.radio_button_unchecked, size: 18, color: context.colors.textHint),
-                        ],
+                            if (selectedIdx == entry.key)
+                              const Icon(
+                                Icons.check_circle_rounded,
+                                size: 18,
+                                color: AppColors.ink,
+                              )
+                            else
+                              Icon(
+                                Icons.radio_button_unchecked,
+                                size: 18,
+                                color: context.colors.textHint,
+                              ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  if (entry.key < cards.length - 1)
-                    Divider(height: 1, indent: 68, color: context.colors.divider),
-                ]),
+                    if (entry.key < cards.length - 1)
+                      Divider(
+                        height: 1,
+                        indent: 68,
+                        color: context.colors.divider,
+                      ),
+                  ],
+                ),
               ],
             ),
           ),
           AppGap.h8,
-          PaymentAddButton(label: 'Ajouter une carte', onTap: _showAddCardDialog),
+          PaymentAddButton(
+            label: 'Ajouter une carte',
+            onTap: _showAddCardDialog,
+          ),
           AppGap.h12,
           const PaymentInfoNote(
             icon: Icons.shield_outlined,
-            body: 'Montant bloqué — libéré au prestataire uniquement après votre validation.',
+            body:
+                'Montant bloqué — libéré au prestataire uniquement après votre validation.',
           ),
           AppGap.h20,
           AppButton(
@@ -791,11 +850,17 @@ class _MissionPaymentSheetState extends State<_MissionPaymentSheet> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.lock_outline_rounded, size: 12, color: context.colors.textHint),
+                Icon(
+                  Icons.lock_outline_rounded,
+                  size: 12,
+                  color: context.colors.textHint,
+                ),
                 AppGap.w4,
                 Text(
                   'Paiement sécurisé',
-                  style: context.text.labelSmall?.copyWith(color: context.colors.textHint),
+                  style: context.text.labelSmall?.copyWith(
+                    color: context.colors.textHint,
+                  ),
                 ),
               ],
             ),
@@ -839,7 +904,9 @@ class _PayRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: context.text.bodyMedium?.copyWith(color: context.colors.textPrimary),
+              style: context.text.bodyMedium?.copyWith(
+                color: context.colors.textPrimary,
+              ),
             ),
           ),
           Text(

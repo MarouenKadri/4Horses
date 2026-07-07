@@ -65,29 +65,29 @@ class _TrackingPageState extends State<TrackingPage> {
   // ── Supabase Realtime ─────────────────────────────────────────
 
   void _subscribeBroadcast() {
-    _channel = Supabase.instance.client
-        .channel('db-tracking-${widget.mission.id}')
-        .onPostgresChanges(
-          event: PostgresChangeEvent.update,
-          schema: 'public',
-          table: 'missions',
-          filter: PostgresChangeFilter(
-            type: PostgresChangeFilterType.eq,
-            column: 'id',
-            value: widget.mission.id,
-          ),
-          callback: (payload) {
-            final data = payload.newRecord;
-            final lat = data['tracking_lat'];
-            final lng = data['tracking_lng'];
-            if (lat == null || lng == null) return;
-            _applyPosition(LatLng(
-              (lat as num).toDouble(),
-              (lng as num).toDouble(),
-            ));
-          },
-        )
-      ..subscribe();
+    _channel =
+        Supabase.instance.client
+            .channel('db-tracking-${widget.mission.id}')
+            .onPostgresChanges(
+              event: PostgresChangeEvent.update,
+              schema: 'public',
+              table: 'missions',
+              filter: PostgresChangeFilter(
+                type: PostgresChangeFilterType.eq,
+                column: 'id',
+                value: widget.mission.id,
+              ),
+              callback: (payload) {
+                final data = payload.newRecord;
+                final lat = data['tracking_lat'];
+                final lng = data['tracking_lng'];
+                if (lat == null || lng == null) return;
+                _applyPosition(
+                  LatLng((lat as num).toDouble(), (lng as num).toDouble()),
+                );
+              },
+            )
+          ..subscribe();
   }
 
   void _applyPosition(LatLng pos) {
@@ -176,7 +176,9 @@ class _TrackingPageState extends State<TrackingPage> {
                 boxShadow: AppShadows.card,
                 child: Text(
                   isOnTheWay ? 'Prestataire en route' : 'Mission en cours',
-                  style: context.text.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                  style: context.text.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
@@ -204,9 +206,7 @@ class _TrackingPageState extends State<TrackingPage> {
             builder: (_, controller) => ListView(
               controller: controller,
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-              children: [
-                _ClientTrackingPanel(mission: widget.mission),
-              ],
+              children: [_ClientTrackingPanel(mission: widget.mission)],
             ),
           ),
         ],
@@ -243,7 +243,10 @@ class _ClientTrackingPanel extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(presta?.name ?? 'Prestataire', style: context.text.titleLarge),
+                  Text(
+                    presta?.name ?? 'Prestataire',
+                    style: context.text.titleLarge,
+                  ),
                   AppGap.h2,
                   Row(
                     children: [
@@ -264,7 +267,11 @@ class _ClientTrackingPanel extends StatelessWidget {
             border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
             child: Row(
               children: [
-                const Icon(Icons.play_circle_rounded, color: AppColors.primary, size: 20),
+                const Icon(
+                  Icons.play_circle_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
                 AppGap.w10,
                 Text(
                   'Mission en cours',
@@ -282,7 +289,11 @@ class _ClientTrackingPanel extends StatelessWidget {
         AppGap.h12,
         Row(
           children: [
-            const Icon(Icons.location_on_rounded, size: 16, color: AppColors.error),
+            const Icon(
+              Icons.location_on_rounded,
+              size: 16,
+              color: AppColors.error,
+            ),
             AppGap.w6,
             Expanded(
               child: Text(

@@ -19,72 +19,72 @@ export 'user_models.dart';
 // ─── Statuts ─────────────────────────────────────────────────────────────────
 
 enum MissionStatus {
-  draft,               // Brouillon (création en cours)
-  waitingCandidates,   // Publiée, aucune candidature
-  candidateReceived,   // ≥1 candidature reçue
-  confirmed,           // Freelancer accepté et payé → prêt à démarrer
-  onTheWay,            // Freelancer en route
-  inProgress,          // Mission démarrée (timer actif)
+  draft, // Brouillon (création en cours)
+  waitingCandidates, // Publiée, aucune candidature
+  candidateReceived, // ≥1 candidature reçue
+  confirmed, // Freelancer accepté et payé → prêt à démarrer
+  onTheWay, // Freelancer en route
+  inProgress, // Mission démarrée (timer actif)
   completionRequested, // Freelancer a signalé la fin, attente action client
-  completed,           // Mission terminée côté exécution
-  paymentHeld,         // Fonds débités et sécurisés (Stripe hold)
-  awaitingRelease,     // Délai 24h après livraison — client peut signaler un problème
-  inDispute,           // Litige ouvert — paiement suspendu
-  closed,              // Versement effectué, archivé
-  cancelled,           // Annulée
-  expired,             // Pas de candidat dans le délai
+  completed, // Mission terminée côté exécution
+  paymentHeld, // Fonds débités et sécurisés (Stripe hold)
+  awaitingRelease, // Délai 24h après livraison — client peut signaler un problème
+  inDispute, // Litige ouvert — paiement suspendu
+  closed, // Versement effectué, archivé
+  cancelled, // Annulée
+  expired, // Pas de candidat dans le délai
 }
 
 extension MissionStatusX on MissionStatus {
   String get label => switch (this) {
-    MissionStatus.draft                => 'Brouillon',
-    MissionStatus.waitingCandidates    => 'En attente',
-    MissionStatus.candidateReceived    => 'Candidatures',
-    MissionStatus.confirmed            => 'Confirmée',
-    MissionStatus.onTheWay             => 'En route',
-    MissionStatus.inProgress           => 'En cours',
-    MissionStatus.completionRequested  => 'Fin demandée',
-    MissionStatus.completed            => 'Terminée',
-    MissionStatus.paymentHeld          => 'Fonds reserves',
-    MissionStatus.awaitingRelease      => 'Versement 24h',
-    MissionStatus.inDispute            => 'Litige en cours',
-    MissionStatus.closed               => 'Versement effectue',
-    MissionStatus.cancelled            => 'Annulée',
-    MissionStatus.expired              => 'Expirée',
+    MissionStatus.draft => 'Brouillon',
+    MissionStatus.waitingCandidates => 'En attente',
+    MissionStatus.candidateReceived => 'Candidatures',
+    MissionStatus.confirmed => 'Confirmée',
+    MissionStatus.onTheWay => 'En route',
+    MissionStatus.inProgress => 'En cours',
+    MissionStatus.completionRequested => 'Fin demandée',
+    MissionStatus.completed => 'Terminée',
+    MissionStatus.paymentHeld => 'Fonds reserves',
+    MissionStatus.awaitingRelease => 'Versement 24h',
+    MissionStatus.inDispute => 'Litige en cours',
+    MissionStatus.closed => 'Versement effectue',
+    MissionStatus.cancelled => 'Annulée',
+    MissionStatus.expired => 'Expirée',
   };
 
   Color get color => switch (this) {
-    MissionStatus.draft               => AppColors.draftAmber,
-    MissionStatus.waitingCandidates   => AppColors.warning,
-    MissionStatus.candidateReceived   => AppColors.secondary,
-    MissionStatus.confirmed           => AppColors.primary,
-    MissionStatus.onTheWay            => AppColors.secondary,
-    MissionStatus.inProgress          => AppColors.indigo,
+    MissionStatus.draft => AppColors.draftAmber,
+    MissionStatus.waitingCandidates => AppColors.warning,
+    MissionStatus.candidateReceived => AppColors.secondary,
+    MissionStatus.confirmed => AppColors.primary,
+    MissionStatus.onTheWay => AppColors.secondary,
+    MissionStatus.inProgress => AppColors.indigo,
     MissionStatus.completionRequested => AppColors.warning,
-    MissionStatus.completed           => AppColors.primary,
-    MissionStatus.paymentHeld         => AppColors.success,
-    MissionStatus.awaitingRelease     => AppColors.warning,
-    MissionStatus.inDispute           => AppColors.error,
-    MissionStatus.closed              => AppColors.textTertiary,
-    MissionStatus.cancelled           => AppColors.error,
-    MissionStatus.expired             => AppColors.textTertiary,
+    MissionStatus.completed => AppColors.primary,
+    MissionStatus.paymentHeld => AppColors.success,
+    MissionStatus.awaitingRelease => AppColors.warning,
+    MissionStatus.inDispute => AppColors.error,
+    MissionStatus.closed => AppColors.textTertiary,
+    MissionStatus.cancelled => AppColors.error,
+    MissionStatus.expired => AppColors.textTertiary,
   };
 
   IconData get icon => switch (this) {
-    MissionStatus.draft               => Icons.edit_note_rounded,
-    MissionStatus.waitingCandidates   => Icons.hourglass_empty_rounded,
-    MissionStatus.candidateReceived   => Icons.people_rounded,
-    MissionStatus.confirmed           => Icons.check_circle_rounded,
-    MissionStatus.onTheWay            => Icons.directions_car_rounded,
-    MissionStatus.inProgress          => Icons.play_circle_rounded,
+    MissionStatus.draft => Icons.edit_note_rounded,
+    MissionStatus.waitingCandidates => Icons.hourglass_empty_rounded,
+    MissionStatus.candidateReceived => Icons.people_rounded,
+    MissionStatus.confirmed => Icons.check_circle_rounded,
+    MissionStatus.onTheWay => Icons.directions_car_rounded,
+    MissionStatus.inProgress => Icons.play_circle_rounded,
     MissionStatus.completionRequested => Icons.hourglass_top_rounded,
-    MissionStatus.completed           => Icons.done_all_rounded,
-    MissionStatus.paymentHeld         => Icons.lock_rounded,
-    MissionStatus.awaitingRelease     => Icons.schedule_rounded,
-    MissionStatus.inDispute           => Icons.flag_rounded,
-    MissionStatus.closed              => Icons.inventory_2_rounded,
-    MissionStatus.cancelled           => Icons.cancel_rounded,
-    MissionStatus.expired             => Icons.timer_off_rounded,
+    MissionStatus.completed => Icons.done_all_rounded,
+    MissionStatus.paymentHeld => Icons.lock_rounded,
+    MissionStatus.awaitingRelease => Icons.schedule_rounded,
+    MissionStatus.inDispute => Icons.flag_rounded,
+    MissionStatus.closed => Icons.inventory_2_rounded,
+    MissionStatus.cancelled => Icons.cancel_rounded,
+    MissionStatus.expired => Icons.timer_off_rounded,
   };
 
   bool get isActive =>
@@ -141,12 +141,14 @@ class Mission {
   ServiceCategory? get category => ServiceCategory.findById(categoryId);
   String get categoryName => category?.name ?? 'Autre';
   IconData get categoryIcon => category?.icon ?? Icons.help_outline;
-  Color get categoryColor => category?.color ?? Colors.grey;
+  Color get categoryColor => category?.color ?? AppColors.textTertiary;
 
   String get duration {
     if (budget.type == BudgetType.hourly && budget.estimatedHours != null) {
       final h = budget.estimatedHours!;
-      return h == h.truncateToDouble() ? '${h.toInt()}h' : '${h.toStringAsFixed(1)}h';
+      return h == h.truncateToDouble()
+          ? '${h.toInt()}h'
+          : '${h.toStringAsFixed(1)}h';
     }
     return '-';
   }
@@ -179,7 +181,20 @@ class Mission {
     final diff = missionDay.difference(today).inDays;
     if (diff == 0) return 'Aujourd\'hui';
     if (diff == 1) return 'Demain';
-    const mois = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+    const mois = [
+      'Jan',
+      'Fév',
+      'Mar',
+      'Avr',
+      'Mai',
+      'Juin',
+      'Juil',
+      'Août',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Déc',
+    ];
     if (diff < 0) return '${date.day} ${mois[date.month - 1]}';
     if (diff < 7) {
       const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
@@ -195,19 +210,32 @@ class Mission {
   }
 
   Mission copyWith({
-    String? id, String? title, String? description, String? categoryId,
-    DateTime? date, String? timeSlot,
-    MissionAddress? address, BudgetInfo? budget, MissionStatus? status,
-    List<String>? images, DateTime? createdAt,
-    ClientInfo? client, PrestaInfo? assignedPresta,
-    int? candidatesCount, int? rating, String? startCode,
+    String? id,
+    String? title,
+    String? description,
+    String? categoryId,
+    DateTime? date,
+    String? timeSlot,
+    MissionAddress? address,
+    BudgetInfo? budget,
+    MissionStatus? status,
+    List<String>? images,
+    DateTime? createdAt,
+    ClientInfo? client,
+    PrestaInfo? assignedPresta,
+    int? candidatesCount,
+    int? rating,
+    String? startCode,
   }) {
     return Mission(
-      id: id ?? this.id, title: title ?? this.title,
+      id: id ?? this.id,
+      title: title ?? this.title,
       description: description ?? this.description,
       categoryId: categoryId ?? this.categoryId,
-      date: date ?? this.date, timeSlot: timeSlot ?? this.timeSlot,
-      address: address ?? this.address, budget: budget ?? this.budget,
+      date: date ?? this.date,
+      timeSlot: timeSlot ?? this.timeSlot,
+      address: address ?? this.address,
+      budget: budget ?? this.budget,
       status: status ?? this.status,
       images: images ?? this.images,
       createdAt: createdAt ?? this.createdAt,

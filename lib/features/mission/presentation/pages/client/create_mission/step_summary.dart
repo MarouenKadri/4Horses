@@ -40,7 +40,7 @@ class StepSummary extends StatelessWidget {
       orElse: () => <String, dynamic>{
         'name': '',
         'icon': Icons.help_outline_rounded,
-        'color': Colors.grey,
+        'color': AppColors.textTertiary,
       },
     );
 
@@ -152,7 +152,9 @@ class StepSummary extends StatelessWidget {
                         final isLocalFile = !photo.startsWith('http');
                         return Container(
                           width: 84,
-                          margin: EdgeInsets.only(right: index < photos.length - 1 ? 10 : 0),
+                          margin: EdgeInsets.only(
+                            right: index < photos.length - 1 ? 10 : 0,
+                          ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             color: context.colors.surfaceAlt,
@@ -163,22 +165,31 @@ class StepSummary extends StatelessWidget {
                                 ? Image.file(
                                     File(photo),
                                     fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) => const _BrokenPhoto(),
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const _BrokenPhoto(),
                                   )
                                 : Image.network(
                                     photo,
                                     fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return const Center(
-                                        child: SizedBox(
-                                          width: 18,
-                                          height: 18,
-                                          child: CircularProgressIndicator(strokeWidth: 2),
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) => const _BrokenPhoto(),
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          }
+                                          return const Center(
+                                            child: SizedBox(
+                                              width: 18,
+                                              height: 18,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const _BrokenPhoto(),
                                   ),
                           ),
                         );
@@ -200,10 +211,10 @@ class StepSummary extends StatelessWidget {
                             budgetType == 'hourly'
                                 ? 'Budget estime'
                                 : budgetType == 'fixed'
-                                    ? 'Budget fixe'
-                                    : 'Sur devis',
-                              style: context.missionSubtleCaptionStyle,
-                            ),
+                                ? 'Budget fixe'
+                                : 'Sur devis',
+                            style: context.missionSubtleCaptionStyle,
+                          ),
                           if (budgetType == 'hourly') ...[
                             AppGap.h4,
                             Text(
@@ -276,7 +287,7 @@ class StepSummary extends StatelessWidget {
       'septembre',
       'octobre',
       'novembre',
-      'decembre'
+      'decembre',
     ];
     return months[month - 1];
   }
@@ -312,10 +323,7 @@ class SummaryRow extends StatelessWidget {
                 ),
               ),
               AppGap.h4,
-              Text(
-                value,
-                style: context.missionStepValueStyle,
-              ),
+              Text(value, style: context.missionStepValueStyle),
             ],
           ),
         ),

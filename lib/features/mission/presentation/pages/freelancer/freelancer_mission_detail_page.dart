@@ -193,7 +193,7 @@ class _FreelancerMissionDetailPageState
         );
       case MissionStatus.paymentHeld:
         return StatusBannerConfig(
-          color: Colors.orange,
+          color: AppColors.warning,
           icon: Icons.lock_clock_rounded,
           title: '100€ sécurisés par le client',
           subtitle:
@@ -257,7 +257,8 @@ class _FreelancerMissionDetailPageState
     ];
 
     final today = DateTime.now();
-    final isToday = mission.date.year == today.year &&
+    final isToday =
+        mission.date.year == today.year &&
         mission.date.month == today.month &&
         mission.date.day == today.day;
 
@@ -416,9 +417,7 @@ class _FreelancerMissionDetailPageState
   Future<void> _openClientReview(BuildContext ctx) async {
     final rated = await Navigator.push<bool>(
       ctx,
-      MaterialPageRoute(
-        builder: (_) => ClientReviewPage(mission: mission),
-      ),
+      MaterialPageRoute(builder: (_) => ClientReviewPage(mission: mission)),
     );
     if (rated == true && mounted) {
       setState(() => _hasRatedClient = true);
@@ -459,7 +458,9 @@ class _FreelancerMissionDetailPageState
     final client = mission.client;
     if (client == null) return;
 
-    final conversationId = await context.read<MessagingProvider>().findConversation(
+    final conversationId = await context
+        .read<MessagingProvider>()
+        .findConversation(
           otherUserId: client.id,
           iAmClient: false,
           missionId: mission.id,
@@ -483,10 +484,14 @@ class _FreelancerMissionDetailPageState
           missionTitle: mission.title,
           confirmedMissionTitle: mission.title,
           isMissionConfirmed: const {
-            MissionStatus.confirmed, MissionStatus.onTheWay,
-            MissionStatus.inProgress, MissionStatus.completionRequested,
-            MissionStatus.completed, MissionStatus.paymentHeld,
-            MissionStatus.awaitingRelease, MissionStatus.closed,
+            MissionStatus.confirmed,
+            MissionStatus.onTheWay,
+            MissionStatus.inProgress,
+            MissionStatus.completionRequested,
+            MissionStatus.completed,
+            MissionStatus.paymentHeld,
+            MissionStatus.awaitingRelease,
+            MissionStatus.closed,
           }.contains(mission.status),
         ),
       ),
@@ -508,7 +513,8 @@ class _FreelancerMissionDetailPageState
 
   Future<void> _sendContactRequest(dynamic client) async {
     final currentUser = Supabase.instance.client.auth.currentUser;
-    final freelancerDisplayName = currentUser?.userMetadata?['first_name'] as String? ?? 'Le prestataire';
+    final freelancerDisplayName =
+        currentUser?.userMetadata?['first_name'] as String? ?? 'Le prestataire';
 
     try {
       await Supabase.instance.client.from('notifications').insert({

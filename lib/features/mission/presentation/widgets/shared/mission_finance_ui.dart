@@ -14,7 +14,6 @@ enum MissionFinanceState {
   refund50,
 }
 
-
 class MissionFinanceUi {
   static const Set<MissionStatus> _paymentLinkedStatuses = {
     MissionStatus.confirmed,
@@ -37,10 +36,7 @@ class MissionFinanceUi {
     return false;
   }
 
-  static MissionFinanceState resolveState(
-    Mission mission, {
-    DateTime? now,
-  }) {
+  static MissionFinanceState resolveState(Mission mission, {DateTime? now}) {
     switch (mission.status) {
       case MissionStatus.draft:
       case MissionStatus.waitingCandidates:
@@ -99,13 +95,13 @@ class MissionFinanceUi {
 
   static IconData stateIcon(MissionFinanceState state) {
     return switch (state) {
-      MissionFinanceState.pending            => Icons.hourglass_empty_rounded,
-      MissionFinanceState.secured            => Icons.shield_rounded,
+      MissionFinanceState.pending => Icons.hourglass_empty_rounded,
+      MissionFinanceState.secured => Icons.shield_rounded,
       MissionFinanceState.awaitingRelease24h => Icons.timer_rounded,
-      MissionFinanceState.paidOut            => Icons.check_circle_rounded,
-      MissionFinanceState.disputeHold        => Icons.gavel_rounded,
-      MissionFinanceState.refund100          => Icons.undo_rounded,
-      MissionFinanceState.refund50           => Icons.undo_rounded,
+      MissionFinanceState.paidOut => Icons.check_circle_rounded,
+      MissionFinanceState.disputeHold => Icons.gavel_rounded,
+      MissionFinanceState.refund100 => Icons.undo_rounded,
+      MissionFinanceState.refund50 => Icons.undo_rounded,
     };
   }
 
@@ -118,22 +114,23 @@ class MissionFinanceUi {
 
     return switch (role) {
       MissionUiRole.client => switch (state) {
-        MissionFinanceState.pending            => 'Paiement en attente',
-        MissionFinanceState.secured            => 'Argent sécurisé',
+        MissionFinanceState.pending => 'Paiement en attente',
+        MissionFinanceState.secured => 'Argent sécurisé',
         MissionFinanceState.awaitingRelease24h => 'Versement auto dans 24h',
-        MissionFinanceState.paidOut            => 'Prestataire payé',
-        MissionFinanceState.disputeHold        => 'Paiement suspendu',
-        MissionFinanceState.refund100          => 'Remboursement total',
-        MissionFinanceState.refund50           => 'Remboursement 50 %',
+        MissionFinanceState.paidOut => 'Prestataire payé',
+        MissionFinanceState.disputeHold => 'Paiement suspendu',
+        MissionFinanceState.refund100 => 'Remboursement total',
+        MissionFinanceState.refund50 => 'Remboursement 50 %',
       },
       MissionUiRole.freelancer => switch (state) {
-        MissionFinanceState.pending            => 'Paiement garanti à la fin',
-        MissionFinanceState.secured            => 'Fonds réservés pour vous',
-        MissionFinanceState.awaitingRelease24h => 'Versement automatique sous 24h',
-        MissionFinanceState.paidOut            => 'Versement reçu',
-        MissionFinanceState.disputeHold        => 'Versement suspendu',
+        MissionFinanceState.pending => 'Paiement garanti à la fin',
+        MissionFinanceState.secured => 'Fonds réservés pour vous',
+        MissionFinanceState.awaitingRelease24h =>
+          'Versement automatique sous 24h',
+        MissionFinanceState.paidOut => 'Versement reçu',
+        MissionFinanceState.disputeHold => 'Versement suspendu',
         MissionFinanceState.refund100 ||
-        MissionFinanceState.refund50           => 'Mission annulée',
+        MissionFinanceState.refund50 => 'Mission annulée',
       },
     };
   }
@@ -158,8 +155,8 @@ class MissionFinanceUi {
         MissionFinanceState.awaitingRelease24h => 'Versement programme',
         MissionFinanceState.paidOut => 'Versement effectue',
         MissionFinanceState.disputeHold => 'Versement suspendu',
-        MissionFinanceState.refund100 || MissionFinanceState.refund50 =>
-          'Mission annulee',
+        MissionFinanceState.refund100 ||
+        MissionFinanceState.refund50 => 'Mission annulee',
       },
     };
   }
@@ -242,8 +239,8 @@ class MissionFinanceUi {
     if (role == MissionUiRole.client) {
       return switch (state) {
         MissionFinanceState.pending => Icons.payments_outlined,
-        MissionFinanceState.refund100 || MissionFinanceState.refund50 =>
-          Icons.replay_rounded,
+        MissionFinanceState.refund100 ||
+        MissionFinanceState.refund50 => Icons.replay_rounded,
         MissionFinanceState.disputeHold => Icons.pause_circle_outline_rounded,
         _ => Icons.payments_rounded,
       };
@@ -253,8 +250,8 @@ class MissionFinanceUi {
       MissionFinanceState.pending => Icons.wallet_outlined,
       MissionFinanceState.paidOut => Icons.account_balance_wallet_rounded,
       MissionFinanceState.disputeHold => Icons.pause_circle_outline_rounded,
-      MissionFinanceState.refund100 || MissionFinanceState.refund50 =>
-        Icons.money_off_csred_rounded,
+      MissionFinanceState.refund100 ||
+      MissionFinanceState.refund50 => Icons.money_off_csred_rounded,
       _ => Icons.savings_rounded,
     };
   }
@@ -280,13 +277,11 @@ class MissionFinanceUi {
       _ => 0.0,
     };
 
-    return (
-      reserved: _euro(reserved),
-      paid: _euro(paid),
-    );
+    return (reserved: _euro(reserved), paid: _euro(paid));
   }
 
-  static String _euro(double value) { // ignore: library_private_types_in_public_api
+  static String _euro(double value) {
+    // ignore: library_private_types_in_public_api
     final rounded = value.roundToDouble();
     if (rounded == value) return '${rounded.toInt()} €';
     return '${value.toStringAsFixed(2)} €';
@@ -353,10 +348,10 @@ class MissionFinanceExposureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state  = MissionFinanceUi.resolveState(mission);
+    final state = MissionFinanceUi.resolveState(mission);
     final accent = MissionFinanceUi.accentColor(context, state);
-    final icon   = MissionFinanceUi.stateIcon(state);
-    final label  = MissionFinanceUi.outsideLabel(mission: mission, role: role);
+    final icon = MissionFinanceUi.stateIcon(state);
+    final label = MissionFinanceUi.outsideLabel(mission: mission, role: role);
     final amount = MissionFinanceUi._euro(
       role == MissionUiRole.client
           ? mission.budget.averageAmount

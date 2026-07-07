@@ -1,6 +1,7 @@
 import '../../../data/models/mission.dart';
 
 enum MissionUiRole { client, freelancer }
+
 enum MissionUiTab { published, applied, confirmed, inProgress, archived }
 
 class MissionStatusUi {
