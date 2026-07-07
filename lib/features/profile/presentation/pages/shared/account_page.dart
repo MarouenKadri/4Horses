@@ -192,7 +192,14 @@ class _FlatSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label.toUpperCase(), style: context.accountSectionStyle),
+        // Titre de section noir — même langage que les profils publics.
+        Text(
+          label,
+          style: context.text.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.textPrimary,
+          ),
+        ),
         AppGap.h8,
         Divider(height: 1, thickness: 1, color: context.colors.divider),
         for (int i = 0; i < children.length; i++) ...[
@@ -274,16 +281,41 @@ class _ProfileHeader extends StatelessWidget {
     final isVerified = profile?.isVerified ?? false;
     final isUploading = profileProv.isSaving;
 
+    // Même langage que les profils publics : nom en gros à gauche,
+    // avatar à droite.
     return Padding(
       padding: const EdgeInsets.only(top: 24, bottom: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          InkWell(
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  displayName,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.text.displaySmall,
+                ),
+                if (profile?.email?.isNotEmpty == true) ...[
+                  AppGap.h4,
+                  Text(
+                    profile!.email!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.bodyMedium?.copyWith(
+                      color: context.colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          AppGap.w16,
+          GestureDetector(
             onTap: isUploading ? null : () => _pickAvatar(context, profileProv),
-            borderRadius: BorderRadius.circular(34),
-            splashColor: Colors.black.withValues(alpha: 0.04),
-            highlightColor: Colors.black.withValues(alpha: 0.02),
             child: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -363,38 +395,18 @@ class _ProfileHeader extends StatelessWidget {
                     right: -2,
                     top: -2,
                     child: Container(
-                      width: 18,
-                      height: 18,
+                      padding: const EdgeInsets.all(1),
                       decoration: BoxDecoration(
-                        color: AppColors.successDark,
+                        color: context.colors.background,
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: context.colors.background,
-                          width: 2,
-                        ),
                       ),
                       child: const Icon(
-                        Icons.check_rounded,
-                        size: 10,
-                        color: Colors.white,
+                        Icons.verified_rounded,
+                        size: 16,
+                        color: AppColors.info,
                       ),
                     ),
                   ),
-              ],
-            ),
-          ),
-          AppGap.w16,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  displayName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.accountProfileNameStyle,
-                ),
               ],
             ),
           ),
