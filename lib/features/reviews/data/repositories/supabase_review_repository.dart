@@ -15,7 +15,9 @@ class SupabaseReviewRepository implements ReviewRepository {
     try {
       final rows = await _supabase
           .from('reviews')
-          .select('id, reviewee_id, reviewer_id, reviewer_name, reviewer_avatar, rating, comment, mission_id, mission_title, created_at')
+          .select(
+            'id, reviewee_id, reviewer_id, reviewer_name, reviewer_avatar, rating, comment, mission_id, mission_title, created_at',
+          )
           .eq('reviewee_id', userId)
           .order('created_at', ascending: false)
           .limit(_defaultLimit);
@@ -33,7 +35,9 @@ class SupabaseReviewRepository implements ReviewRepository {
     try {
       final rows = await _supabase
           .from('reviews')
-          .select('id, reviewee_id, reviewer_id, reviewer_name, reviewer_avatar, rating, comment, mission_id, mission_title, created_at')
+          .select(
+            'id, reviewee_id, reviewer_id, reviewer_name, reviewer_avatar, rating, comment, mission_id, mission_title, created_at',
+          )
           .eq('reviewer_id', userId)
           .order('created_at', ascending: false)
           .limit(_defaultLimit);
@@ -54,7 +58,9 @@ class SupabaseReviewRepository implements ReviewRepository {
     try {
       final rows = await _supabase
           .from('reviews')
-          .select('id, reviewee_id, reviewer_id, reviewer_name, reviewer_avatar, rating, comment, mission_id, mission_title, created_at')
+          .select(
+            'id, reviewee_id, reviewer_id, reviewer_name, reviewer_avatar, rating, comment, mission_id, mission_title, created_at',
+          )
           .eq('reviewee_id', revieweeId)
           .order('created_at', ascending: false)
           .limit(_defaultLimit);
@@ -80,7 +86,9 @@ class SupabaseReviewRepository implements ReviewRepository {
     try {
       final rows = await _supabase
           .from('reviews')
-          .select('id, reviewee_id, reviewer_id, reviewer_name, reviewer_avatar, rating, comment, mission_id, mission_title, created_at')
+          .select(
+            'id, reviewee_id, reviewer_id, reviewer_name, reviewer_avatar, rating, comment, mission_id, mission_title, created_at',
+          )
           .eq('reviewer_id', reviewerId)
           .order('created_at', ascending: false)
           .limit(_defaultLimit);
@@ -139,9 +147,10 @@ class SupabaseReviewRepository implements ReviewRepository {
       final list = rows as List;
       if (list.isEmpty) return 0.0;
       final sum = list.fold<int>(
-          0,
-          (acc, r) =>
-              acc + ((r as Map<String, dynamic>)['rating'] as num).toInt());
+        0,
+        (acc, r) =>
+            acc + ((r as Map<String, dynamic>)['rating'] as num).toInt(),
+      );
       return sum / list.length;
     } catch (e) {
       debugPrint('getAverageRating error: $e');
@@ -175,17 +184,18 @@ class SupabaseReviewRepository implements ReviewRepository {
           .toSet()
           .toList(growable: false);
 
-      final roleByProfileId =
-          await _loadRolesFromProfiles(unresolvedUserIds);
+      final roleByProfileId = await _loadRolesFromProfiles(unresolvedUserIds);
 
-      final filtered = reviews.where((review) {
-        final targetUserId = userIdSelector(review);
-        final missionId = review.missionId.trim();
-        final missionKey = '$missionId|$targetUserId';
-        final missionRole = roleByMissionAndUser[missionKey];
-        final resolvedRole = missionRole ?? roleByProfileId[targetUserId];
-        return resolvedRole == expected;
-      }).toList(growable: false);
+      final filtered = reviews
+          .where((review) {
+            final targetUserId = userIdSelector(review);
+            final missionId = review.missionId.trim();
+            final missionKey = '$missionId|$targetUserId';
+            final missionRole = roleByMissionAndUser[missionKey];
+            final resolvedRole = missionRole ?? roleByProfileId[targetUserId];
+            return resolvedRole == expected;
+          })
+          .toList(growable: false);
 
       return filtered;
     } catch (e) {
@@ -242,7 +252,8 @@ class SupabaseReviewRepository implements ReviewRepository {
   }
 
   Future<Map<String, String>> _loadRolesFromProfiles(
-      List<String> userIds) async {
+    List<String> userIds,
+  ) async {
     if (userIds.isEmpty) return const {};
 
     try {
@@ -266,8 +277,7 @@ class SupabaseReviewRepository implements ReviewRepository {
     }
   }
 
-  String? _roleFromMissionForUser(
-      Map<String, dynamic> mission, String userId) {
+  String? _roleFromMissionForUser(Map<String, dynamic> mission, String userId) {
     final normalizedUserId = userId.trim();
     if (normalizedUserId.isEmpty) return null;
 

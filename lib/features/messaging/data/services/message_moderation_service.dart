@@ -35,9 +35,7 @@ class MessageModerationService {
   );
 
   // ── Suite de chiffres obfusquée (10 chiffres avec séparateurs) ────────────
-  static final _phoneRaw = RegExp(
-    r'\b\d[\d\s.\-]{8,}\d\b',
-  );
+  static final _phoneRaw = RegExp(r'\b\d[\d\s.\-]{8,}\d\b');
 
   // ── Apps de messagerie externe ────────────────────────────────────────────
   static final _socialApps = RegExp(
@@ -77,9 +75,7 @@ class MessageModerationService {
 
   // ─────────────────────────────────────────────────────────────────────────
 
-  static final _locationMessage = RegExp(
-    r'^📍\s+-?\d+\.\d+,-?\d+\.\d+$',
-  );
+  static final _locationMessage = RegExp(r'^📍\s+-?\d+\.\d+,-?\d+\.\d+$');
 
   ModerationResult check(String text) {
     if (_locationMessage.hasMatch(text)) return ModerationResult.allowed;

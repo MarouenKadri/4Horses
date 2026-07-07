@@ -110,8 +110,7 @@ class _ClientReviewPageState extends State<ClientReviewPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(5, (i) {
                             return GestureDetector(
-                              onTap: () =>
-                                  setState(() => _starRating = i + 1),
+                              onTap: () => setState(() => _starRating = i + 1),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 6,
@@ -171,20 +170,25 @@ class _ClientReviewPageState extends State<ClientReviewPage> {
                               color: context.colors.textTertiary,
                             ),
                             border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.input),
-                              borderSide:
-                                  BorderSide(color: context.colors.border),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.input,
+                              ),
+                              borderSide: BorderSide(
+                                color: context.colors.border,
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.input),
-                              borderSide:
-                                  BorderSide(color: context.colors.border),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.input,
+                              ),
+                              borderSide: BorderSide(
+                                color: context.colors.border,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.input),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.input,
+                              ),
                               borderSide: const BorderSide(
                                 color: AppColors.primary,
                               ),
@@ -252,11 +256,7 @@ class _ClientReviewPageState extends State<ClientReviewPage> {
       if (err != null) {
         debugPrint('submitReview (client) warning: $err');
       } else {
-        showAppSnackBar(
-          context,
-          'Avis envoyé',
-          type: SnackBarType.success,
-        );
+        showAppSnackBar(context, 'Avis envoyé', type: SnackBarType.success);
       }
     }
 
@@ -265,10 +265,10 @@ class _ClientReviewPageState extends State<ClientReviewPage> {
   }
 
   String _ratingLabel(int stars) => switch (stars) {
-        1 => 'Décevant',
-        2 => 'Passable',
-        3 => 'Bien',
-        4 => 'Très bien',
-        _ => 'Excellent !',
-      };
+    1 => 'Décevant',
+    2 => 'Passable',
+    3 => 'Bien',
+    4 => 'Très bien',
+    _ => 'Excellent !',
+  };
 }

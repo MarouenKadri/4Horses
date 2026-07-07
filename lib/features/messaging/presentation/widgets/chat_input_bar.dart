@@ -3,12 +3,12 @@ import 'package:geolocator/geolocator.dart';
 import '../../../../core/design/app_design_system.dart';
 import '../../data/services/message_moderation_service.dart';
 
-const _kInk       = AppColors.ink;
-const _kWhite     = AppColors.surface;
-const _kCharcoal  = AppColors.surfaceAlt;
-const _kGrayMid   = AppColors.textTertiary;
+const _kInk = AppColors.ink;
+const _kWhite = AppColors.surface;
+const _kCharcoal = AppColors.surfaceAlt;
+const _kGrayMid = AppColors.textTertiary;
 const _kGrayLight = AppColors.textHint;
-const _kBorder    = AppColors.divider;
+const _kBorder = AppColors.divider;
 
 class ChatInputBar extends StatefulWidget {
   final Future<String?> Function(String text) onSendMessage;
@@ -69,7 +69,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
     }
     if (perm == LocationPermission.denied ||
         perm == LocationPermission.deniedForever) {
-      if (mounted) showAppSnackBar(context, 'Permission de localisation refusée');
+      if (mounted) {
+        showAppSnackBar(context, 'Permission de localisation refusée');
+      }
       return;
     }
     setState(() => _isSendingLocation = true);
@@ -85,7 +87,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
         );
       }
       if (!mounted) return;
-      final error = await widget.onSendMessage('📍 ${pos.latitude},${pos.longitude}');
+      final error = await widget.onSendMessage(
+        '📍 ${pos.latitude},${pos.longitude}',
+      );
       if (!mounted) return;
       if (error != null) {
         showAppSnackBar(context, error, type: SnackBarType.error);
@@ -93,7 +97,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
         widget.onSendSuccess();
       }
     } catch (_) {
-      if (mounted) showAppSnackBar(context, 'Impossible d\'obtenir la position');
+      if (mounted) {
+        showAppSnackBar(context, 'Impossible d\'obtenir la position');
+      }
     } finally {
       if (mounted) setState(() => _isSendingLocation = false);
     }
@@ -102,7 +108,8 @@ class _ChatInputBarState extends State<ChatInputBar> {
   @override
   Widget build(BuildContext context) {
     final hasText = _controller.text.trim().isNotEmpty;
-    final isForbidden = hasText &&
+    final isForbidden =
+        hasText &&
         MessageModerationService.instance.check(_controller.text).blocked;
 
     return Container(
@@ -148,8 +155,10 @@ class _ChatInputBarState extends State<ChatInputBar> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 14, bottom: 11),
+                              padding: const EdgeInsets.only(
+                                left: 14,
+                                bottom: 11,
+                              ),
                               child: GestureDetector(
                                 onTap: _isSendingLocation
                                     ? null
@@ -178,15 +187,15 @@ class _ChatInputBarState extends State<ChatInputBar> {
                                 minLines: 1,
                                 textCapitalization:
                                     TextCapitalization.sentences,
-                                style: context.chatInputStyle
-                                    .copyWith(color: _kInk),
+                                style: context.chatInputStyle.copyWith(
+                                  color: _kInk,
+                                ),
                                 decoration: AppInputDecorations.formField(
                                   context,
                                   hintText: 'Votre message...',
                                   hintStyle: context.chatInputHintStyle
                                       .copyWith(color: _kGrayLight),
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 8,
                                     vertical: 11,
                                   ),
@@ -199,7 +208,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
                                       .check(value)
                                       .blocked;
                                   widget.onModerationWarning(blocked);
-                                  setState(() {}); // refresh hasText / isForbidden
+                                  setState(
+                                    () {},
+                                  ); // refresh hasText / isForbidden
                                 },
                                 onSubmitted: (_) => _handleSend(),
                               ),
@@ -220,8 +231,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
                                   width: 40,
                                   height: 40,
                                   decoration: BoxDecoration(
-                                    color:
-                                        isForbidden ? AppColors.error : _kInk,
+                                    color: isForbidden
+                                        ? AppColors.error
+                                        : _kInk,
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
@@ -271,8 +283,12 @@ class _MissionContextStrip extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 10,
-            backgroundImage: contactAvatar.isNotEmpty ? NetworkImage(contactAvatar) : null,
-            onBackgroundImageError: contactAvatar.isNotEmpty ? (_, __) {} : null,
+            backgroundImage: contactAvatar.isNotEmpty
+                ? NetworkImage(contactAvatar)
+                : null,
+            onBackgroundImageError: contactAvatar.isNotEmpty
+                ? (_, __) {}
+                : null,
             backgroundColor: _kBorder,
           ),
           AppGap.w6,

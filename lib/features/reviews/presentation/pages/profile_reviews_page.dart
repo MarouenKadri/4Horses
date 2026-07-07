@@ -77,7 +77,9 @@ class _ProfileReviewsPageState extends State<ProfileReviewsPage> {
         titleWidget: Text('Avis', style: context.reviewPageTitleStyle),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator(color: context.colors.primary))
+          ? Center(
+              child: CircularProgressIndicator(color: context.colors.primary),
+            )
           : Column(
               children: [
                 Padding(
@@ -106,14 +108,16 @@ class _ProfileReviewsPageState extends State<ProfileReviewsPage> {
                           children: [
                             Text(
                               widget.profileName,
-                              style: context.text.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w700),
+                              style: context.text.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               subtitle,
-                              style: context.text.bodySmall
-                                  ?.copyWith(color: context.colors.textSecondary),
+                              style: context.text.bodySmall?.copyWith(
+                                color: context.colors.textSecondary,
+                              ),
                             ),
                           ],
                         ),
@@ -144,4 +148,3 @@ class _ProfileReviewsPageState extends State<ProfileReviewsPage> {
     );
   }
 }
-

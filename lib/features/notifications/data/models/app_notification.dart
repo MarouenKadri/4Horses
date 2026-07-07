@@ -49,13 +49,13 @@ class AppNotification {
   }
 
   AppNotification copyWith({bool? isRead}) => AppNotification(
-        id: id,
-        type: type,
-        title: title,
-        body: body,
-        timeAgo: timeAgo,
-        avatarUrl: avatarUrl,
-        isRead: isRead ?? this.isRead,
-        createdAt: createdAt,
-      );
+    id: id,
+    type: type,
+    title: title,
+    body: body,
+    timeAgo: timeAgo,
+    avatarUrl: avatarUrl,
+    isRead: isRead ?? this.isRead,
+    createdAt: createdAt,
+  );
 }

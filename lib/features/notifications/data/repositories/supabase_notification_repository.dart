@@ -58,10 +58,7 @@ class SupabaseNotificationRepository implements NotificationRepository {
   @override
   Future<void> delete(String notifId) async {
     try {
-      await _supabase
-          .from('notifications')
-          .delete()
-          .eq('id', notifId);
+      await _supabase.from('notifications').delete().eq('id', notifId);
     } catch (e) {
       debugPrint('deleteNotification error: $e');
     }

@@ -13,22 +13,27 @@ class SupabaseMessagingRepository implements MessagingRepository {
     required bool isClientMode,
   }) async {
     try {
-      final query = _supabase.from('conversations').select(
+      final query = _supabase
+          .from('conversations')
+          .select(
             'id, client_id, freelancer_id, mission_id, mission_title, '
             'last_message, last_message_at',
           );
-      final rows = await (isClientMode
-              ? query.eq('client_id', userId)
-              : query.eq('freelancer_id', userId))
-          .order('last_message_at', ascending: false)
-          .limit(50);
+      final rows =
+          await (isClientMode
+                  ? query.eq('client_id', userId)
+                  : query.eq('freelancer_id', userId))
+              .order('last_message_at', ascending: false)
+              .limit(50);
 
       if ((rows as List).isEmpty) return [];
 
       final otherUserIds = rows
-          .map<String>((row) => row['client_id'] == userId
-              ? row['freelancer_id'] as String
-              : row['client_id'] as String)
+          .map<String>(
+            (row) => row['client_id'] == userId
+                ? row['freelancer_id'] as String
+                : row['client_id'] as String,
+          )
           .toSet()
           .toList(growable: false);
 
@@ -39,16 +44,16 @@ class SupabaseMessagingRepository implements MessagingRepository {
           .inFilter('id', otherUserIds);
 
       final profileMap = <String, Map<String, dynamic>>{
-        for (final p
-            in (profileRows as List).whereType<Map<String, dynamic>>())
+        for (final p in (profileRows as List).whereType<Map<String, dynamic>>())
           p['id'] as String: p,
       };
 
       // Batch-count unread — 1 query, limited to avoid unbounded scans.
       // TODO: replace with an RPC `get_unread_counts(conversation_ids uuid[])`
       // returning TABLE(conversation_id uuid, count bigint) once volume justifies it.
-      final conversationIds =
-          rows.map<String>((r) => r['id'] as String).toList(growable: false);
+      final conversationIds = rows
+          .map<String>((r) => r['id'] as String)
+          .toList(growable: false);
 
       final unreadRows = await _supabase
           .from('messages')
@@ -72,7 +77,7 @@ class SupabaseMessagingRepository implements MessagingRepository {
         final profile = profileMap[otherUserId];
         final otherName = profile != null
             ? '${profile['first_name'] ?? ''} ${profile['last_name'] ?? ''}'
-                .trim()
+                  .trim()
             : '';
 
         return Conversation(
@@ -112,7 +117,10 @@ class SupabaseMessagingRepository implements MessagingRepository {
           .order('created_at', ascending: true)
           .limit(100);
       return (rows as List)
-          .map((r) => ChatMessage.fromJson(r as Map<String, dynamic>, currentUserId))
+          .map(
+            (r) =>
+                ChatMessage.fromJson(r as Map<String, dynamic>, currentUserId),
+          )
           .toList();
     } catch (e) {
       debugPrint('getMessages error: $e');
@@ -143,9 +151,11 @@ class SupabaseMessagingRepository implements MessagingRepository {
           .lt('created_at', anchorRow['created_at'] as String)
           .order('created_at', ascending: false)
           .limit(limit);
-      return (rows as List)
-          .reversed
-          .map((r) => ChatMessage.fromJson(r as Map<String, dynamic>, currentUserId))
+      return (rows as List).reversed
+          .map(
+            (r) =>
+                ChatMessage.fromJson(r as Map<String, dynamic>, currentUserId),
+          )
           .toList();
     } catch (e) {
       debugPrint('getMessagesBefore error: $e');
@@ -163,12 +173,16 @@ class SupabaseMessagingRepository implements MessagingRepository {
     String content,
   ) async {
     try {
-      final row = await _supabase.from('messages').insert({
-        'conversation_id': conversationId,
-        'sender_id': senderId,
-        'content': content,
-        'status': 'sent',
-      }).select().single();
+      final row = await _supabase
+          .from('messages')
+          .insert({
+            'conversation_id': conversationId,
+            'sender_id': senderId,
+            'content': content,
+            'status': 'sent',
+          })
+          .select()
+          .single();
       return ChatMessage.fromJson(row, senderId);
     } catch (e) {
       debugPrint('sendMessage error: $e');
@@ -257,10 +271,13 @@ class SupabaseMessagingRepository implements MessagingRepository {
     String lastMessage,
   ) async {
     try {
-      await _supabase.from('conversations').update({
-        'last_message': lastMessage,
-        'last_message_at': DateTime.now().toIso8601String(),
-      }).eq('id', conversationId);
+      await _supabase
+          .from('conversations')
+          .update({
+            'last_message': lastMessage,
+            'last_message_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', conversationId);
     } catch (e) {
       debugPrint('updateConversationLastMessage error: $e');
     }

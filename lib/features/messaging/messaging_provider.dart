@@ -25,8 +25,8 @@ class MessagingProvider extends ChangeNotifier {
   MessagingProvider({
     MessagingRepository? repository,
     SupabaseClient? supabaseClient,
-  })  : _repo = repository ?? SupabaseMessagingRepository(),
-        _supabase = supabaseClient ?? Supabase.instance.client {
+  }) : _repo = repository ?? SupabaseMessagingRepository(),
+       _supabase = supabaseClient ?? Supabase.instance.client {
     _authSub = _supabase.auth.onAuthStateChange.listen((data) {
       if (data.event == AuthChangeEvent.signedOut) _resetState();
     });
@@ -47,8 +47,10 @@ class MessagingProvider extends ChangeNotifier {
     final token = ++_conversationLoadToken;
     _setLoading(true);
 
-    final result =
-        await _repo.getConversations(userId, isClientMode: _isClientMode);
+    final result = await _repo.getConversations(
+      userId,
+      isClientMode: _isClientMode,
+    );
     if (token != _conversationLoadToken) return;
 
     _conversations = result;
@@ -98,8 +100,10 @@ class MessagingProvider extends ChangeNotifier {
     final index = _conversations.indexWhere((c) => c.id == conversationId);
     if (index != -1) {
       final next = List<Conversation>.from(_conversations);
-      next[index] = _conversations[index]
-          .copyWith(missionId: missionId, missionTitle: missionTitle);
+      next[index] = _conversations[index].copyWith(
+        missionId: missionId,
+        missionTitle: missionTitle,
+      );
       _conversations = next;
       notifyListeners();
     }
@@ -125,7 +129,8 @@ class MessagingProvider extends ChangeNotifier {
       unreadCount: unreadCount,
     );
 
-    final changed = updated.lastMessage != current.lastMessage ||
+    final changed =
+        updated.lastMessage != current.lastMessage ||
         updated.lastMessageAt != current.lastMessageAt ||
         updated.unreadCount != current.unreadCount;
     if (!changed && (preservePosition || index == 0)) return;

@@ -51,10 +51,7 @@ class ReviewsTab extends StatelessWidget {
       itemCount: reviews.length,
       itemBuilder: (_, i) => Padding(
         padding: const EdgeInsets.only(bottom: 12),
-        child: ReviewCard(
-          review: reviews[i],
-          isReceived: isReceived,
-        ),
+        child: ReviewCard(review: reviews[i], isReceived: isReceived),
       ),
     );
   }

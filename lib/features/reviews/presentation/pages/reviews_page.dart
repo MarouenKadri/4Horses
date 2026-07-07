@@ -23,8 +23,8 @@ class ReviewsPage extends StatelessWidget {
     if (config.isPublicProfile) {
       // Provider isolé : ne pollue pas le state global de l'utilisateur connecté.
       return ChangeNotifierProvider(
-        create: (_) => ReviewProvider(autoLoad: false)
-          ..loadReceivedFor(config.userId),
+        create: (_) =>
+            ReviewProvider(autoLoad: false)..loadReceivedFor(config.userId),
         child: _ReviewsPageContent(config: config),
       );
     }
@@ -81,7 +81,10 @@ class _ReviewsPageContentState extends State<_ReviewsPageContent>
       backgroundColor: context.colors.background,
       appBar: AppPageAppBar(
         leading: const AppBackButtonLeading(),
-        titleWidget: Text(widget.config.title, style: context.reviewPageTitleStyle),
+        titleWidget: Text(
+          widget.config.title,
+          style: context.reviewPageTitleStyle,
+        ),
         centerTitle: true,
         bottom: _hasTabs
             ? AppSegmentedTabBar(
@@ -89,13 +92,17 @@ class _ReviewsPageContentState extends State<_ReviewsPageContent>
                 tabs: const [
                   AppSegmentedTab(icon: Icons.star_rounded, label: 'Reçus'),
                   AppSegmentedTab(
-                      icon: Icons.rate_review_rounded, label: 'Donnés'),
+                    icon: Icons.rate_review_rounded,
+                    label: 'Donnés',
+                  ),
                 ],
               )
             : null,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator(color: context.colors.primary))
+          ? Center(
+              child: CircularProgressIndicator(color: context.colors.primary),
+            )
           : Column(
               children: [
                 ReviewsSummary(reviews: received),
@@ -105,9 +112,9 @@ class _ReviewsPageContentState extends State<_ReviewsPageContent>
                     child: ReviewsErrorCard(
                       message: provider.error!,
                       onRetry: () => widget.config.isPublicProfile
-                          ? context
-                              .read<ReviewProvider>()
-                              .loadReceivedFor(widget.config.userId)
+                          ? context.read<ReviewProvider>().loadReceivedFor(
+                              widget.config.userId,
+                            )
                           : context.read<ReviewProvider>().loadReviews(),
                     ),
                   ),

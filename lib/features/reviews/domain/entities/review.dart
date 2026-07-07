@@ -26,15 +26,15 @@ class Review {
   });
 
   factory Review.fromJson(Map<String, dynamic> json) => Review(
-        id: json['id'] as String,
-        revieweeId: json['reviewee_id'] as String,
-        reviewerId: json['reviewer_id'] as String,
-        reviewerName: json['reviewer_name'] as String? ?? 'Anonyme',
-        reviewerAvatar: json['reviewer_avatar'] as String? ?? '',
-        satisfaction: Satisfaction.fromInt((json['rating'] as num).toInt()),
-        comment: json['comment'] as String? ?? '',
-        missionId: json['mission_id'] as String? ?? '',
-        missionTitle: json['mission_title'] as String? ?? 'Mission',
-        createdAt: DateTime.parse(json['created_at'] as String),
-      );
+    id: json['id'] as String,
+    revieweeId: json['reviewee_id'] as String,
+    reviewerId: json['reviewer_id'] as String,
+    reviewerName: json['reviewer_name'] as String? ?? 'Anonyme',
+    reviewerAvatar: json['reviewer_avatar'] as String? ?? '',
+    satisfaction: Satisfaction.fromInt((json['rating'] as num).toInt()),
+    comment: json['comment'] as String? ?? '',
+    missionId: json['mission_id'] as String? ?? '',
+    missionTitle: json['mission_title'] as String? ?? 'Mission',
+    createdAt: DateTime.parse(json['created_at'] as String),
+  );
 }

@@ -6,10 +6,10 @@ import '../providers/chat_provider.dart';
 import 'location_message_bubble.dart';
 import 'message_time_status.dart';
 
-const _kInk      = AppColors.ink;
-const _kWhite    = AppColors.surface;
-const _kGrayMid  = AppColors.textTertiary;
-const _kBorder   = AppColors.divider;
+const _kInk = AppColors.ink;
+const _kWhite = AppColors.surface;
+const _kGrayMid = AppColors.textTertiary;
+const _kBorder = AppColors.divider;
 
 class ChatMessageBubble extends StatelessWidget {
   final ChatMessage message;
@@ -37,10 +37,10 @@ class ChatMessageBubble extends StatelessWidget {
       ),
       child: switch (message.parsedContent) {
         final LocationContent loc => LocationMessageBubble(
-            message: message,
-            location: loc,
-            isMe: isMe,
-          ),
+          message: message,
+          location: loc,
+          isMe: isMe,
+        ),
         _ => _TextBubble(message: message, isMe: isMe),
       },
     );
@@ -55,8 +55,12 @@ class ChatMessageBubble extends StatelessWidget {
                 showAvatar
                     ? CircleAvatar(
                         radius: 15,
-                        backgroundImage: contactAvatar.isNotEmpty ? NetworkImage(contactAvatar) : null,
-                        onBackgroundImageError: contactAvatar.isNotEmpty ? (_, __) {} : null,
+                        backgroundImage: contactAvatar.isNotEmpty
+                            ? NetworkImage(contactAvatar)
+                            : null,
+                        onBackgroundImageError: contactAvatar.isNotEmpty
+                            ? (_, __) {}
+                            : null,
                         backgroundColor: _kBorder,
                       )
                     : const SizedBox(width: 30),
@@ -96,15 +100,17 @@ class _TextBubble extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isMe
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           Text(
             message.content,
-            style: (isMe
-                    ? context.chatBubbleTextOnDarkStyle
-                    : context.chatBubbleTextStyle)
-                .copyWith(color: isMe ? _kWhite : _kInk),
+            style:
+                (isMe
+                        ? context.chatBubbleTextOnDarkStyle
+                        : context.chatBubbleTextStyle)
+                    .copyWith(color: isMe ? _kWhite : _kInk),
           ),
           AppGap.h4,
           MessageTimeStatus(message: message, isMe: isMe),

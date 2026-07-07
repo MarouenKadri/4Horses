@@ -29,9 +29,9 @@ class _MessagesPageState extends State<MessagesPage> {
       final isClient =
           context.read<AuthProvider>().currentRole == UserRole.client;
       _lastRole = isClient ? UserRole.client : UserRole.provider;
-      context
-          .read<MessagingProvider>()
-          .loadConversations(isClientMode: isClient);
+      context.read<MessagingProvider>().loadConversations(
+        isClientMode: isClient,
+      );
     });
   }
 
@@ -63,7 +63,9 @@ class _MessagesPageState extends State<MessagesPage> {
         child: Consumer<MessagingProvider>(
           builder: (context, provider, _) {
             if (provider.isLoadingConversations) {
-              return Center(child: CircularProgressIndicator(color: context.colors.primary));
+              return Center(
+                child: CircularProgressIndicator(color: context.colors.primary),
+              );
             }
 
             if (provider.conversations.isEmpty) {
@@ -76,20 +78,22 @@ class _MessagesPageState extends State<MessagesPage> {
             }
 
             return RefreshIndicator(
-              onRefresh: () =>
-                  provider.loadConversations(forceRefresh: true),
+              onRefresh: () => provider.loadConversations(forceRefresh: true),
               color: AppColors.primary,
               child: ListView.separated(
                 padding: AppInsets.v8,
                 itemCount: provider.conversations.length,
-                separatorBuilder: (_, __) =>
-                    Divider(height: 1, indent: 80, color: context.colors.divider),
+                separatorBuilder: (_, __) => Divider(
+                  height: 1,
+                  indent: 80,
+                  color: context.colors.divider,
+                ),
                 itemBuilder: (context, i) => _ConversationTile(
                   conversation: provider.conversations[i],
                   currentUserId: provider.currentUserId ?? '',
                   isClientMode:
                       context.read<AuthProvider>().currentRole ==
-                          UserRole.client,
+                      UserRole.client,
                 ),
               ),
             );
@@ -114,7 +118,8 @@ class _ConversationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasUnread = conversation.unreadCount > 0;
-    final avatar = conversation.otherUserAvatar ??
+    final avatar =
+        conversation.otherUserAvatar ??
         'https://api.dicebear.com/7.x/avataaars/png?seed=${conversation.otherUserId}';
     final isOtherFreelancer = currentUserId == conversation.clientId;
 
@@ -156,21 +161,19 @@ class _ConversationTile extends StatelessWidget {
               contactAvatar: avatar,
               isVerified: conversation.isOtherVerified,
               missionTitle: conversation.missionTitle,
-              showReserveButton:
-                  conversation.missionId == null && isClientMode,
-              freelancerId:
-                  conversation.missionId == null && isClientMode
-                      ? conversation.otherUserId
-                      : null,
+              showReserveButton: conversation.missionId == null && isClientMode,
+              freelancerId: conversation.missionId == null && isClientMode
+                  ? conversation.otherUserId
+                  : null,
               confirmedMissionTitle: conversation.missionTitle,
               onProfileTap: goToProfile,
             ),
           ),
         ).then((_) {
           if (context.mounted) {
-            context
-                .read<MessagingProvider>()
-                .loadConversations(forceRefresh: true);
+            context.read<MessagingProvider>().loadConversations(
+              forceRefresh: true,
+            );
           }
         });
       },
@@ -181,9 +184,7 @@ class _ConversationTile extends StatelessWidget {
             CircleAvatar(
               radius: 28,
               backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
-              onBackgroundImageError: avatar.isNotEmpty
-                  ? (_, __) {}
-                  : null,
+              onBackgroundImageError: avatar.isNotEmpty ? (_, __) {} : null,
               child: avatar.isEmpty
                   ? const Icon(Icons.person_rounded, size: 28)
                   : null,
@@ -218,7 +219,9 @@ class _ConversationTile extends StatelessWidget {
                           backgroundColor: AppColors.secondary,
                           foregroundColor: AppColors.primary,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           fontSize: AppFontSize.xs,
                           fontWeight: FontWeight.w600,
                         ),
@@ -238,7 +241,9 @@ class _ConversationTile extends StatelessWidget {
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 7, vertical: 3),
+                            horizontal: 7,
+                            vertical: 3,
+                          ),
                         ),
                     ],
                   ),

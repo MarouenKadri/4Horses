@@ -42,14 +42,13 @@ class ReviewsViewConfig {
     required String userId,
     required String name,
     required String avatar,
-  }) =>
-      ReviewsViewConfig._(
-        userId: userId,
-        showGivenTab: false,
-        title: 'Avis sur $name',
-        profileName: name,
-        profileAvatar: avatar,
-      );
+  }) => ReviewsViewConfig._(
+    userId: userId,
+    showGivenTab: false,
+    title: 'Avis sur $name',
+    profileName: name,
+    profileAvatar: avatar,
+  );
 
   bool get isPublicProfile => !showGivenTab;
 }

@@ -25,10 +25,10 @@ class ReviewProvider extends ChangeNotifier {
     GetReceivedReviews? getReceivedReviews,
     GetGivenReviews? getGivenReviews,
     bool autoLoad = true,
-  })  : _getReceivedReviews = getReceivedReviews ??
-            GetReceivedReviews(SupabaseReviewRepository()),
-        _getGivenReviews =
-            getGivenReviews ?? GetGivenReviews(SupabaseReviewRepository()) {
+  }) : _getReceivedReviews =
+           getReceivedReviews ?? GetReceivedReviews(SupabaseReviewRepository()),
+       _getGivenReviews =
+           getGivenReviews ?? GetGivenReviews(SupabaseReviewRepository()) {
     if (autoLoad) {
       _authSub = _supabase.auth.onAuthStateChange.listen((data) {
         if (data.event == AuthChangeEvent.signedIn ||

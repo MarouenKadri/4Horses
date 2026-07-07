@@ -7,13 +7,14 @@ import '../../data/repositories/messaging_repository.dart';
 import '../../data/repositories/moderated_messaging_repository.dart';
 import '../../data/repositories/supabase_messaging_repository.dart';
 
-typedef ConversationSyncCallback = void Function(
-  String conversationId, {
-  String? lastMessage,
-  DateTime? lastMessageAt,
-  int? unreadCount,
-  bool preservePosition,
-});
+typedef ConversationSyncCallback =
+    void Function(
+      String conversationId, {
+      String? lastMessage,
+      DateTime? lastMessageAt,
+      int? unreadCount,
+      bool preservePosition,
+    });
 
 /// Provider scoped to a single conversation.
 /// Created per-ChatPage; lifecycle managed by the page.
@@ -51,12 +52,13 @@ class ChatProvider extends ChangeNotifier {
     SupabaseClient? supabaseClient,
     this.onConversationSync,
     @visibleForTesting String? testCurrentUserId,
-  })  : _repo = repository ??
-            ModeratedMessagingRepository(SupabaseMessagingRepository()),
-        _supabase = (testCurrentUserId != null || repository != null)
-            ? null
-            : (supabaseClient ?? Supabase.instance.client),
-        _testCurrentUserId = testCurrentUserId;
+  }) : _repo =
+           repository ??
+           ModeratedMessagingRepository(SupabaseMessagingRepository()),
+       _supabase = (testCurrentUserId != null || repository != null)
+           ? null
+           : (supabaseClient ?? Supabase.instance.client),
+       _testCurrentUserId = testCurrentUserId;
 
   /// Lifts or restores content moderation based on mission assignment status.
   /// When [value] is true, phone numbers and addresses are allowed in chat.
@@ -130,8 +132,7 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final older =
-          await _repo.getMessagesBefore(convId, _messages.first.id);
+      final older = await _repo.getMessagesBefore(convId, _messages.first.id);
       if (older.isEmpty) {
         _hasMore = false;
       } else {
@@ -307,8 +308,7 @@ class ChatProvider extends ChangeNotifier {
   }
 
   void _removeById(String id, {bool notify = true}) {
-    _messages =
-        _messages.where((m) => m.id != id).toList(growable: false);
+    _messages = _messages.where((m) => m.id != id).toList(growable: false);
     if (notify) notifyListeners();
   }
 
@@ -330,14 +330,16 @@ class ChatProvider extends ChangeNotifier {
     final userId = currentUserId;
     if (userId == null) return;
 
-    _messages = _messages.map((m) {
-      if (m.senderId != userId &&
-          m.status != MessageStatus.read &&
-          !m.id.startsWith('temp_')) {
-        return m.copyWith(status: MessageStatus.read);
-      }
-      return m;
-    }).toList(growable: false);
+    _messages = _messages
+        .map((m) {
+          if (m.senderId != userId &&
+              m.status != MessageStatus.read &&
+              !m.id.startsWith('temp_')) {
+            return m.copyWith(status: MessageStatus.read);
+          }
+          return m;
+        })
+        .toList(growable: false);
 
     _notifyConversationSync(
       conversationId,

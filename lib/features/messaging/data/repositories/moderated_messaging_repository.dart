@@ -40,8 +40,7 @@ class ModeratedMessagingRepository implements MessagingRepository {
   Future<List<Conversation>> getConversations(
     String userId, {
     required bool isClientMode,
-  }) =>
-      _delegate.getConversations(userId, isClientMode: isClientMode);
+  }) => _delegate.getConversations(userId, isClientMode: isClientMode);
 
   @override
   Future<List<ChatMessage>> getMessages(String conversationId) =>
@@ -52,36 +51,33 @@ class ModeratedMessagingRepository implements MessagingRepository {
     String conversationId,
     String beforeMessageId, {
     int limit = 50,
-  }) =>
-      _delegate.getMessagesBefore(
-        conversationId,
-        beforeMessageId,
-        limit: limit,
-      );
+  }) => _delegate.getMessagesBefore(
+    conversationId,
+    beforeMessageId,
+    limit: limit,
+  );
 
   @override
   Future<String?> getOrCreateConversation({
     required String clientId,
     required String freelancerId,
     String? missionId,
-  }) =>
-      _delegate.getOrCreateConversation(
-        clientId: clientId,
-        freelancerId: freelancerId,
-        missionId: missionId,
-      );
+  }) => _delegate.getOrCreateConversation(
+    clientId: clientId,
+    freelancerId: freelancerId,
+    missionId: missionId,
+  );
 
   @override
   Future<String?> findConversation({
     required String clientId,
     required String freelancerId,
     String? missionId,
-  }) =>
-      _delegate.findConversation(
-        clientId: clientId,
-        freelancerId: freelancerId,
-        missionId: missionId,
-      );
+  }) => _delegate.findConversation(
+    clientId: clientId,
+    freelancerId: freelancerId,
+    missionId: missionId,
+  );
 
   @override
   Future<void> markAsRead(String conversationId, String userId) =>
@@ -91,14 +87,16 @@ class ModeratedMessagingRepository implements MessagingRepository {
   Future<void> updateConversationLastMessage(
     String conversationId,
     String lastMessage,
-  ) =>
-      _delegate.updateConversationLastMessage(conversationId, lastMessage);
+  ) => _delegate.updateConversationLastMessage(conversationId, lastMessage);
 
   @override
   Future<void> linkMissionToConversation(
     String conversationId,
     String missionId,
     String missionTitle,
-  ) =>
-      _delegate.linkMissionToConversation(conversationId, missionId, missionTitle);
+  ) => _delegate.linkMissionToConversation(
+    conversationId,
+    missionId,
+    missionTitle,
+  );
 }

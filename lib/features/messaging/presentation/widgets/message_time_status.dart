@@ -47,24 +47,24 @@ class MessageTimeStatus extends StatelessWidget {
   }
 
   String _statusLabel(MessageStatus status) => switch (status) {
-    MessageStatus.sending   => 'Envoi',
-    MessageStatus.sent      => 'Envoye',
+    MessageStatus.sending => 'Envoi',
+    MessageStatus.sent => 'Envoye',
     MessageStatus.delivered => 'Non lu',
-    MessageStatus.read      => 'Lu',
-    MessageStatus.failed    => 'Erreur',
+    MessageStatus.read => 'Lu',
+    MessageStatus.failed => 'Erreur',
   };
 
   IconData _statusIcon(MessageStatus status) => switch (status) {
-    MessageStatus.sending   => Icons.schedule_rounded,
-    MessageStatus.sent      => Icons.done_rounded,
+    MessageStatus.sending => Icons.schedule_rounded,
+    MessageStatus.sent => Icons.done_rounded,
     MessageStatus.delivered => Icons.done_all_rounded,
-    MessageStatus.read      => Icons.done_all_rounded,
-    MessageStatus.failed    => Icons.error_outline_rounded,
+    MessageStatus.read => Icons.done_all_rounded,
+    MessageStatus.failed => Icons.error_outline_rounded,
   };
 
   Color _statusColor(MessageStatus status) => switch (status) {
-    MessageStatus.read   => AppColors.messageReadBg,
+    MessageStatus.read => AppColors.messageReadBg,
     MessageStatus.failed => AppColors.error,
-    _                    => _kWhite.withValues(alpha: 0.82),
+    _ => _kWhite.withValues(alpha: 0.82),
   };
 }

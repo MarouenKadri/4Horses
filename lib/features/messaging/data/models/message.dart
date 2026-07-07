@@ -23,14 +23,17 @@ class ChatMessage {
     this.isSystemMessage = false,
   });
 
-  factory ChatMessage.fromJson(Map<String, dynamic> json, String currentUserId) {
+  factory ChatMessage.fromJson(
+    Map<String, dynamic> json,
+    String currentUserId,
+  ) {
     final statusStr = json['status'] as String? ?? 'sent';
     final status = switch (statusStr) {
-      'sending'   => MessageStatus.sending,
+      'sending' => MessageStatus.sending,
       'delivered' => MessageStatus.delivered,
-      'read'      => MessageStatus.read,
-      'failed'    => MessageStatus.failed,
-      _           => MessageStatus.sent,
+      'read' => MessageStatus.read,
+      'failed' => MessageStatus.failed,
+      _ => MessageStatus.sent,
     };
     return ChatMessage(
       id: json['id'] as String,
@@ -105,19 +108,18 @@ class Conversation {
     int? unreadCount,
     String? missionId,
     String? missionTitle,
-  }) =>
-      Conversation(
-        id: id,
-        clientId: clientId,
-        freelancerId: freelancerId,
-        missionId: missionId ?? this.missionId,
-        missionTitle: missionTitle ?? this.missionTitle,
-        lastMessage: lastMessage ?? this.lastMessage,
-        lastMessageAt: lastMessageAt ?? this.lastMessageAt,
-        unreadCount: unreadCount ?? this.unreadCount,
-        otherUserId: otherUserId,
-        otherUserName: otherUserName,
-        otherUserAvatar: otherUserAvatar,
-        isOtherVerified: isOtherVerified,
-      );
+  }) => Conversation(
+    id: id,
+    clientId: clientId,
+    freelancerId: freelancerId,
+    missionId: missionId ?? this.missionId,
+    missionTitle: missionTitle ?? this.missionTitle,
+    lastMessage: lastMessage ?? this.lastMessage,
+    lastMessageAt: lastMessageAt ?? this.lastMessageAt,
+    unreadCount: unreadCount ?? this.unreadCount,
+    otherUserId: otherUserId,
+    otherUserName: otherUserName,
+    otherUserAvatar: otherUserAvatar,
+    isOtherVerified: isOtherVerified,
+  );
 }

@@ -4,7 +4,7 @@ import '../../../../core/design/app_design_system.dart';
 import '../../data/models/message.dart';
 import 'message_time_status.dart';
 
-const _kInk   = AppColors.ink;
+const _kInk = AppColors.ink;
 const _kWhite = AppColors.surface;
 
 class LocationMessageBubble extends StatelessWidget {
@@ -21,7 +21,8 @@ class LocationMessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mapUrl = 'https://staticmap.openstreetmap.de/staticmap.php'
+    final mapUrl =
+        'https://staticmap.openstreetmap.de/staticmap.php'
         '?center=${location.lat},${location.lng}'
         '&zoom=15&size=300x150'
         '&markers=${location.lat},${location.lng},red-pushpin';
@@ -77,7 +78,9 @@ class LocationMessageBubble extends StatelessWidget {
                   right: 6,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.55),
                       borderRadius: BorderRadius.circular(999),
@@ -85,8 +88,11 @@ class LocationMessageBubble extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.open_in_new_rounded,
-                            size: 11, color: Colors.white),
+                        const Icon(
+                          Icons.open_in_new_rounded,
+                          size: 11,
+                          color: Colors.white,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Ouvrir',

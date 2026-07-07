@@ -9,11 +9,7 @@ class ReviewCard extends StatelessWidget {
   final Review review;
   final bool isReceived;
 
-  const ReviewCard({
-    super.key,
-    required this.review,
-    required this.isReceived,
-  });
+  const ReviewCard({super.key, required this.review, required this.isReceived});
 
   @override
   Widget build(BuildContext context) {
@@ -92,9 +88,7 @@ class ReviewCard extends StatelessWidget {
                     color: isReceived
                         ? AppColors.secondary
                         : context.colors.surfaceAlt,
-                    borderRadius: BorderRadius.circular(
-                      AppDesign.radius14Lg,
-                    ),
+                    borderRadius: BorderRadius.circular(AppDesign.radius14Lg),
                     child: Text(
                       isReceived ? 'Recu' : 'Donne',
                       style: context.text.labelMedium?.copyWith(

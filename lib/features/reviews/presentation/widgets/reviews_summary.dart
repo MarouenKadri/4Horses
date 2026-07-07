@@ -8,10 +8,7 @@ import '../mappers/satisfaction_ui.dart';
 class ReviewsSummary extends StatelessWidget {
   final List<Review> reviews;
 
-  const ReviewsSummary({
-    super.key,
-    required this.reviews,
-  });
+  const ReviewsSummary({super.key, required this.reviews});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +45,10 @@ class ReviewsSummary extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('$pctRecommend%', style: context.reviewSummaryScoreStyle),
+                  Text(
+                    '$pctRecommend%',
+                    style: context.reviewSummaryScoreStyle,
+                  ),
                   Text(
                     'recommandent · $total avis',
                     style: context.reviewSummaryMetaStyle,

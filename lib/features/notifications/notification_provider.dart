@@ -21,7 +21,7 @@ class NotificationProvider extends ChangeNotifier {
   String? get _userId => Supabase.instance.client.auth.currentUser?.id;
 
   NotificationProvider({NotificationRepository? repository})
-      : _repository = repository ?? SupabaseNotificationRepository() {
+    : _repository = repository ?? SupabaseNotificationRepository() {
     _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       if (data.event == AuthChangeEvent.signedIn) {
         _channel?.unsubscribe();
@@ -70,7 +70,9 @@ class NotificationProvider extends ChangeNotifier {
     list[index] = list[index].copyWith(isRead: true);
     _notifications = list;
     notifyListeners();
-    _repository.markRead(id).catchError((e) => debugPrint('markRead error: $e'));
+    _repository
+        .markRead(id)
+        .catchError((e) => debugPrint('markRead error: $e'));
   }
 
   void markAllRead() {

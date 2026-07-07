@@ -27,8 +27,8 @@ class _MyReviewsPageState extends State<MyReviewsPage>
     _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReviewProvider>().loadReviewsForMode(
-            isFreelancer: widget.isFreelancer,
-          );
+        isFreelancer: widget.isFreelancer,
+      );
     });
   }
 
@@ -58,11 +58,14 @@ class _MyReviewsPageState extends State<MyReviewsPage>
           ],
         ),
       ),
-      body: provider.isLoading &&
+      body:
+          provider.isLoading &&
               receivedReviews.isEmpty &&
               givenReviews.isEmpty &&
               provider.error == null
-          ? Center(child: CircularProgressIndicator(color: context.colors.primary))
+          ? Center(
+              child: CircularProgressIndicator(color: context.colors.primary),
+            )
           : Column(
               children: [
                 ReviewsSummary(reviews: receivedReviews),
@@ -73,16 +76,17 @@ class _MyReviewsPageState extends State<MyReviewsPage>
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                     child: ReviewsErrorCard(
                       message: provider.error!,
-                      onRetry: () => context.read<ReviewProvider>().loadReviewsForMode(
+                      onRetry: () =>
+                          context.read<ReviewProvider>().loadReviewsForMode(
                             isFreelancer: widget.isFreelancer,
                           ),
                     ),
                   ),
                 Expanded(
                   child: RefreshIndicator(
-                    onRefresh: () => context.read<ReviewProvider>().loadReviewsForMode(
-                          isFreelancer: widget.isFreelancer,
-                        ),
+                    onRefresh: () => context
+                        .read<ReviewProvider>()
+                        .loadReviewsForMode(isFreelancer: widget.isFreelancer),
                     child: TabBarView(
                       controller: _tabController,
                       children: [
@@ -104,5 +108,4 @@ class _MyReviewsPageState extends State<MyReviewsPage>
             ),
     );
   }
-
 }

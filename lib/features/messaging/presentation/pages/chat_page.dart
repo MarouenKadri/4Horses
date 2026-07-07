@@ -11,12 +11,12 @@ import '../../../mission/presentation/pages/client/create_mission_page.dart';
 import '../../../mission/presentation/pages/client/client_mission_detail_page.dart';
 import '../../../mission/presentation/widgets/shared/mission_shared_widgets.dart';
 
-const _kBg       = AppColors.snow;
-const _kWhite    = AppColors.surface;
-const _kInk      = AppColors.ink;
+const _kBg = AppColors.snow;
+const _kWhite = AppColors.surface;
+const _kInk = AppColors.ink;
 const _kCharcoal = AppColors.surfaceAlt;
 const _kGrayLight = AppColors.textHint;
-const _kBorder   = AppColors.divider;
+const _kBorder = AppColors.divider;
 
 class ChatPage extends StatefulWidget {
   final String? conversationId;
@@ -80,8 +80,9 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     _chatProvider = ChatProvider(
-      onConversationSync:
-          context.read<MessagingProvider>().updateConversationPreview,
+      onConversationSync: context
+          .read<MessagingProvider>()
+          .updateConversationPreview,
     );
     _chatProvider.setMissionConfirmed(widget.isMissionConfirmed);
     _chatProvider.addListener(_onChatUpdated);
@@ -98,12 +99,11 @@ class _ChatPageState extends State<ChatPage> {
       // Restore scroll position after prepend so the view doesn't jump
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || !_scrollController.hasClients) return;
-        final added = _scrollController.position.maxScrollExtent -
+        final added =
+            _scrollController.position.maxScrollExtent -
             _scrollExtentBeforeLoadMore;
         if (added > 0) {
-          _scrollController.jumpTo(
-            _scrollController.position.pixels + added,
-          );
+          _scrollController.jumpTo(_scrollController.position.pixels + added);
         }
       });
     } else {
@@ -139,7 +139,8 @@ class _ChatPageState extends State<ChatPage> {
         builder: (_) => PostMissionFlow(
           preAssignedFreelancerId: widget.freelancerId,
           preAssignedFreelancerName: widget.contactName,
-          preAssignedFreelancerAvatar: widget.freelancerAvatarUrl ?? widget.contactAvatar,
+          preAssignedFreelancerAvatar:
+              widget.freelancerAvatarUrl ?? widget.contactAvatar,
         ),
       ),
     );
@@ -149,15 +150,16 @@ class _ChatPageState extends State<ChatPage> {
     final payload = result.substring('published:'.length);
     final sep = payload.indexOf(':');
     final missionId = sep > 0 ? payload.substring(0, sep) : '';
-    final title =
-        (sep > 0 ? payload.substring(sep + 1) : payload).trim();
+    final title = (sep > 0 ? payload.substring(sep + 1) : payload).trim();
     final displayTitle = title.isNotEmpty ? title : 'Mission réservée';
 
     // Link conversation → mission (updates badge + hides reserve button)
     if (missionId.isNotEmpty && widget.conversationId != null) {
-      context
-          .read<MessagingProvider>()
-          .linkConversationToMission(widget.conversationId!, missionId, displayTitle);
+      context.read<MessagingProvider>().linkConversationToMission(
+        widget.conversationId!,
+        missionId,
+        displayTitle,
+      );
     }
 
     setState(() => _bookedMissionTitle = displayTitle);
@@ -217,8 +219,11 @@ class _ChatPageState extends State<ChatPage> {
             ),
             child: Row(
               children: [
-                Icon(Icons.info_outline_rounded,
-                    size: 20, color: AppColors.warning),
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 20,
+                  color: AppColors.warning,
+                ),
                 AppGap.w8,
                 Expanded(
                   child: Text(
@@ -284,7 +289,8 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     final activeMissionTitle =
         _bookedMissionTitle ?? widget.confirmedMissionTitle;
-    final showReserve = widget.showReserveButton &&
+    final showReserve =
+        widget.showReserveButton &&
         _bookedMissionTitle == null &&
         widget.confirmedMissionTitle == null;
 
@@ -302,29 +308,28 @@ class _ChatPageState extends State<ChatPage> {
               _MissionBanner(
                 missionTitle: widget.missionTitle!,
                 contactName: widget.contactName,
-                showAccept:
-                    widget.candidateMode && !_candidateAccepted,
+                showAccept: widget.candidateMode && !_candidateAccepted,
                 candidatePrice: widget.candidatePrice,
                 candidateAccepted: _candidateAccepted,
                 onAccept: _acceptCandidateFromChat,
               ),
             if (_showContactWarning)
               _ContactWarning(
-                onDismiss: () =>
-                    setState(() => _showContactWarning = false),
+                onDismiss: () => setState(() => _showContactWarning = false),
               ),
-            Expanded(child: _MessageList(
-              conversationId: widget.conversationId,
-              contactUserId: widget.contactUserId,
-              contactAvatar: widget.contactAvatar,
-              scrollController: _scrollController,
-              onLoadMoreTriggered: () {
-                _scrollExtentBeforeLoadMore =
-                    _scrollController.hasClients
-                        ? _scrollController.position.maxScrollExtent
-                        : 0;
-              },
-            )),
+            Expanded(
+              child: _MessageList(
+                conversationId: widget.conversationId,
+                contactUserId: widget.contactUserId,
+                contactAvatar: widget.contactAvatar,
+                scrollController: _scrollController,
+                onLoadMoreTriggered: () {
+                  _scrollExtentBeforeLoadMore = _scrollController.hasClients
+                      ? _scrollController.position.maxScrollExtent
+                      : 0;
+                },
+              ),
+            ),
             ChatInputBar(
               onSendMessage: _chatProvider.sendMessage,
               onSendSuccess: _scrollToBottom,
@@ -352,23 +357,22 @@ class _ChatPageState extends State<ChatPage> {
         child: Container(height: 0.5, color: _kBorder),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded,
-            color: _kInk, size: 18),
+        icon: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: _kInk,
+          size: 18,
+        ),
         onPressed: () => Navigator.pop(context, _candidateAccepted),
       ),
       titleSpacing: 0,
       title: Row(
         children: [
-          ClipOval(
-            child: InkWell(
-              onTap: widget.onProfileTap,
-              splashColor: Colors.black.withValues(alpha: 0.04),
-              highlightColor: Colors.black.withValues(alpha: 0.02),
-              child: CircleAvatar(
-                radius: 19,
-                backgroundImage: NetworkImage(widget.contactAvatar),
-                backgroundColor: _kBorder,
-              ),
+          GestureDetector(
+            onTap: widget.onProfileTap,
+            child: CircleAvatar(
+              radius: 19,
+              backgroundImage: NetworkImage(widget.contactAvatar),
+              backgroundColor: _kBorder,
             ),
           ),
           AppGap.w12,
@@ -381,23 +385,24 @@ class _ChatPageState extends State<ChatPage> {
                     Flexible(
                       child: Text(
                         widget.contactName,
-                        style:
-                            context.chatTitleStyle.copyWith(color: _kInk),
+                        style: context.chatTitleStyle.copyWith(color: _kInk),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (widget.isVerified) ...[
                       AppGap.w4,
-                      const Icon(Icons.verified_rounded,
-                          size: 14, color: _kInk),
+                      const Icon(
+                        Icons.verified_rounded,
+                        size: 14,
+                        color: _kInk,
+                      ),
                     ],
                   ],
                 ),
                 const SizedBox(height: 1),
                 Text(
                   widget.isOnline ? 'En ligne' : 'Vu récemment',
-                  style: context.chatMetaStyle
-                      .copyWith(color: _kGrayLight),
+                  style: context.chatMetaStyle.copyWith(color: _kGrayLight),
                 ),
               ],
             ),
@@ -406,8 +411,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.more_horiz_rounded,
-              color: _kInk, size: 22),
+          icon: const Icon(Icons.more_horiz_rounded, color: _kInk, size: 22),
           onPressed: _showChatOptions,
         ),
       ],
@@ -443,8 +447,9 @@ class _MessageList extends StatelessWidget {
         child: Center(
           child: Text(
             'Démarrez la conversation',
-            style: context.chatEmptyStateStyle
-                .copyWith(color: AppColors.textHint),
+            style: context.chatEmptyStateStyle.copyWith(
+              color: AppColors.textHint,
+            ),
           ),
         ),
       );
@@ -469,35 +474,36 @@ class _MessageList extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.wifi_off_rounded,
-                      size: 40, color: AppColors.textTertiary),
+                  Icon(
+                    Icons.wifi_off_rounded,
+                    size: 40,
+                    color: AppColors.textTertiary,
+                  ),
                   AppGap.h12,
                   Text(
                     provider.error!,
-                    style: context.text.bodyMedium
-                        ?.copyWith(color: AppColors.textSecondary),
+                    style: context.text.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   AppGap.h16,
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(999),
-                    child: InkWell(
-                      onTap: () =>
-                          provider.open(conversationId!, forceRefresh: true),
-                      borderRadius: BorderRadius.circular(999),
-                      splashColor: Colors.black.withValues(alpha: 0.04),
-                      highlightColor: Colors.black.withValues(alpha: 0.02),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: _kInk,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          'Réessayer',
-                          style: context.chatPrimaryActionStyle
-                              .copyWith(color: _kWhite),
+                  GestureDetector(
+                    onTap: () =>
+                        provider.open(conversationId!, forceRefresh: true),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _kInk,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        'Réessayer',
+                        style: context.chatPrimaryActionStyle.copyWith(
+                          color: _kWhite,
                         ),
                       ),
                     ),
@@ -536,8 +542,7 @@ class _MessageList extends StatelessWidget {
             },
             child: ListView.builder(
               controller: scrollController,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               itemCount: itemCount,
               itemBuilder: (context, index) {
                 // Spinner en haut pendant le chargement des anciens messages
@@ -560,9 +565,9 @@ class _MessageList extends StatelessWidget {
                 final msgIndex = hasLoadingHeader ? index - 1 : index;
                 final msg = messages[msgIndex];
                 final isMe = isMyMessage(msg);
-                final showAvatar = !isMe &&
-                    (msgIndex == 0 ||
-                        isMyMessage(messages[msgIndex - 1]));
+                final showAvatar =
+                    !isMe &&
+                    (msgIndex == 0 || isMyMessage(messages[msgIndex - 1]));
                 return ChatMessageBubble(
                   message: msg,
                   isMe: isMe,
@@ -592,8 +597,7 @@ class _ConfirmedMissionBadge extends StatelessWidget {
       color: _kInk,
       child: Row(
         children: [
-          const Icon(Icons.task_alt_rounded,
-              size: 13, color: Colors.white70),
+          const Icon(Icons.task_alt_rounded, size: 13, color: Colors.white70),
           AppGap.w6,
           Expanded(
             child: Text(
@@ -669,26 +673,22 @@ class _MissionBanner extends StatelessWidget {
           ),
           if (showAccept) ...[
             AppGap.w12,
-            ClipRRect(
-              borderRadius: BorderRadius.circular(999),
-              child: InkWell(
-                onTap: onAccept,
-                borderRadius: BorderRadius.circular(999),
-                splashColor: Colors.black.withValues(alpha: 0.04),
-                highlightColor: Colors.black.withValues(alpha: 0.02),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _kInk,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    'Accepter',
-                    style: context.chatPrimaryActionStyle.copyWith(
-                      fontSize: AppFontSize.sm,
-                      color: _kWhite,
-                    ),
+            GestureDetector(
+              onTap: onAccept,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: _kInk,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  'Accepter',
+                  style: context.chatPrimaryActionStyle.copyWith(
+                    fontSize: AppFontSize.sm,
+                    color: _kWhite,
                   ),
                 ),
               ),
@@ -717,8 +717,7 @@ class _ContactWarning extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded,
-              color: AppColors.error, size: 18),
+          Icon(Icons.warning_amber_rounded, color: AppColors.error, size: 18),
           AppGap.w10,
           Expanded(
             child: Text(
@@ -726,13 +725,9 @@ class _ContactWarning extends StatelessWidget {
               style: context.chatWarningStyle,
             ),
           ),
-          InkWell(
+          GestureDetector(
             onTap: onDismiss,
-            borderRadius: BorderRadius.circular(12),
-            splashColor: Colors.black.withValues(alpha: 0.04),
-            highlightColor: Colors.black.withValues(alpha: 0.02),
-            child: Icon(Icons.close_rounded,
-                color: AppColors.error, size: 16),
+            child: Icon(Icons.close_rounded, color: AppColors.error, size: 16),
           ),
         ],
       ),

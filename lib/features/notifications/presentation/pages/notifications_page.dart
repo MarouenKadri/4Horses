@@ -54,7 +54,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   if (unreadCount > 0)
                     AppButton(
                       label: 'Tout lire',
-                      onPressed: () => context.read<NotificationProvider>().markAllRead(),
+                      onPressed: () =>
+                          context.read<NotificationProvider>().markAllRead(),
                       variant: ButtonVariant.ghost,
                       width: null,
                       height: 36,
@@ -73,7 +74,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   ),
                   const SizedBox(width: 10),
                   _FilterPill(
-                    label: unreadCount > 0 ? 'Non lues ($unreadCount)' : 'Non lues',
+                    label: unreadCount > 0
+                        ? 'Non lues ($unreadCount)'
+                        : 'Non lues',
                     selected: _showUnreadOnly,
                     onTap: () => setState(() => _showUnreadOnly = true),
                   ),
@@ -94,12 +97,16 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           direction: DismissDirection.endToStart,
                           background: const _DismissBackground(),
                           onDismissed: (_) {
-                            context.read<NotificationProvider>().deleteNotification(notification.id);
+                            context
+                                .read<NotificationProvider>()
+                                .deleteNotification(notification.id);
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           },
                           child: _NotificationCard(
                             notification: notification,
-                            onTap: () => context.read<NotificationProvider>().markRead(notification.id),
+                            onTap: () => context
+                                .read<NotificationProvider>()
+                                .markRead(notification.id),
                           ),
                         );
                       },
@@ -116,10 +123,7 @@ class _NotificationCard extends StatelessWidget {
   final AppNotification notification;
   final VoidCallback onTap;
 
-  const _NotificationCard({
-    required this.notification,
-    required this.onTap,
-  });
+  const _NotificationCard({required this.notification, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +225,8 @@ class _NotificationAvatar extends StatelessWidget {
         child: Image.network(
           notification.avatarUrl!,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _AvatarFallback(type: notification.type),
+          errorBuilder: (_, __, ___) =>
+              _AvatarFallback(type: notification.type),
         ),
       );
     }
@@ -308,27 +313,23 @@ class _FilterPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.full),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.full),
-        splashColor: Colors.black.withValues(alpha: 0.04),
-        highlightColor: Colors.black.withValues(alpha: 0.02),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: AppInsets.h16v10,
-          decoration: BoxDecoration(
-            color: selected ? context.colors.textPrimary : context.colors.surfaceAlt,
-            borderRadius: BorderRadius.circular(AppRadius.full),
-          ),
-          child: Text(
-            label,
-            style: context.text.labelLarge?.copyWith(
-              fontSize: AppFontSize.md,
-              fontWeight: FontWeight.w600,
-              color: selected ? Colors.white : context.colors.textPrimary,
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: AppInsets.h16v10,
+        decoration: BoxDecoration(
+          color: selected
+              ? context.colors.textPrimary
+              : context.colors.surfaceAlt,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Text(
+          label,
+          style: context.text.labelLarge?.copyWith(
+            fontSize: AppFontSize.md,
+            fontWeight: FontWeight.w600,
+            color: selected ? Colors.white : context.colors.textPrimary,
           ),
         ),
       ),
@@ -375,7 +376,7 @@ class _EmptyNotifications extends StatelessWidget {
               height: 68,
               decoration: BoxDecoration(
                 color: context.colors.surfaceAlt,
-                borderRadius: BorderRadius.circular(AppRadius.xl),
+                borderRadius: BorderRadius.circular(22),
               ),
               child: Icon(
                 Icons.notifications_none_rounded,
@@ -385,7 +386,9 @@ class _EmptyNotifications extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             Text(
-              showUnreadOnly ? 'Aucune notification non lue' : 'Aucune notification',
+              showUnreadOnly
+                  ? 'Aucune notification non lue'
+                  : 'Aucune notification',
               textAlign: TextAlign.center,
               style: context.text.titleLarge?.copyWith(
                 fontSize: AppFontSize.title,
