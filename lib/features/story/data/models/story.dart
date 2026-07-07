@@ -6,7 +6,9 @@ class Story {
   final String authorId;
   final String authorName;
   final String authorAvatar;
-  final String imageUrl;
+
+  /// Toutes les images du post (la colonne `posts.images` est un tableau).
+  final List<String> images;
   final String caption;
   final String serviceCategory; // e.g. "jardinage", "" = non classé
   final DateTime createdAt;
@@ -14,12 +16,15 @@ class Story {
   final int likesCount;
   final bool isLiked;
 
+  /// Première image — compat pour les surfaces mono-image (grille, viewer).
+  String get imageUrl => images.isNotEmpty ? images.first : '';
+
   const Story({
     required this.id,
     required this.authorId,
     required this.authorName,
     required this.authorAvatar,
-    required this.imageUrl,
+    this.images = const [],
     required this.caption,
     required this.serviceCategory,
     required this.createdAt,
@@ -43,7 +48,7 @@ class Story {
       authorId: json['author_id'] as String,
       authorName: authorName.isEmpty ? 'Prestataire' : authorName,
       authorAvatar: author?['avatar_url'] as String? ?? '',
-      imageUrl: images.isNotEmpty ? images.first : '',
+      images: images,
       caption: json['content'] as String? ?? '',
       serviceCategory: json['service_category'] as String? ?? '',
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -63,7 +68,7 @@ class Story {
     authorId: authorId,
     authorName: authorName,
     authorAvatar: authorAvatar,
-    imageUrl: imageUrl,
+    images: images,
     caption: caption ?? this.caption,
     serviceCategory: serviceCategory ?? this.serviceCategory,
     createdAt: createdAt,

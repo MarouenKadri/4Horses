@@ -71,34 +71,39 @@ class StoryProvider extends ChangeNotifier {
 
   Future<void> refresh() => _load();
 
+  /// Crée UN post contenant toutes les images (posts.images est un tableau).
   Future<Story?> createStory({
-    required File imageFile,
+    required List<File> imageFiles,
     String caption = '',
     String serviceCategory = '',
   }) async {
     final userId = _userId;
-    if (userId == null) return null;
+    if (userId == null || imageFiles.isEmpty) return null;
     try {
-      final bytes = await imageFile.readAsBytes();
-      final path = '$userId/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      await _supabase.storage
-          .from('post-images')
-          .uploadBinary(
-            path,
-            bytes,
-            fileOptions: const FileOptions(
-              contentType: 'image/jpeg',
-              upsert: true,
-            ),
-          );
-      final imageUrl = _supabase.storage.from('post-images').getPublicUrl(path);
+      final urls = <String>[];
+      final ts = DateTime.now().millisecondsSinceEpoch;
+      for (var i = 0; i < imageFiles.length; i++) {
+        final bytes = await imageFiles[i].readAsBytes();
+        final path = '$userId/${ts}_$i.jpg';
+        await _supabase.storage
+            .from('post-images')
+            .uploadBinary(
+              path,
+              bytes,
+              fileOptions: const FileOptions(
+                contentType: 'image/jpeg',
+                upsert: true,
+              ),
+            );
+        urls.add(_supabase.storage.from('post-images').getPublicUrl(path));
+      }
 
       final data = await _supabase
           .from('posts')
           .insert({
             'author_id': userId,
             'content': caption,
-            'images': [imageUrl],
+            'images': urls,
             'service_category': serviceCategory.isEmpty
                 ? null
                 : serviceCategory,

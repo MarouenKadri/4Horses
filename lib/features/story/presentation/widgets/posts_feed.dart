@@ -5,7 +5,6 @@ import '../../../../core/design/app_design_system.dart';
 import '../../../mission/data/models/service_category.dart';
 import '../../data/models/story.dart';
 import '../../story_provider.dart';
-import '../pages/story_viewer_page.dart';
 
 /// Fil de posts façon Quora : un post après l'autre, en-tête auteur,
 /// légende, image pleine largeur et vote ♥ directement dans le fil.
@@ -31,17 +30,14 @@ class _PostsFeedState extends State<PostsFeed> {
     if (mounted) setState(() => _pendingLike.remove(storyId));
   }
 
-  void _openViewer(List<StoryGroup> groups, Story story) {
-    final groupIdx = groups.indexWhere((g) => g.stories.contains(story));
+  void _openPhotos(Story story, int initialIndex) {
     Navigator.push(
       context,
       PageRouteBuilder(
         opaque: false,
-        pageBuilder: (_, __, ___) => StoryViewerPage(
-          groups: groups,
-          initialIndex: groupIdx >= 0 ? groupIdx : 0,
-          onViewed: (_) {},
-          onProfileTap: widget.onProfileTap,
+        pageBuilder: (_, __, ___) => _PostPhotosViewer(
+          images: story.images,
+          initialIndex: initialIndex,
         ),
         transitionsBuilder: (_, anim, __, child) =>
             FadeTransition(opacity: anim, child: child),
@@ -105,7 +101,7 @@ class _PostsFeedState extends State<PostsFeed> {
                   likesCount: isPending
                       ? post.likesCount + (post.isLiked ? -1 : 1)
                       : post.likesCount,
-                  onImageTap: () => _openViewer(groups, post),
+                  onImageTap: (index) => _openPhotos(post, index),
                   onAuthorTap: widget.onProfileTap != null
                       ? () => _openAuthorProfile(groups, post)
                       : null,
@@ -124,7 +120,7 @@ class _PostRow extends StatelessWidget {
   final Story post;
   final bool isLiked;
   final int likesCount;
-  final VoidCallback onImageTap;
+  final void Function(int imageIndex) onImageTap;
   final VoidCallback? onAuthorTap;
   final VoidCallback onLikeTap;
 
@@ -207,23 +203,10 @@ class _PostRow extends StatelessWidget {
               style: context.text.bodyMedium?.copyWith(height: 1.45),
             ),
           ],
-          // ── Image pleine largeur ──────────────────────────────────
-          if (post.imageUrl.isNotEmpty) ...[
+          // ── Images (carrousel si plusieurs) ───────────────────────
+          if (post.images.isNotEmpty) ...[
             AppGap.h10,
-            GestureDetector(
-              onTap: onImageTap,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: AspectRatio(
-                  aspectRatio: 4 / 3,
-                  child: Image.network(
-                    post.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const _ImageFallback(),
-                  ),
-                ),
-              ),
-            ),
+            _PostImages(images: post.images, onTap: onImageTap),
           ],
           // ── Barre de vote ─────────────────────────────────────────
           AppGap.h8,
@@ -303,6 +286,173 @@ class _AuthorAvatar extends StatelessWidget {
           ),
         ),
       );
+}
+
+/// Carrousel d'images du post : PageView 4:3 + points de position.
+class _PostImages extends StatefulWidget {
+  final List<String> images;
+  final void Function(int index) onTap;
+
+  const _PostImages({required this.images, required this.onTap});
+
+  @override
+  State<_PostImages> createState() => _PostImagesState();
+}
+
+class _PostImagesState extends State<_PostImages> {
+  int _current = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final multiple = widget.images.length > 1;
+
+    return Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: AspectRatio(
+            aspectRatio: 4 / 3,
+            child: multiple
+                ? PageView.builder(
+                    itemCount: widget.images.length,
+                    onPageChanged: (i) => setState(() => _current = i),
+                    itemBuilder: (context, i) => GestureDetector(
+                      onTap: () => widget.onTap(i),
+                      child: Image.network(
+                        widget.images[i],
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const _ImageFallback(),
+                      ),
+                    ),
+                  )
+                : GestureDetector(
+                    onTap: () => widget.onTap(0),
+                    child: Image.network(
+                      widget.images.first,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const _ImageFallback(),
+                    ),
+                  ),
+          ),
+        ),
+        if (multiple) ...[
+          AppGap.h8,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (int i = 0; i < widget.images.length; i++) ...[
+                if (i > 0) AppGap.w4,
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  width: i == _current ? 14 : 5,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: i == _current
+                        ? context.colors.textPrimary
+                        : context.colors.textHint,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Visionneuse plein écran des photos d'UN post (swipe + zoom) —
+/// remplace le viewer de stories au tap sur l'image du fil.
+class _PostPhotosViewer extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+
+  const _PostPhotosViewer({required this.images, this.initialIndex = 0});
+
+  @override
+  State<_PostPhotosViewer> createState() => _PostPhotosViewerState();
+}
+
+class _PostPhotosViewerState extends State<_PostPhotosViewer> {
+  late final PageController _controller;
+  late int _current;
+
+  @override
+  void initState() {
+    super.initState();
+    _current = widget.initialIndex;
+    _controller = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _controller,
+            itemCount: widget.images.length,
+            onPageChanged: (i) => setState(() => _current = i),
+            itemBuilder: (context, i) => InteractiveViewer(
+              maxScale: 4,
+              child: Center(
+                child: Image.network(
+                  widget.images[i],
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.broken_image_rounded,
+                    size: 48,
+                    color: Colors.white38,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    behavior: HitTestBehavior.opaque,
+                    child: Icon(
+                      Icons.close_rounded,
+                      size: 26,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withValues(alpha: 0.45),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  if (widget.images.length > 1)
+                    Text(
+                      '${_current + 1}/${widget.images.length}',
+                      style: context.text.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _ImageFallback extends StatelessWidget {

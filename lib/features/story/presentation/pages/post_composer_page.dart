@@ -74,19 +74,15 @@ class _PostComposerPageState extends State<PostComposerPage> {
     HapticFeedback.lightImpact();
     setState(() => _isPosting = true);
 
-    final provider = context.read<StoryProvider>();
-    var successCount = 0;
-    for (final file in _files) {
-      final story = await provider.createStory(
-        imageFile: file,
-        caption: _captionController.text.trim(),
-        serviceCategory: _categoryId ?? '',
-      );
-      if (story != null) successCount++;
-    }
+    // Un seul post avec toutes les images.
+    final story = await context.read<StoryProvider>().createStory(
+          imageFiles: List.of(_files),
+          caption: _captionController.text.trim(),
+          serviceCategory: _categoryId ?? '',
+        );
 
     if (!mounted) return;
-    if (successCount == _files.length) {
+    if (story != null) {
       Navigator.pop(context);
       showAppSnackBar(context, 'Post publié');
     } else {
