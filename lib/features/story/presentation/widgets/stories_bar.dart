@@ -1,19 +1,17 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/design/app_design_system.dart';
-import '../pages/story_composer_page.dart';
+import '../pages/post_composer_page.dart';
 
-/// Reusable media picker sheet for stories.
+/// Reusable media picker sheet for posts.
 class StoryMediaPickerSheet extends StatelessWidget {
   const StoryMediaPickerSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AppActionSheet(
-      title: 'Ajouter une story',
+      title: 'Ajouter une photo',
       children: <Widget>[
         AppActionSheetItem(
           icon: Icons.photo_camera_outlined,
@@ -30,7 +28,7 @@ class StoryMediaPickerSheet extends StatelessWidget {
         AppActionSheetItem(
           icon: Icons.photo_library_outlined,
           title: 'Choisir depuis la galerie',
-          subtitle: 'Sélectionner une photo',
+          subtitle: 'Sélectionner des photos',
           onTap: () => Navigator.pop(context, ImageSource.gallery),
         ),
       ],
@@ -38,25 +36,10 @@ class StoryMediaPickerSheet extends StatelessWidget {
   }
 }
 
-/// Helper function to pick media then open the story composer.
-Future<void> pickAndOpenComposer(BuildContext context) async {
-  final source = await showAppBottomSheet<ImageSource>(
-    context: context,
-    wrapWithSurface: false,
-    child: const StoryMediaPickerSheet(),
-  );
-  if (source == null || !context.mounted) return;
-
-  final picked = await ImagePicker().pickImage(
-    source: source,
-    imageQuality: 85,
-  );
-  if (picked == null || !context.mounted) return;
-
-  Navigator.push(
+/// Ouvre le composer de post (la sélection des photos se fait dedans).
+Future<void> pickAndOpenComposer(BuildContext context) {
+  return Navigator.push(
     context,
-    MaterialPageRoute(
-      builder: (_) => StoryComposerPage(mediaFile: File(picked.path)),
-    ),
+    MaterialPageRoute(builder: (_) => const PostComposerPage()),
   );
 }
