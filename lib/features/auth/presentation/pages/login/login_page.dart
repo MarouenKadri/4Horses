@@ -21,21 +21,22 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _inputCtrl = TextEditingController();
-  final _passCtrl  = TextEditingController();
+  final _passCtrl = TextEditingController();
 
-  final List<TextEditingController> _otpControllers =
-      List.generate(4, (_) => TextEditingController());
-  final List<FocusNode> _otpFocusNodes =
-      List.generate(4, (_) => FocusNode());
+  final List<TextEditingController> _otpControllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
+  final List<FocusNode> _otpFocusNodes = List.generate(4, (_) => FocusNode());
 
-  _InputType   _inputType   = _InputType.unknown;
+  _InputType _inputType = _InputType.unknown;
   _InputStatus _inputStatus = _InputStatus.idle;
-  CountryCode  _selectedCountry = kCountries[0];
+  CountryCode _selectedCountry = kCountries[0];
   Timer? _debounce;
 
   bool _isSubmitting = false;
-  bool _otpSent      = false;
-  bool _obscurePass  = true;
+  bool _otpSent = false;
+  bool _obscurePass = true;
 
   @override
   void initState() {
@@ -49,8 +50,12 @@ class _LoginPageState extends State<LoginPage> {
     _debounce?.cancel();
     _inputCtrl.dispose();
     _passCtrl.dispose();
-    for (final c in _otpControllers) { c.dispose(); }
-    for (final f in _otpFocusNodes) { f.dispose(); }
+    for (final c in _otpControllers) {
+      c.dispose();
+    }
+    for (final f in _otpFocusNodes) {
+      f.dispose();
+    }
     super.dispose();
   }
 
@@ -72,12 +77,12 @@ class _LoginPageState extends State<LoginPage> {
   void _onInputChanged() {
     setState(() {});
     _debounce?.cancel();
-    final raw  = _inputCtrl.text.trim();
+    final raw = _inputCtrl.text.trim();
     final type = _detectType(raw);
 
     if (type != _inputType) {
       setState(() {
-        _inputType   = type;
+        _inputType = type;
         _inputStatus = _InputStatus.idle;
       });
     }
@@ -93,9 +98,11 @@ class _LoginPageState extends State<LoginPage> {
         () => _checkEmail(raw),
       );
     } else if (type == _InputType.phone) {
-      setState(() => _inputStatus = _isValidPhone(raw)
-          ? _InputStatus.validPhone
-          : _InputStatus.idle);
+      setState(
+        () => _inputStatus = _isValidPhone(raw)
+            ? _InputStatus.validPhone
+            : _InputStatus.idle,
+      );
     } else {
       setState(() => _inputStatus = _InputStatus.idle);
     }
@@ -103,11 +110,16 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _checkEmail(String email) async {
     try {
-      final exists = await Supabase.instance.client
-          .rpc('check_email_exists', params: {'p_email': email});
+      final exists = await Supabase.instance.client.rpc(
+        'check_email_exists',
+        params: {'p_email': email},
+      );
       if (!mounted) return;
-      setState(() => _inputStatus =
-          exists == true ? _InputStatus.found : _InputStatus.notFound);
+      setState(
+        () => _inputStatus = exists == true
+            ? _InputStatus.found
+            : _InputStatus.notFound,
+      );
     } catch (_) {
       if (mounted) setState(() => _inputStatus = _InputStatus.idle);
     }
@@ -174,8 +186,10 @@ class _LoginPageState extends State<LoginPage> {
       }
       setState(() => _isSubmitting = true);
       final phone = _normalizePhone(_inputCtrl.text.trim());
-      final error =
-          await context.read<AuthProvider>().verifyPhoneLoginOtp(phone, token);
+      final error = await context.read<AuthProvider>().verifyPhoneLoginOtp(
+        phone,
+        token,
+      );
       if (!mounted) return;
       setState(() => _isSubmitting = false);
       if (error != null) {
@@ -187,18 +201,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _goToRegister() => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => RegisterFlow(
-            initialEmail: _inputType == _InputType.email
-                ? _inputCtrl.text.trim()
-                : null,
-          ),
-        ),
-      );
+    context,
+    MaterialPageRoute(
+      builder: (_) => RegisterFlow(
+        initialEmail: _inputType == _InputType.email
+            ? _inputCtrl.text.trim()
+            : null,
+      ),
+    ),
+  );
 
   String _normalizePhone(String raw) {
-    final digits   = raw.replaceAll(' ', '');
+    final digits = raw.replaceAll(' ', '');
     final stripped = digits.startsWith('0') ? digits.substring(1) : digits;
     return '${_selectedCountry.dialCode}$stripped';
   }
@@ -226,7 +240,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final kbH    = MediaQuery.of(context).viewInsets.bottom;
+    final kbH = MediaQuery.of(context).viewInsets.bottom;
     final kbOpen = kbH > 50;
     final isPhone = _inputType == _InputType.phone;
 
@@ -251,8 +265,10 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                            size: 20),
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 20,
+                        ),
                         onPressed: () => Navigator.pop(context),
                         color: context.colors.textPrimary,
                       ),
@@ -287,57 +303,71 @@ class _LoginPageState extends State<LoginPage> {
                           style: context.text.bodyMedium?.copyWith(
                             color: context.colors.textPrimary,
                           ),
-                          decoration: AppInputDecorations.profileField(
-                            context,
-                            hintText: isPhone
-                                ? _selectedCountry.hint
-                                : 'Ex: email@exemple.com',
-                            radius: 18,
-                            prefixIcon: isPhone
-                                ? GestureDetector(
-                                    onTap: _showCountryPicker,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 12),
-                                      margin:
-                                          const EdgeInsets.only(right: 8),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(_selectedCountry.flag,
-                                              style: const TextStyle(
-                                                  fontSize: 18)),
-                                          AppGap.w4,
-                                          Text(
-                                            _selectedCountry.dialCode,
-                                            style: context.text.bodySmall
-                                                ?.copyWith(
-                                              color: context
-                                                  .colors.textSecondary,
-                                            ),
+                          decoration:
+                              AppInputDecorations.profileField(
+                                context,
+                                hintText: isPhone
+                                    ? _selectedCountry.hint
+                                    : 'Ex: email@exemple.com',
+                                radius: 18,
+                                prefixIcon: isPhone
+                                    ? GestureDetector(
+                                        onTap: _showCountryPicker,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 12,
                                           ),
-                                          AppGap.w2,
-                                          Icon(
-                                            Icons.arrow_drop_down_rounded,
-                                            size: 16,
-                                            color:
-                                                context.colors.textTertiary,
+                                          margin: const EdgeInsets.only(
+                                            right: 8,
                                           ),
-                                        ],
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                _selectedCountry.flag,
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                              AppGap.w4,
+                                              Text(
+                                                _selectedCountry.dialCode,
+                                                style: context.text.bodySmall
+                                                    ?.copyWith(
+                                                      color: context
+                                                          .colors
+                                                          .textSecondary,
+                                                    ),
+                                              ),
+                                              AppGap.w2,
+                                              Icon(
+                                                Icons.arrow_drop_down_rounded,
+                                                size: 16,
+                                                color:
+                                                    context.colors.textTertiary,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : Icon(
+                                        Icons.alternate_email_rounded,
+                                        size: 16,
+                                        color: context.colors.textHint,
                                       ),
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.alternate_email_rounded,
-                                    size: 16,
-                                    color: context.colors.textHint,
-                                  ),
-                          ).copyWith(
-                            labelText: isPhone ? 'Téléphone' : 'Email ou téléphone',
-                            contentPadding:
-                                const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                            errorStyle: context.profileErrorStyle,
-                          ),
+                              ).copyWith(
+                                labelText: isPhone
+                                    ? 'Téléphone'
+                                    : 'Email ou téléphone',
+                                contentPadding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  16,
+                                  16,
+                                  16,
+                                ),
+                                errorStyle: context.profileErrorStyle,
+                              ),
                         ),
 
                         // ── Indicateur de statut ──────────────────────────
@@ -371,8 +401,7 @@ class _LoginPageState extends State<LoginPage> {
                           curve: Curves.easeInOut,
                           child: showPasswordField
                               ? Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     AppGap.h16,
                                     Row(
@@ -390,9 +419,9 @@ class _LoginPageState extends State<LoginPage> {
                                             'Mot de passe oublié ?',
                                             style: context.text.bodySmall
                                                 ?.copyWith(
-                                              color: context.colors.primary,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                                  color: context.colors.primary,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                           ),
                                         ),
                                       ],
@@ -403,44 +432,47 @@ class _LoginPageState extends State<LoginPage> {
                                       obscureText: _obscurePass,
                                       autofocus:
                                           _inputStatus == _InputStatus.found,
-                                      style: context.text.bodyMedium
-                                          ?.copyWith(
+                                      style: context.text.bodyMedium?.copyWith(
                                         color: context.colors.textPrimary,
                                       ),
                                       decoration:
                                           AppInputDecorations.profileField(
-                                        context,
-                                        hintText: '••••••••',
-                                        radius: 18,
-                                        prefixIcon: Icon(
-                                          Icons.lock_outline_rounded,
-                                          size: 16,
-                                          color: context.colors.textHint,
-                                        ),
-                                        suffixIcon: IconButton(
-                                          icon: Icon(
-                                            _obscurePass
-                                                ? Icons
-                                                    .visibility_off_rounded
-                                                : Icons.visibility_rounded,
-                                            size: 18,
-                                            color:
-                                                context.colors.textSecondary,
+                                            context,
+                                            hintText: '••••••••',
+                                            radius: 18,
+                                            prefixIcon: Icon(
+                                              Icons.lock_outline_rounded,
+                                              size: 16,
+                                              color: context.colors.textHint,
+                                            ),
+                                            suffixIcon: IconButton(
+                                              icon: Icon(
+                                                _obscurePass
+                                                    ? Icons
+                                                          .visibility_off_rounded
+                                                    : Icons.visibility_rounded,
+                                                size: 18,
+                                                color: context
+                                                    .colors
+                                                    .textSecondary,
+                                              ),
+                                              onPressed: () => setState(
+                                                () => _obscurePass =
+                                                    !_obscurePass,
+                                              ),
+                                            ),
+                                          ).copyWith(
+                                            labelText: 'Mot de passe',
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                  16,
+                                                  16,
+                                                  16,
+                                                  16,
+                                                ),
+                                            errorStyle:
+                                                context.profileErrorStyle,
                                           ),
-                                          onPressed: () => setState(
-                                            () => _obscurePass = !_obscurePass,
-                                          ),
-                                        ),
-                                      ).copyWith(
-                                        labelText: 'Mot de passe',
-                                        contentPadding: const EdgeInsets.fromLTRB(
-                                          16,
-                                          16,
-                                          16,
-                                          16,
-                                        ),
-                                        errorStyle: context.profileErrorStyle,
-                                      ),
                                     ),
                                   ],
                                 )
@@ -453,14 +485,12 @@ class _LoginPageState extends State<LoginPage> {
                           curve: Curves.easeInOut,
                           child: showOtpField
                               ? Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     AppGap.h20,
                                     Text(
                                       'Code SMS',
-                                      style: context.text.bodySmall
-                                          ?.copyWith(
+                                      style: context.text.bodySmall?.copyWith(
                                         fontWeight: FontWeight.w600,
                                         color: context.colors.textSecondary,
                                       ),
@@ -512,7 +542,8 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   children: [
                                     const TextSpan(
-                                        text: 'Pas encore de compte ? '),
+                                      text: 'Pas encore de compte ? ',
+                                    ),
                                     TextSpan(
                                       text: 'S\'inscrire',
                                       style: TextStyle(
@@ -592,8 +623,9 @@ class _StatusIndicator extends StatelessWidget {
           AppGap.w8,
           Text(
             'Vérification…',
-            style: context.text.bodySmall
-                ?.copyWith(color: context.colors.textTertiary),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.textTertiary,
+            ),
           ),
         ],
       );

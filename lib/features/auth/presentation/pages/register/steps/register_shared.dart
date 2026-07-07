@@ -37,7 +37,9 @@ class RegisterSelectableCard extends StatelessWidget {
           color: context.colors.surface,
           borderRadius: BorderRadius.circular(AppDesign.radius16),
           border: Border.all(
-            color: isSelected ? context.colors.textPrimary : context.colors.border,
+            color: isSelected
+                ? context.colors.textPrimary
+                : context.colors.border,
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -54,7 +56,9 @@ class RegisterSelectableCard extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: isSelected ? context.colors.textPrimary : context.colors.textSecondary,
+                color: isSelected
+                    ? context.colors.textPrimary
+                    : context.colors.textSecondary,
                 size: 26,
               ),
             ),
@@ -82,9 +86,13 @@ class RegisterSelectableCard extends StatelessWidget {
               height: 24,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSelected ? context.colors.textPrimary : Colors.transparent,
+                color: isSelected
+                    ? context.colors.textPrimary
+                    : Colors.transparent,
                 border: Border.all(
-                  color: isSelected ? context.colors.textPrimary : context.colors.border,
+                  color: isSelected
+                      ? context.colors.textPrimary
+                      : context.colors.border,
                   width: 2,
                 ),
               ),
@@ -118,18 +126,18 @@ class RegisterFieldStatusRow extends StatelessWidget {
     final color = isChecking
         ? context.colors.textTertiary
         : isAvailable
-            ? AppColors.teal
-            : AppColors.error;
+        ? AppColors.teal
+        : AppColors.error;
     final icon = isChecking
         ? null
         : isAvailable
-            ? Icons.check_circle_rounded
-            : Icons.cancel_rounded;
+        ? Icons.check_circle_rounded
+        : Icons.cancel_rounded;
     final label = isChecking
         ? 'Vérification…'
         : isAvailable
-            ? 'Disponible'
-            : takenMessage;
+        ? 'Disponible'
+        : takenMessage;
 
     return Row(
       children: [

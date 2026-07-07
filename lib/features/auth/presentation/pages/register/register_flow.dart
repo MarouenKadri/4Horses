@@ -318,9 +318,13 @@ class _RegisterFlowState extends State<RegisterFlow> {
                       _BirthdateGenderPage(
                         selectedGender: _gender,
                         onGenderChanged: (g) => setState(() => _gender = g),
-                        onBirthdateChanged: (d) => setState(() => _birthDate = d),
+                        onBirthdateChanged: (d) =>
+                            setState(() => _birthDate = d),
                       ),
-                      _PasswordPage(ctrl: _passCtrl, confirmCtrl: _passConfirmCtrl),
+                      _PasswordPage(
+                        ctrl: _passCtrl,
+                        confirmCtrl: _passConfirmCtrl,
+                      ),
                       _UserTypePage(
                         selected: _userType,
                         onSelected: _onUserTypeSelected,
@@ -761,8 +765,14 @@ class _BirthdateGenderPageState extends State<_BirthdateGenderPage> {
     final day = int.tryParse(parts[0]);
     final month = int.tryParse(parts[1]);
     final year = int.tryParse(parts[2]);
-    if (day == null || month == null || year == null ||
-        day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) {
+    if (day == null ||
+        month == null ||
+        year == null ||
+        day < 1 ||
+        day > 31 ||
+        month < 1 ||
+        month > 12 ||
+        year < 1900) {
       setState(() => _error = 'Date invalide');
       widget.onBirthdateChanged(null);
       return;
@@ -777,7 +787,9 @@ class _BirthdateGenderPageState extends State<_BirthdateGenderPage> {
       final now = DateTime.now();
       int age = now.year - date.year;
       if (now.month < date.month ||
-          (now.month == date.month && now.day < date.day)) { age--; }
+          (now.month == date.month && now.day < date.day)) {
+        age--;
+      }
       if (age < 18) {
         setState(() => _error = 'Vous devez avoir au moins 18 ans');
         widget.onBirthdateChanged(null);
@@ -793,9 +805,12 @@ class _BirthdateGenderPageState extends State<_BirthdateGenderPage> {
 
   ({IconData icon, String emoji}) _genderMeta(Gender g) {
     switch (g) {
-      case Gender.homme: return (icon: Icons.person_rounded, emoji: '♂');
-      case Gender.femme: return (icon: Icons.face_3_rounded, emoji: '♀');
-      case Gender.autre: return (icon: Icons.people_rounded, emoji: '⚧');
+      case Gender.homme:
+        return (icon: Icons.person_rounded, emoji: '♂');
+      case Gender.femme:
+        return (icon: Icons.face_3_rounded, emoji: '♀');
+      case Gender.autre:
+        return (icon: Icons.people_rounded, emoji: '⚧');
     }
   }
 
@@ -806,7 +821,11 @@ class _BirthdateGenderPageState extends State<_BirthdateGenderPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _pageHeader(context, 'Votre identité', 'Ces informations restent privées'),
+          _pageHeader(
+            context,
+            'Votre identité',
+            'Ces informations restent privées',
+          ),
           AppGap.h40,
 
           // ── Date de naissance ──
@@ -854,7 +873,7 @@ class _BirthdateGenderPageState extends State<_BirthdateGenderPage> {
                         color: selected
                             ? context.colors.textPrimary
                             : context.colors.surfaceAlt,
-                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: selected
                               ? context.colors.textPrimary
@@ -908,7 +927,8 @@ class _PasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mismatch = confirmCtrl.text.isNotEmpty && confirmCtrl.text != ctrl.text;
+    final mismatch =
+        confirmCtrl.text.isNotEmpty && confirmCtrl.text != ctrl.text;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 32, 24, 100),
       child: Column(
@@ -941,7 +961,11 @@ class _PasswordPage extends StatelessWidget {
             AppGap.h8,
             Row(
               children: [
-                const Icon(Icons.cancel_rounded, size: 14, color: AppColors.error),
+                const Icon(
+                  Icons.cancel_rounded,
+                  size: 14,
+                  color: AppColors.error,
+                ),
                 AppGap.w6,
                 Text(
                   'Les mots de passe ne correspondent pas',
@@ -973,7 +997,7 @@ class _StrengthBar extends StatelessWidget {
       case 2:
         return AppColors.warning;
       case 3:
-        return Colors.orange;
+        return AppColors.rating;
       default:
         return AppColors.ink;
     }
@@ -1155,9 +1179,7 @@ class _PhotoPage extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: photo != null
-                      ? AppColors.ink
-                      : context.colors.border,
+                  color: photo != null ? AppColors.ink : context.colors.border,
                   width: 2,
                 ),
               ),

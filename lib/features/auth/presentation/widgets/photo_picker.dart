@@ -32,17 +32,17 @@ class PhotoPicker extends StatelessWidget {
             decoration: BoxDecoration(
               color: context.colors.surfaceAlt,
               shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
-              borderRadius:
-                  isCircle ? null : BorderRadius.circular(AppDesign.radius14),
+              borderRadius: isCircle
+                  ? null
+                  : BorderRadius.circular(AppDesign.radius14),
               border: Border.all(
-                color: photo != null ? AppColors.primary : context.colors.border,
+                color: photo != null
+                    ? AppColors.primary
+                    : context.colors.border,
                 width: 2.5,
               ),
               image: photo != null
-                  ? DecorationImage(
-                      image: FileImage(photo!),
-                      fit: BoxFit.cover,
-                    )
+                  ? DecorationImage(image: FileImage(photo!), fit: BoxFit.cover)
                   : null,
             ),
             child: photo == null
@@ -77,7 +77,9 @@ class PhotoPicker extends StatelessWidget {
             bottom: 2,
             right: 2,
             child: AppIconCircle(
-              icon: photo != null ? Icons.edit_rounded : Icons.camera_alt_rounded,
+              icon: photo != null
+                  ? Icons.edit_rounded
+                  : Icons.camera_alt_rounded,
               size: size * 0.22,
               iconSize: size * 0.11,
               backgroundColor: AppColors.primary,

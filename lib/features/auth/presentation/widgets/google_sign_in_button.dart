@@ -22,14 +22,19 @@ class GoogleSignInButton extends StatelessWidget {
           backgroundColor: context.colors.surface,
           foregroundColor: context.colors.textPrimary,
           side: BorderSide(color: context.colors.border, width: 1),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           elevation: 0,
         ),
         child: isLoading
             ? const SizedBox(
                 width: 22,
                 height: 22,
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.primary,
+                ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,

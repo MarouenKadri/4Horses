@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/design/app_design_system.dart';
 import '../../data/models/freelancer.dart';
 
+/// Carte freelancer façon TikTok : photo plein cadre, dégradé léger,
+/// légende (métier), puis une seule ligne mini-avatar · nom · note.
+/// Le tarif reste visible en pastille translucide (impératif marketplace).
 class FreelancerPreviewCard extends StatelessWidget {
   final Freelancer freelancer;
   final VoidCallback? onTap;
@@ -21,19 +24,16 @@ class FreelancerPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.cardLg),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.cardLg),
-        splashColor: Colors.black.withValues(alpha: 0.04),
-        highlightColor: Colors.black.withValues(alpha: 0.02),
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
         child: SizedBox(
           width: width,
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // ── Image de fond ──────────────────────────────────────
+              // ── Image plein cadre ──────────────────────────────────
               freelancer.imageUrl.isNotEmpty
                   ? Image.network(
                       freelancer.imageUrl,
@@ -43,7 +43,7 @@ class FreelancerPreviewCard extends StatelessWidget {
                     )
                   : _AvatarFallback(name: freelancer.name),
 
-              // ── Gradient sombre en bas ─────────────────────────────
+              // ── Dégradé bas, léger ─────────────────────────────────
               const DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -51,159 +51,119 @@ class FreelancerPreviewCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      AppColors.blackAlpha07,
-                      AppColors.blackAlpha80,
+                      Colors.transparent,
+                      AppColors.blackAlpha55,
                     ],
-                    stops: [0.35, 0.60, 1.0],
+                    stops: [0.0, 0.55, 1.0],
                   ),
                 ),
               ),
 
-              // ── Badge vérifié (haut droite) ────────────────────────
-              if (freelancer.isVerified)
+              // ── Tarif (haut droite, translucide) ───────────────────
+              if (freelancer.job.isNotEmpty)
                 Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.90),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.verified_rounded,
-                      size: 15,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ),
-
-              // ── Note (haut gauche) ─────────────────────────────────
-              if (freelancer.rating > 0)
-                Positioned(
-                  top: 10,
-                  left: 10,
+                  top: 8,
+                  right: 8,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
+                      horizontal: 7,
+                      vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.45),
-                      borderRadius: BorderRadius.circular(AppRadius.cardLg),
+                      color: Colors.black.withValues(alpha: 0.40),
+                      borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.star_rounded,
-                          size: 12,
-                          color: AppColors.rating,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          freelancer.rating.toStringAsFixed(1),
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            height: 1,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      freelancer.job,
+                      style: context.text.labelSmall!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        height: 1,
+                      ),
                     ),
                   ),
                 ),
 
-              // ── Infos en bas ───────────────────────────────────────
+              // ── Légende + ligne auteur (bas) ───────────────────────
               Positioned(
-                left: 11,
-                right: 11,
-                bottom: 11,
+                left: 10,
+                right: 10,
+                bottom: 9,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Nom
-                    Text(
-                      freelancer.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        height: 1.2,
-                      ),
-                    ),
-
-                    // Service
                     if (freelancer.subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 2),
                       Text(
                         freelancer.subtitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.80),
+                        style: context.text.labelMedium!.copyWith(
+                          color: Colors.white,
                           height: 1.3,
                         ),
                       ),
+                      const SizedBox(height: 5),
                     ],
-
-                    const SizedBox(height: 8),
-
-                    // Tarif + missions + avis
                     Row(
                       children: [
-                        // Tarif
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(AppRadius.cardLg),
-                          ),
+                        _MiniAvatar(
+                          imageUrl: freelancer.imageUrl,
+                          name: freelancer.name,
+                        ),
+                        const SizedBox(width: 5),
+                        Flexible(
                           child: Text(
-                            freelancer.job,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.inkDark,
+                            freelancer.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.text.labelMedium!.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
                               height: 1,
                             ),
                           ),
                         ),
-
-                        const Spacer(),
-
-                        // Missions
-                        if (missionsCount > 0) ...[
-                          _StatBadge(
-                            icon: Icons.check_circle_outline_rounded,
-                            value: '$missionsCount',
+                        if (freelancer.isVerified) ...[
+                          const SizedBox(width: 3),
+                          const Icon(
+                            Icons.verified_rounded,
+                            size: 12,
+                            color: AppColors.info,
                           ),
-                          const SizedBox(width: 5),
                         ],
-
-                        // Avis
-                        if (reviewsCount > 0)
-                          _StatBadge(
-                            icon: Icons.chat_bubble_outline_rounded,
-                            value: '$reviewsCount',
+                        const Spacer(),
+                        if (freelancer.rating > 0) ...[
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 12,
+                            color: AppColors.rating,
                           ),
+                          const SizedBox(width: 2),
+                          Text(
+                            freelancer.rating.toStringAsFixed(1),
+                            style: context.text.labelSmall!.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              height: 1,
+                            ),
+                          ),
+                        ] else if (missionsCount > 0) ...[
+                          Icon(
+                            Icons.check_circle_outline_rounded,
+                            size: 11,
+                            color: Colors.white.withValues(alpha: 0.85),
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            '$missionsCount',
+                            style: context.text.labelSmall!.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white.withValues(alpha: 0.9),
+                              height: 1,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ],
@@ -217,31 +177,49 @@ class FreelancerPreviewCard extends StatelessWidget {
   }
 }
 
-class _StatBadge extends StatelessWidget {
-  final IconData icon;
-  final String value;
+class _MiniAvatar extends StatelessWidget {
+  final String imageUrl;
+  final String name;
 
-  const _StatBadge({required this.icon, required this.value});
+  const _MiniAvatar({required this.imageUrl, required this.name});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 11, color: Colors.white.withValues(alpha: 0.80)),
-        const SizedBox(width: 3),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: Colors.white.withValues(alpha: 0.90),
-            height: 1,
-          ),
+    return Container(
+      width: 18,
+      height: 18,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.9),
+          width: 1,
         ),
-      ],
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: imageUrl.isNotEmpty
+          ? Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => _initial(context),
+            )
+          : _initial(context),
     );
   }
+
+  Widget _initial(BuildContext context) => ColoredBox(
+        color: AppColors.primary,
+        child: Center(
+          child: Text(
+            name.isNotEmpty ? name[0].toUpperCase() : '?',
+            style: context.text.labelSmall!.copyWith(
+              fontSize: AppFontSize.micro,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              height: 1,
+            ),
+          ),
+        ),
+      );
 }
 
 class _AvatarFallback extends StatelessWidget {
@@ -271,8 +249,8 @@ class _AvatarFallback extends StatelessWidget {
       child: Center(
         child: Text(
           initials.isEmpty ? '?' : initials,
-          style: const TextStyle(
-            fontSize: 32,
+          style: context.text.displayMedium!.copyWith(
+            fontSize: AppFontSize.d2,
             fontWeight: FontWeight.w700,
             color: Colors.white,
           ),

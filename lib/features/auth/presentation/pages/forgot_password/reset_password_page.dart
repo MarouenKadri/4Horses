@@ -7,10 +7,7 @@ import '../../../../../app/navigation/root_nav.dart';
 class ResetPasswordPage extends StatefulWidget {
   final String identifier;
 
-  const ResetPasswordPage({
-    super.key,
-    required this.identifier,
-  });
+  const ResetPasswordPage({super.key, required this.identifier});
 
   @override
   State<ResetPasswordPage> createState() => _ResetPasswordPageState();
@@ -42,7 +39,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     final kbH = MediaQuery.of(context).viewInsets.bottom;
     final kbOpen = kbH > 50;
-    final canReset = _passwordController.text.length >= 8 &&
+    final canReset =
+        _passwordController.text.length >= 8 &&
         _confirmController.text == _passwordController.text;
 
     return Scaffold(
@@ -118,8 +116,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               bottom: kbH,
               left: 0,
               right: 0,
-              child:
-                  AppKeyboardActionBar(enabled: true, onTap: _handleResetPassword),
+              child: AppKeyboardActionBar(
+                enabled: true,
+                onTap: _handleResetPassword,
+              ),
             ),
         ],
       ),
@@ -130,7 +130,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    final error = await context.read<AuthProvider>().updatePassword(_passwordController.text);
+    final error = await context.read<AuthProvider>().updatePassword(
+      _passwordController.text,
+    );
     if (!mounted) return;
     setState(() => _isLoading = false);
 

@@ -139,13 +139,15 @@ class _MethodCard extends StatelessWidget {
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(AppDesign.radius16),
         border: Border.all(
-          color: isSelected ? context.colors.textPrimary : context.colors.border,
+          color: isSelected
+              ? context.colors.textPrimary
+              : context.colors.border,
           width: isSelected ? 1.5 : 1,
         ),
         child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: const BoxDecoration(),
-        child: Row(
+          duration: const Duration(milliseconds: 200),
+          decoration: const BoxDecoration(),
+          child: Row(
             children: [
               Container(
                 width: 52,
@@ -203,7 +205,11 @@ class _MethodCard extends StatelessWidget {
                   ),
                 ),
                 child: isSelected
-                    ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
+                    ? const Icon(
+                        Icons.check_rounded,
+                        size: 16,
+                        color: Colors.white,
+                      )
                     : null,
               ),
             ],

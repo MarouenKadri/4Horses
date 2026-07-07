@@ -59,20 +59,37 @@ class PaymentSecurityCard extends StatelessWidget {
           Divider(height: 24, color: context.colors.divider),
 
           // ─── Features ───
-          _featureRow(context, Icons.shield_rounded, 'Paiement sécurisé',
-              'Fonds libérés uniquement à la fin'),
+          _featureRow(
+            context,
+            Icons.shield_rounded,
+            'Paiement sécurisé',
+            'Fonds libérés uniquement à la fin',
+          ),
           AppGap.h14,
-          _featureRow(context, Icons.badge_rounded, 'Identité vérifiée',
-              'Chaque prestataire est contrôlé'),
+          _featureRow(
+            context,
+            Icons.badge_rounded,
+            'Identité vérifiée',
+            'Chaque prestataire est contrôlé',
+          ),
           AppGap.h14,
-          _featureRow(context, Icons.star_rounded, 'Avis authentiques',
-              'Uniquement après mission réalisée'),
+          _featureRow(
+            context,
+            Icons.star_rounded,
+            'Avis authentiques',
+            'Uniquement après mission réalisée',
+          ),
         ],
       ),
     );
   }
 
-  Widget _featureRow(BuildContext context, IconData icon, String title, String subtitle) {
+  Widget _featureRow(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String subtitle,
+  ) {
     return Row(
       children: [
         Icon(icon, size: 18, color: AppColors.primary),
@@ -88,10 +105,7 @@ class PaymentSecurityCard extends StatelessWidget {
                   color: context.colors.textPrimary,
                 ),
               ),
-              Text(
-                subtitle,
-                style: context.text.labelMedium,
-              ),
+              Text(subtitle, style: context.text.labelMedium),
             ],
           ),
         ),

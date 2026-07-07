@@ -13,7 +13,7 @@ import '../../../mission/presentation/widgets/cards/primitives/mission_card_fram
 import '../../../mission/presentation/pages/client/client_mission_detail_page.dart';
 import '../../../mission/presentation/pages/client/create_mission_page.dart';
 import '../../../auth/data/models/freelancer.dart';
-import '../../../auth/presentation/widgets/freelancer_preview_card.dart';
+import '../../../auth/presentation/widgets/freelancer_list_tile.dart';
 import 'freelancer_profile_view.dart';
 
 Map<String, dynamic> _normalizeFreelancerRow(Map<String, dynamic> row) {
@@ -277,8 +277,7 @@ class _ActiveMissionsSection extends StatelessWidget {
                   ),
                   child: Text(
                     '${missions.length} mission${missions.length > 1 ? 's' : ''}',
-                    style: const TextStyle(
-                      fontSize: AppFontSize.sm,
+                    style: context.text.labelMedium!.copyWith(
                       fontWeight: FontWeight.w700,
                       color: AppColors.primary,
                     ),
@@ -317,10 +316,10 @@ class _EmptyTodayCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.cardLg),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
-            color: AppColors.blackAlpha03,
+            color: Color.fromRGBO(0, 0, 0, 0.04),
             blurRadius: 24,
             offset: Offset(0, 10),
           ),
@@ -358,13 +357,31 @@ class _EmptyTodayCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          AppButton(
-            label: 'Créer une mission',
-            variant: ButtonVariant.black,
-            icon: Icons.add_rounded,
-            onPressed: () => Navigator.push(
+          GestureDetector(
+            onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const PostMissionFlow()),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.inkDark,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.add_rounded, size: 16, color: Colors.white),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Créer une mission',
+                    style: context.text.labelLarge!.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -412,74 +429,69 @@ class _ActiveMissionCard extends StatelessWidget {
         : null;
     final topLabel = showDate ? _dateLabel(mission.date) : (timeLabel ?? '—');
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
-      child: InkWell(
-        onTap: () => Navigator.push(
-          context,
-          slideUpRoute(page: ClientMissionDetailPage(mission: mission)),
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        slideUpRoute(page: ClientMissionDetailPage(mission: mission)),
+      ),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+        decoration: BoxDecoration(
+          color: context.colors.surface,
+          borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
+          border: Border.all(color: context.colors.border),
         ),
-        borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
-        splashColor: Colors.black.withValues(alpha: 0.04),
-        highlightColor: Colors.black.withValues(alpha: 0.02),
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-          decoration: BoxDecoration(
-            color: context.colors.surface,
-            borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
-            border: Border.all(color: context.colors.border),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Date/heure + flèche ────────────────────────────
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    topLabel,
-                    style: context.text.labelSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.textSecondary,
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 12,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Date/heure + flèche ────────────────────────────
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  topLabel,
+                  style: context.text.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: context.colors.textSecondary,
+                    letterSpacing: 0.2,
                   ),
-                ],
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 12,
+                  color: context.colors.textSecondary,
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // ── Titre ───────────────────────────────────────────
+            Text(
+              mission.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.text.titleMedium!.copyWith(
+                fontSize: AppFontSize.body,
+                fontWeight: FontWeight.w700,
+                color: AppColors.inkDark,
+                letterSpacing: -0.2,
               ),
-              const SizedBox(height: 10),
-              // ── Titre ───────────────────────────────────────────
+            ),
+            // ── Sous-titre ──────────────────────────────────────
+            if (subtitle.isNotEmpty) ...[
+              const SizedBox(height: 4),
               Text(
-                mission.title,
+                subtitle,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: context.text.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.textPrimary,
-                  letterSpacing: -0.2,
-                ),
+                style: MissionCardFrame.metaStyle,
               ),
-              // ── Sous-titre ──────────────────────────────────────
-              if (subtitle.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: MissionCardFrame.metaStyle,
-                ),
-              ],
-              // ── Heure (when showing date in topLabel) ──────────
-              if (showDate && timeLabel != null) ...[
-                const SizedBox(height: 4),
-                Text(timeLabel, style: MissionCardFrame.metaStyle),
-              ],
             ],
-          ),
+            // ── Heure (when showing date in topLabel) ──────────
+            if (showDate && timeLabel != null) ...[
+              const SizedBox(height: 4),
+              Text(timeLabel, style: MissionCardFrame.metaStyle),
+            ],
+          ],
         ),
       ),
     );
@@ -576,7 +588,7 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
                     border: Border.all(color: context.colors.border),
                     boxShadow: const [
                       BoxShadow(
-                        color: AppColors.blackAlpha07,
+                        color: Color.fromRGBO(0, 0, 0, 0.05),
                         blurRadius: 16,
                         offset: Offset(0, 3),
                       ),
@@ -643,7 +655,7 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
                     ),
                     boxShadow: const [
                       BoxShadow(
-                        color: AppColors.blackAlpha07,
+                        color: Color.fromRGBO(0, 0, 0, 0.05),
                         blurRadius: 16,
                         offset: Offset(0, 3),
                       ),
@@ -671,35 +683,27 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
               }
               final items = _filteredFreelancers;
               if (items.isEmpty) return _buildEmptyState();
-              return LayoutBuilder(
-                builder: (context, constraints) {
-                  final isWide = constraints.maxWidth >= 700;
-                  final crossAxisCount = isWide ? 3 : 2;
-                  return GridView.builder(
-                    padding: AppInsets.a16,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: isWide ? 0.65 : 0.62,
+              return ListView.separated(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                itemCount: items.length,
+                separatorBuilder: (_, __) => Divider(
+                  height: 1,
+                  indent: 80,
+                  color: context.colors.divider,
+                ),
+                itemBuilder: (context, index) {
+                  final f = items[index];
+                  return FreelancerListTile(
+                    freelancer: Freelancer(
+                      name: f['name'] as String,
+                      imageUrl: f['avatar'] as String,
+                      rating: f['rating'] as double,
+                      job: '${f['hourlyRate']}€/h',
+                      subtitle: f['category'] as String,
+                      isVerified: f['isVerified'] as bool,
                     ),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final f = items[index];
-                      return FreelancerPreviewCard(
-                        freelancer: Freelancer(
-                          name: f['name'] as String,
-                          imageUrl: f['avatar'] as String,
-                          rating: f['rating'] as double,
-                          job: '${f['hourlyRate']}€/h',
-                          subtitle: f['category'] as String,
-                          isVerified: f['isVerified'] as bool,
-                        ),
-                        missionsCount: f['missionsCount'] as int,
-                        reviewsCount: f['reviewsCount'] as int,
-                        onTap: () => _openFreelancerProfile(f),
-                      );
-                    },
+                    missionsCount: f['missionsCount'] as int,
+                    onTap: () => _openFreelancerProfile(f),
                   );
                 },
               );
@@ -755,80 +759,87 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
   }
 
   void _showFilterSheet() {
-    showAppBottomSheet(
+    showModalBottomSheet(
       context: context,
-      wrapWithSurface: false,
+      backgroundColor: context.colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheet) => AppSheetSurface(
-          color: ctx.colors.sheetBg,
-          child: SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const AppBottomSheetHandle(),
-                  AppGap.h12,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Catégorie',
-                        style: ctx.text.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      if (_selectedCategoryId != null)
-                        GestureDetector(
-                          onTap: () {
-                            setState(() => _selectedCategoryId = null);
-                            setSheet(() {});
-                            Navigator.pop(ctx);
-                          },
-                          child: Text(
-                            'Réinitialiser',
-                            style: ctx.text.labelMedium?.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                    ],
+        builder: (ctx, setSheet) => Padding(
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: ctx.colors.border,
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  AppGap.h16,
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      _CategoryChip(
-                        label: 'Tous',
-                        selected: _selectedCategoryId == null,
-                        onTap: () {
-                          setState(() => _selectedCategoryId = null);
-                          setSheet(() {});
-                          Navigator.pop(ctx);
-                        },
-                      ),
-                      ...ServiceCategory.all.map(
-                        (cat) => _CategoryChip(
-                          label: cat.name,
-                          icon: cat.icon,
-                          color: cat.color,
-                          selected: _selectedCategoryId == cat.id,
-                          onTap: () {
-                            setState(() => _selectedCategoryId = cat.id);
-                            setSheet(() {});
-                            Navigator.pop(ctx);
-                          },
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Catégorie',
+                    style: context.text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  if (_selectedCategoryId != null)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() => _selectedCategoryId = null);
+                        setSheet(() {});
+                        Navigator.pop(ctx);
+                      },
+                      child: Text(
+                        'Réinitialiser',
+                        style: context.text.labelMedium?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ],
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _CategoryChip(
+                    label: 'Tous',
+                    selected: _selectedCategoryId == null,
+                    onTap: () {
+                      setState(() => _selectedCategoryId = null);
+                      setSheet(() {});
+                      Navigator.pop(ctx);
+                    },
+                  ),
+                  ...ServiceCategory.all.map(
+                    (cat) => _CategoryChip(
+                      label: cat.name,
+                      icon: cat.icon,
+                      color: cat.color,
+                      selected: _selectedCategoryId == cat.id,
+                      onTap: () {
+                        setState(() => _selectedCategoryId = cat.id);
+                        setSheet(() {});
+                        Navigator.pop(ctx);
+                      },
+                    ),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -903,8 +914,7 @@ class _CategoryChip extends StatelessWidget {
             ],
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
+              style: context.text.labelMedium!.copyWith(
                 fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                 color: selected ? accent : context.colors.textSecondary,
                 height: 1,

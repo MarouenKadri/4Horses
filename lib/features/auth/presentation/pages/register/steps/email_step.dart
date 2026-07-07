@@ -19,7 +19,11 @@ class RegisterEmailStep extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          registerPageHeader(context, 'Votre email', 'Pour vous connecter à votre compte'),
+          registerPageHeader(
+            context,
+            'Votre email',
+            'Pour vous connecter à votre compte',
+          ),
           AppGap.h36,
           AppTextField(
             label: 'Adresse email',

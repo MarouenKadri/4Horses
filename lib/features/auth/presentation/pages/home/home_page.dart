@@ -30,7 +30,10 @@ class WelcomePage extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        AppSectionHeader(title: 'Catégories populaires', padding: EdgeInsets.zero),
+                        AppSectionHeader(
+                          title: 'Catégories populaires',
+                          padding: EdgeInsets.zero,
+                        ),
                         AppGap.h14,
                         const CategoriesRow(),
                         AppGap.h16,
@@ -60,7 +63,6 @@ class WelcomePage extends StatelessWidget {
       ),
     );
   }
-
 }
 
 // ─── Section hero ─────────────────────────────────────────────────────────────
@@ -128,11 +130,7 @@ class _HeroSection extends StatelessWidget {
           // ─── Indicateurs de confiance ───
           Row(
             children: [
-              const Icon(
-                Icons.star_rounded,
-                color: AppColors.rating,
-                size: 16,
-              ),
+              const Icon(Icons.star_rounded, color: AppColors.rating, size: 16),
               AppGap.w4,
               Text(
                 '4.8/5',
@@ -199,9 +197,15 @@ class _BottomAuthBar extends StatelessWidget {
                 onPressed: auth.isLoading
                     ? null
                     : () async {
-                        final err = await context.read<AuthProvider>().signInWithGoogle();
+                        final err = await context
+                            .read<AuthProvider>()
+                            .signInWithGoogle();
                         if (err != null && context.mounted) {
-                          showAppSnackBar(context, err, type: SnackBarType.error);
+                          showAppSnackBar(
+                            context,
+                            err,
+                            type: SnackBarType.error,
+                          );
                         }
                       },
               ),

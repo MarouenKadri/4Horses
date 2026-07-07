@@ -5,10 +5,7 @@ import '../../../../core/design/app_design_system.dart';
 class StatusDotBadge extends StatelessWidget {
   final String text;
 
-  const StatusDotBadge({
-    super.key,
-    this.text = '+320 freelances disponibles',
-  });
+  const StatusDotBadge({super.key, this.text = '+320 freelances disponibles'});
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +53,10 @@ class _PulsingDotState extends State<_PulsingDot>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    _animation = Tween<double>(begin: 0.4, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0.4,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override

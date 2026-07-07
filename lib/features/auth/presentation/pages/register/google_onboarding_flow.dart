@@ -82,11 +82,11 @@ class _GoogleOnboardingFlowState extends State<GoogleOnboardingFlow> {
     if (_userType == null) return;
     setState(() => _isSubmitting = true);
     final error = await context.read<AuthProvider>().completeGoogleSetup(
-          userType: _userType!,
-          birthDate: _birthDate,
-          gender: _gender,
-          phone: _phoneCtrl.text.trim().isEmpty ? null : _phoneCtrl.text.trim(),
-        );
+      userType: _userType!,
+      birthDate: _birthDate,
+      gender: _gender,
+      phone: _phoneCtrl.text.trim().isEmpty ? null : _phoneCtrl.text.trim(),
+    );
     if (!mounted) return;
     setState(() => _isSubmitting = false);
     if (error != null) {
@@ -236,7 +236,12 @@ class _BirthdateStepState extends State<_BirthdateStep> {
       final year = int.parse(digits.substring(4, 8));
       final dt = DateTime(year, month, day);
       final now = DateTime.now();
-      final age = now.year - dt.year - ((now.month < dt.month || (now.month == dt.month && now.day < dt.day)) ? 1 : 0);
+      final age =
+          now.year -
+          dt.year -
+          ((now.month < dt.month || (now.month == dt.month && now.day < dt.day))
+              ? 1
+              : 0);
       if (dt.day != day || dt.month != month) {
         _error = 'Date invalide';
         widget.onChanged(null);
@@ -308,8 +313,8 @@ class _GenderStep extends StatelessWidget {
               icon: g == Gender.homme
                   ? Icons.man_rounded
                   : g == Gender.femme
-                      ? Icons.woman_rounded
-                      : Icons.people_rounded,
+                  ? Icons.woman_rounded
+                  : Icons.people_rounded,
               label: g.label,
               selected: selected == g,
               onTap: () => onSelected(g),
@@ -441,7 +446,9 @@ class _SelectableCard extends StatelessWidget {
           color: context.colors.surface,
           borderRadius: BorderRadius.circular(AppDesign.radius16),
           border: Border.all(
-            color: selected ? context.colors.textPrimary : context.colors.border,
+            color: selected
+                ? context.colors.textPrimary
+                : context.colors.border,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -477,10 +484,7 @@ class _SelectableCard extends StatelessWidget {
                   ),
                   if (subtitle != null) ...[
                     AppGap.h2,
-                    Text(
-                      subtitle!,
-                      style: context.text.bodyMedium,
-                    ),
+                    Text(subtitle!, style: context.text.bodyMedium),
                   ],
                 ],
               ),
@@ -502,8 +506,11 @@ class _SelectableCard extends StatelessWidget {
                 ),
               ),
               child: selected
-                  ? const Icon(Icons.check_rounded,
-                      size: 14, color: Colors.white)
+                  ? const Icon(
+                      Icons.check_rounded,
+                      size: 14,
+                      color: Colors.white,
+                    )
                   : null,
             ),
           ],
