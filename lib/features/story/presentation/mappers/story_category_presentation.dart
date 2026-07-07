@@ -11,6 +11,5 @@ class StoryCategoryPresentation {
   static IconData icon(
     String raw, {
     IconData fallback = Icons.home_repair_service_outlined,
-  }) =>
-      StoryCategoryMapper.icon(raw, fallback: fallback);
+  }) => StoryCategoryMapper.icon(raw, fallback: fallback);
 }

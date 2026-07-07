@@ -51,9 +51,7 @@ class _StoriesSectionState extends State<StoriesSection> {
         separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           if (widget.isFreelancer && index == 0) {
-            return _AddStoryCard(
-              onTap: () => pickAndOpenComposer(context),
-            );
+            return _AddStoryCard(onTap: () => pickAndOpenComposer(context));
           }
           final idx = widget.isFreelancer ? index - 1 : index;
           final group = groups[idx];
@@ -71,8 +69,7 @@ class _StoriesSectionState extends State<StoriesSection> {
     );
   }
 
-  void _openViewer(
-      BuildContext context, List<StoryGroup> groups, int index) {
+  void _openViewer(BuildContext context, List<StoryGroup> groups, int index) {
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -104,7 +101,7 @@ class _AddStoryCard extends StatelessWidget {
       child: Container(
         width: 110,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppRadius.cardLg),
+          borderRadius: BorderRadius.circular(12),
           color: context.colors.surfaceAlt,
           border: Border.all(color: context.colors.border, width: 1),
         ),
@@ -118,22 +115,21 @@ class _AddStoryCard extends StatelessWidget {
                 color: context.colors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.add_rounded, size: 24, color: context.colors.primary),
+              child: Icon(
+                Icons.add_rounded,
+                size: 24,
+                color: context.colors.primary,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               'Ma story',
-              style: TextStyle(
-                fontSize: 12,
+              style: context.storyLabelStyle.copyWith(
                 fontWeight: FontWeight.w600,
-                color: context.colors.textPrimary,
               ),
             ),
             const SizedBox(height: 2),
-            Text(
-              'Publier',
-              style: TextStyle(fontSize: 11, color: context.colors.textTertiary),
-            ),
+            Text('Publier', style: context.storyViewedLabelStyle),
           ],
         ),
       ),
@@ -169,20 +165,13 @@ class _StoryCard extends StatelessWidget {
       child: Container(
         width: 110,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppRadius.cardLg),
+          borderRadius: BorderRadius.circular(12),
+          // Non-vu : anneau primaire net (signal « nouveau ») ;
+          // vu : liseré neutre discret.
           border: Border.all(
-            color: isViewed
-                ? context.colors.border
-                : context.colors.primary.withValues(alpha: 0.30),
-            width: 1,
+            color: isViewed ? context.colors.border : context.colors.primary,
+            width: isViewed ? 1 : 1.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 18,
-              offset: const Offset(0, 10),
-            ),
-          ],
         ),
         clipBehavior: Clip.hardEdge,
         child: Stack(
@@ -221,10 +210,13 @@ class _StoryCard extends StatelessWidget {
               top: 10,
               left: 10,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.34),
-                  borderRadius: BorderRadius.circular(AppRadius.full),
+                  borderRadius: BorderRadius.circular(999),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.16),
                     width: 0.8,
@@ -232,8 +224,8 @@ class _StoryCard extends StatelessWidget {
                 ),
                 child: Text(
                   catLabel,
-                  style: const TextStyle(
-                    fontSize: AppFontSize.tinyHalf,
+                  style: context.text.labelSmall!.copyWith(
+                    fontSize: AppFontSize.tiny,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
@@ -277,8 +269,7 @@ class _StoryCard extends StatelessWidget {
                         group.groupName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: AppFontSize.smHalf,
+                        style: context.text.labelMedium!.copyWith(
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -344,8 +335,8 @@ class _StoryAvatarFallback extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         initials.isEmpty ? '?' : initials,
-        style: TextStyle(
-          fontSize: 10,
+        style: context.text.labelSmall!.copyWith(
+          fontSize: AppFontSize.tiny,
           fontWeight: FontWeight.w700,
           color: context.colors.textPrimary,
         ),

@@ -7,10 +7,7 @@ class CategoryStoryStripAddAction {
   final String label;
   final VoidCallback onTap;
 
-  const CategoryStoryStripAddAction({
-    required this.label,
-    required this.onTap,
-  });
+  const CategoryStoryStripAddAction({required this.label, required this.onTap});
 }
 
 class CategoryStoryStripItem {
@@ -35,11 +32,7 @@ class CategoryStoryStrip extends StatelessWidget {
   final List<CategoryStoryStripItem> items;
   final CategoryStoryStripAddAction? addAction;
 
-  const CategoryStoryStrip({
-    super.key,
-    required this.items,
-    this.addAction,
-  });
+  const CategoryStoryStrip({super.key, required this.items, this.addAction});
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +90,9 @@ class _CategoryStoryCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cat = categoryId != null ? ServiceCategory.resolve(categoryId!) : null;
+    final cat = categoryId != null
+        ? ServiceCategory.resolve(categoryId!)
+        : null;
     final accent = cat?.color ?? context.colors.textTertiary;
 
     return GestureDetector(
@@ -119,14 +114,14 @@ class _CategoryStoryCircle extends StatelessWidget {
                     color: isAdd
                         ? context.colors.surface
                         : viewed
-                            ? context.colors.surfaceAlt
-                            : context.colors.surface,
+                        ? context.colors.surfaceAlt
+                        : context.colors.surface,
                     border: Border.all(
                       color: isAdd
                           ? context.colors.border
                           : viewed
-                              ? context.colors.border
-                              : accent.withValues(alpha: 0.42),
+                          ? context.colors.border
+                          : accent.withValues(alpha: 0.42),
                       width: 1.15,
                     ),
                     boxShadow: AppShadows.storyCircle,

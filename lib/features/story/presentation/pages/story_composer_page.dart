@@ -55,7 +55,9 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
   }
 
   Future<void> _share() async {
-    if (_isPosting || _selectedCategoryId == null || _mediaFiles.isEmpty) return;
+    if (_isPosting || _selectedCategoryId == null || _mediaFiles.isEmpty) {
+      return;
+    }
     HapticFeedback.lightImpact();
     setState(() => _isPosting = true);
 
@@ -144,7 +146,13 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
     final selectedCat = _selectedCategoryId != null
         ? ServiceCategory.findById(_selectedCategoryId!)
         : null;
-    const shadows = [Shadow(color: Color.fromRGBO(0, 0, 0, 0.34), blurRadius: 12, offset: Offset(0, 2))];
+    const shadows = [
+      Shadow(
+        color: Color.fromRGBO(0, 0, 0, 0.34),
+        blurRadius: 12,
+        offset: Offset(0, 2),
+      ),
+    ];
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
@@ -162,7 +170,8 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
                 setState(() => _currentMediaIndex = i);
                 _scrollThumbToIndex(i);
               },
-              itemBuilder: (_, i) => Image.file(_mediaFiles[i], fit: BoxFit.cover),
+              itemBuilder: (_, i) =>
+                  Image.file(_mediaFiles[i], fit: BoxFit.cover),
             ),
             // ── Gradients ────────────────────────────────────────
             DecoratedBox(
@@ -171,7 +180,9 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
                   begin: Alignment.topCenter,
                   end: Alignment.center,
                   colors: [
-                    Colors.black.withValues(alpha: AppStoryMetrics.viewerTopGradientAlpha),
+                    Colors.black.withValues(
+                      alpha: AppStoryMetrics.viewerTopGradientAlpha,
+                    ),
                     Colors.transparent,
                   ],
                 ),
@@ -186,7 +197,9 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     colors: [
-                      Colors.black.withValues(alpha: AppStoryMetrics.viewerBottomGradientAlpha),
+                      Colors.black.withValues(
+                        alpha: AppStoryMetrics.viewerBottomGradientAlpha,
+                      ),
                       Colors.transparent,
                     ],
                   ),
@@ -205,15 +218,24 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
                       child: Row(
                         children: [
                           TextButton(
-                            onPressed: _isPosting ? null : () => Navigator.pop(context),
+                            onPressed: _isPosting
+                                ? null
+                                : () => Navigator.pop(context),
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 8,
+                              ),
                               minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               foregroundColor: AppColors.snow,
-                              textStyle: const TextStyle(fontSize: AppFontSize.lg, fontWeight: FontWeight.w500, letterSpacing: -0.1),
                             ),
-                            child: Text('Annuler', style: TextStyle(color: AppColors.snow.withValues(alpha: 0.96), shadows: shadows)),
+                            child: Text(
+                              'Annuler',
+                              style: context.storyComposerActionStyle.copyWith(
+                                shadows: shadows,
+                              ),
+                            ),
                           ),
                           const Spacer(),
                           _isPosting
@@ -222,27 +244,43 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
                                   height: AppStoryMetrics.composerLoaderSize,
                                   child: Center(
                                     child: SizedBox(
-                                      width: AppStoryMetrics.composerLoaderInnerSize,
-                                      height: AppStoryMetrics.composerLoaderInnerSize,
-                                      child: const CircularProgressIndicator(color: AppColors.snow, strokeWidth: 2),
+                                      width: AppStoryMetrics
+                                          .composerLoaderInnerSize,
+                                      height: AppStoryMetrics
+                                          .composerLoaderInnerSize,
+                                      child: const CircularProgressIndicator(
+                                        color: AppColors.snow,
+                                        strokeWidth: 2,
+                                      ),
                                     ),
                                   ),
                                 )
                               : TextButton(
-                                  onPressed: _selectedCategoryId != null ? _share : null,
+                                  onPressed: _selectedCategoryId != null
+                                      ? _share
+                                      : null,
                                   style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                      vertical: 8,
+                                    ),
                                     minimumSize: Size.zero,
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                     foregroundColor: AppColors.snow,
-                                    textStyle: const TextStyle(fontSize: AppFontSize.lg, fontWeight: FontWeight.w600, letterSpacing: -0.1),
                                   ),
                                   child: Text(
                                     'Publier',
-                                    style: TextStyle(
-                                      color: AppColors.snow.withValues(alpha: _selectedCategoryId != null ? 0.96 : 0.42),
-                                      shadows: shadows,
-                                    ),
+                                    style: context.storyComposerActionStyle
+                                        .copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.snow.withValues(
+                                            alpha: _selectedCategoryId != null
+                                                ? 0.96
+                                                : 0.42,
+                                          ),
+                                          shadows: shadows,
+                                        ),
                                   ),
                                 ),
                         ],
@@ -260,28 +298,43 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
                             GestureDetector(
                               onTap: _isPosting ? null : _openCategoryPicker,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 7,
+                                ),
                                 decoration: BoxDecoration(
                                   color: selectedCat.color,
-                                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                                  borderRadius: BorderRadius.circular(
+                                    AppDesign.radiusFull,
+                                  ),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(selectedCat.icon, size: 15, color: AppColors.snow),
+                                    Icon(
+                                      selectedCat.icon,
+                                      size: 15,
+                                      color: AppColors.snow,
+                                    ),
                                     AppGap.w6,
                                     Text(
                                       selectedCat.name,
-                                      style: TextStyle(
-                                        fontSize: AppFontSize.sm,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.1,
-                                        color: AppColors.snow.withValues(alpha: 0.96),
-                                        shadows: shadows,
-                                      ),
+                                      style: context.storyCategoryPillStyle
+                                          .copyWith(
+                                            color: AppColors.snow.withValues(
+                                              alpha: 0.96,
+                                            ),
+                                            shadows: shadows,
+                                          ),
                                     ),
                                     AppGap.w4,
-                                    Icon(Icons.keyboard_arrow_down_rounded, size: 15, color: AppColors.snow.withValues(alpha: 0.72)),
+                                    Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      size: 15,
+                                      color: AppColors.snow.withValues(
+                                        alpha: 0.72,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -321,9 +374,16 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.22), width: 1),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.22),
+                    width: 1,
+                  ),
                 ),
-                child: Icon(Icons.add_photo_alternate_outlined, color: AppColors.snow.withValues(alpha: 0.80), size: 22),
+                child: Icon(
+                  Icons.add_photo_alternate_outlined,
+                  color: AppColors.snow.withValues(alpha: 0.80),
+                  size: 22,
+                ),
               ),
             );
           }
@@ -331,7 +391,11 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
           return GestureDetector(
             onTap: () {
               setState(() => _currentMediaIndex = i);
-              _mediaPageController.animateToPage(i, duration: const Duration(milliseconds: 240), curve: Curves.easeOutCubic);
+              _mediaPageController.animateToPage(
+                i,
+                duration: const Duration(milliseconds: 240),
+                curve: Curves.easeOutCubic,
+              );
             },
             child: Stack(
               clipBehavior: Clip.none,
@@ -343,7 +407,9 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isActive ? AppColors.snow : Colors.white.withValues(alpha: 0.18),
+                      color: isActive
+                          ? AppColors.snow
+                          : Colors.white.withValues(alpha: 0.18),
                       width: isActive ? 2 : 1,
                     ),
                   ),
@@ -364,9 +430,16 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.72),
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.25), width: 1),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.25),
+                            width: 1,
+                          ),
                         ),
-                        child: const Icon(Icons.close, color: AppColors.snow, size: 12),
+                        child: const Icon(
+                          Icons.close,
+                          color: AppColors.snow,
+                          size: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -379,7 +452,12 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
   }
 
   Widget _buildCaption(List<Shadow> shadows) {
-    final border = Border(bottom: BorderSide(color: AppColors.snow.withValues(alpha: 0.84), width: 1));
+    final border = Border(
+      bottom: BorderSide(
+        color: AppColors.snow.withValues(alpha: 0.84),
+        width: 1,
+      ),
+    );
     if (_showCaption) {
       return Container(
         width: double.infinity,
@@ -391,18 +469,24 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
           maxLines: 3,
           minLines: 1,
           maxLength: 200,
-          style: TextStyle(fontSize: AppFontSize.lg, fontWeight: FontWeight.w400, color: AppColors.snow.withValues(alpha: 0.96), height: 1.45, shadows: shadows),
-          decoration: AppInputDecorations.formField(
-            context,
-            hintText: 'Ajouter un commentaire...',
-            hintStyle: TextStyle(fontSize: AppFontSize.lg, fontWeight: FontWeight.w400, color: AppColors.snow.withValues(alpha: 0.68), shadows: shadows),
-            contentPadding: EdgeInsets.zero,
-            noBorder: true,
-            fillColor: Colors.transparent,
-          ).copyWith(
-            isDense: true,
-            counterStyle: TextStyle(fontSize: AppFontSize.xs, color: AppColors.snow.withValues(alpha: 0.68), shadows: shadows),
-          ),
+          style: context.storyCaptionInputStyle.copyWith(shadows: shadows),
+          decoration:
+              AppInputDecorations.formField(
+                context,
+                hintText: 'Ajouter un commentaire...',
+                hintStyle: context.storyCaptionHintStyle.copyWith(
+                  shadows: shadows,
+                ),
+                contentPadding: EdgeInsets.zero,
+                noBorder: true,
+                fillColor: Colors.transparent,
+              ).copyWith(
+                isDense: true,
+                counterStyle: context.text.labelSmall!.copyWith(
+                  color: AppColors.snow.withValues(alpha: 0.68),
+                  shadows: shadows,
+                ),
+              ),
         ),
       );
     }
@@ -412,7 +496,10 @@ class _StoryComposerPageState extends State<StoryComposerPage> {
         width: double.infinity,
         padding: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(border: border),
-        child: Text('Ajouter un commentaire...', style: TextStyle(fontSize: AppFontSize.lg, fontWeight: FontWeight.w400, color: AppColors.snow.withValues(alpha: 0.72), shadows: shadows)),
+        child: Text(
+          'Ajouter un commentaire...',
+          style: context.storyCaptionHintStyle.copyWith(shadows: shadows),
+        ),
       ),
     );
   }
@@ -443,9 +530,7 @@ class _CategoryPickerSheet extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Text(
                   "Quel talent montrez-vous aujourd'hui ?",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                  style: context.text.headlineSmall!.copyWith(
                     color: AppColors.snow,
                   ),
                 ),
@@ -474,7 +559,8 @@ class _CategoryPickerSheet extends StatelessWidget {
                           children: [
                             AnimatedContainer(
                               duration: const Duration(
-                                milliseconds: AppStoryMetrics.editChipAnimationMs,
+                                milliseconds:
+                                    AppStoryMetrics.editChipAnimationMs,
                               ),
                               width: 52,
                               height: 52,
@@ -499,8 +585,7 @@ class _CategoryPickerSheet extends StatelessWidget {
                             AppGap.h6,
                             Text(
                               cat.name,
-                              style: TextStyle(
-                                fontSize: AppFontSize.xsHalf,
+                              style: context.text.labelSmall!.copyWith(
                                 fontWeight: isSelected
                                     ? FontWeight.w600
                                     : FontWeight.w400,

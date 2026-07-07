@@ -84,8 +84,11 @@ class _StoryViewerPageState extends State<StoryViewerPage>
   }
 
   void _goToGroup(int index) {
-    _pageController.animateToPage(index,
-        duration: const Duration(milliseconds: 280), curve: Curves.easeInOut);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeInOut,
+    );
   }
 
   void _pause() {
@@ -152,10 +155,10 @@ class _StoryViewerPageState extends State<StoryViewerPage>
         onSaved: (caption, catId) async {
           Navigator.pop(context);
           final ok = await context.read<StoryProvider>().updateStory(
-                _current.id,
-                caption: caption,
-                serviceCategory: catId,
-              );
+            _current.id,
+            caption: caption,
+            serviceCategory: catId,
+          );
           if (mounted && ok) {
             showAppSnackBar(
               context,
@@ -200,9 +203,15 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                       style: context.storySheetBodyStyle,
                     ),
                   ),
-                  Divider(height: 0.5, thickness: 0.5, color: context.colors.divider),
+                  Divider(
+                    height: 0.5,
+                    thickness: 0.5,
+                    color: context.colors.divider,
+                  ),
                   InkWell(
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(AppRadius.card)),
+                    borderRadius: const BorderRadius.vertical(
+                      bottom: Radius.circular(AppRadius.card),
+                    ),
                     onTap: () async {
                       Navigator.pop(context);
                       await context.read<StoryProvider>().deleteStory(storyId);
@@ -237,10 +246,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                 child: Padding(
                   padding: AppInsets.v17,
                   child: Center(
-                    child: Text(
-                      'Annuler',
-                      style: context.text.titleLarge,
-                    ),
+                    child: Text('Annuler', style: context.text.titleLarge),
                   ),
                 ),
               ),
@@ -284,9 +290,12 @@ class _StoryViewerPageState extends State<StoryViewerPage>
             fit: StackFit.expand,
             children: [
               // Background image
-              Image.network(story.imageUrl, fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      const ColoredBox(color: AppColors.deepNavy)),
+              Image.network(
+                story.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) =>
+                    const ColoredBox(color: AppColors.deepNavy),
+              ),
               // Gradient overlay
               DecoratedBox(
                 decoration: BoxDecoration(
@@ -295,36 +304,42 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                     end: Alignment.bottomCenter,
                     stops: const [0, 0.25, 0.6, 1],
                     colors: [
-                      Colors.black.withValues(alpha: AppStoryMetrics.viewerTopGradientAlpha),
+                      Colors.black.withValues(
+                        alpha: AppStoryMetrics.viewerTopGradientAlpha,
+                      ),
                       Colors.transparent,
                       Colors.transparent,
-                      Colors.black.withValues(alpha: AppStoryMetrics.viewerBottomGradientAlpha),
+                      Colors.black.withValues(
+                        alpha: AppStoryMetrics.viewerBottomGradientAlpha,
+                      ),
                     ],
                   ),
                 ),
               ),
               // Tap zones
               if (isActive)
-                Row(children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: _goBack,
-                      onLongPressStart: (_) => _pause(),
-                      onLongPressEnd: (_) => _resume(),
-                      behavior: HitTestBehavior.opaque,
-                      child: const SizedBox.expand(),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: _goBack,
+                        onLongPressStart: (_) => _pause(),
+                        onLongPressEnd: (_) => _resume(),
+                        behavior: HitTestBehavior.opaque,
+                        child: const SizedBox.expand(),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: _advance,
-                      onLongPressStart: (_) => _pause(),
-                      onLongPressEnd: (_) => _resume(),
-                      behavior: HitTestBehavior.opaque,
-                      child: const SizedBox.expand(),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: _advance,
+                        onLongPressStart: (_) => _pause(),
+                        onLongPressEnd: (_) => _resume(),
+                        behavior: HitTestBehavior.opaque,
+                        child: const SizedBox.expand(),
+                      ),
                     ),
-                  ),
-                ]),
+                  ],
+                ),
               // UI overlay
               SafeArea(
                 child: Column(
@@ -360,18 +375,19 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                   final value = i < _storyIndex
                       ? 1.0
                       : i == _storyIndex
-                          ? _progressCtrl.value
-                          : 0.0;
+                      ? _progressCtrl.value
+                      : 0.0;
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(AppRadius.micro),
                     child: LinearProgressIndicator(
                       value: value,
                       minHeight: 2.5,
-                      backgroundColor: Colors.white.withValues(alpha: 
-                        AppStoryMetrics.viewerProgressBackgroundAlpha,
+                      backgroundColor: Colors.white.withValues(
+                        alpha: AppStoryMetrics.viewerProgressBackgroundAlpha,
                       ),
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Colors.white,
+                      ),
                     ),
                   );
                 },
@@ -403,37 +419,49 @@ class _StoryViewerPageState extends State<StoryViewerPage>
               children: [
                 if (group.isAuthorGroup)
                   Container(
-                    width: 42, height: 42,
+                    width: 42,
+                    height: 42,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
                     ),
                     child: ClipOval(
                       child: group.avatarUrl.isNotEmpty
-                          ? Image.network(group.avatarUrl, fit: BoxFit.cover,
+                          ? Image.network(
+                              group.avatarUrl,
+                              fit: BoxFit.cover,
                               errorBuilder: (_, __, ___) =>
-                                  _avatarFallback(context, group.groupName))
+                                  _avatarFallback(context, group.groupName),
+                            )
                           : _avatarFallback(context, group.groupName),
                     ),
                   )
                 else
-                  Builder(builder: (_) {
-                    final cat = ServiceCategory.findById(group.categoryId);
-                    return Container(
-                      width: 42, height: 42,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: (cat?.themedColor(context) ?? context.colors.primary).withValues(alpha: 
-                          AppStoryMetrics.viewerCategoryBadgeAlpha,
+                  Builder(
+                    builder: (_) {
+                      final cat = ServiceCategory.findById(group.categoryId);
+                      return Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color:
+                              (cat?.themedColor(context) ??
+                                      context.colors.primary)
+                                  .withValues(
+                                    alpha: AppStoryMetrics
+                                        .viewerCategoryBadgeAlpha,
+                                  ),
+                          border: Border.all(color: Colors.white, width: 2),
                         ),
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: Icon(
+                        child: Icon(
                           cat?.icon ?? Icons.photo_library_rounded,
                           color: Colors.white,
-                          size: 22),
-                    );
-                  }),
+                          size: 22,
+                        ),
+                      );
+                    },
+                  ),
                 AppGap.w10,
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -454,44 +482,55 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                 ),
                 if (widget.onProfileTap != null) ...[
                   AppGap.w6,
-                  Icon(Icons.chevron_right_rounded,
-                      color: Colors.white.withValues(alpha: 0.70), size: 18),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.white.withValues(alpha: 0.70),
+                    size: 18,
+                  ),
                 ],
               ],
             ),
           ),
           const Spacer(),
-          // ⋯ options (owner only)
+          // ⋯ options (owner only) — icône nue avec ombre, façon TikTok
           if (isOwner) ...[
             GestureDetector(
               onTap: _showOwnerOptions,
-              child: Container(
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
                 padding: AppInsets.a6,
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 
-                    AppStoryMetrics.viewerHeaderButtonAlpha,
-                  ),
-                  shape: BoxShape.circle,
+                child: Icon(
+                  Icons.more_vert_rounded,
+                  color: Colors.white,
+                  size: 24,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withValues(alpha: 0.45),
+                      blurRadius: 8,
+                    ),
+                  ],
                 ),
-                child: const Icon(Icons.more_vert_rounded,
-                    color: Colors.white, size: 20),
               ),
             ),
-            AppGap.w6,
+            AppGap.w4,
           ],
-          // Close
+          // Close — icône nue avec ombre
           GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: Container(
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
               padding: AppInsets.a6,
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 
-                  AppStoryMetrics.viewerHeaderButtonAlpha,
-                ),
-                shape: BoxShape.circle,
+              child: Icon(
+                Icons.close_rounded,
+                color: Colors.white,
+                size: 26,
+                shadows: [
+                  Shadow(
+                    color: Colors.black.withValues(alpha: 0.45),
+                    blurRadius: 8,
+                  ),
+                ],
               ),
-              child: const Icon(Icons.close_rounded,
-                  color: Colors.white, size: 18),
             ),
           ),
         ],
@@ -500,14 +539,14 @@ class _StoryViewerPageState extends State<StoryViewerPage>
   }
 
   Widget _avatarFallback(BuildContext context, String name) => Container(
-        color: context.colors.primary.withValues(alpha: 0.18),
-        child: Center(
-          child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: context.storyFallbackStyle,
-          ),
-        ),
-      );
+    color: context.colors.primary.withValues(alpha: 0.18),
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: context.storyFallbackStyle,
+      ),
+    ),
+  );
 
   Widget _buildBottomContent(Story story) {
     final fresh = _fresh(story);
@@ -518,81 +557,102 @@ class _StoryViewerPageState extends State<StoryViewerPage>
         ? fresh.likesCount + (fresh.isLiked ? -1 : 1)
         : fresh.likesCount;
 
+    // Façon TikTok : nom + légende + heure en bas à gauche,
+    // rail d'action vertical (cœur au-dessus du compteur) à droite.
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.fromLTRB(16, 0, 12, 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (story.caption.isNotEmpty) ...[
-            Text(
-              story.caption,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: context.storyOverlayCaptionStyle,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  story.authorName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.storyAuthorNameStyle.copyWith(
+                    fontSize: AppFontSize.body,
+                    fontWeight: FontWeight.w700,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withValues(alpha: 0.45),
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
+                ),
+                if (story.caption.isNotEmpty) ...[
+                  AppGap.h4,
+                  Text(
+                    story.caption,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.storyOverlayCaptionStyle,
+                  ),
+                ],
+                AppGap.h6,
+                Text(
+                  _timeAgo(story.createdAt),
+                  style: context.storyMetaStyle.copyWith(
+                    color: Colors.white.withValues(
+                      alpha: AppStoryMetrics.viewerMetaAlpha,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            AppGap.h8,
-          ],
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              // ── Heure ───────────────────────────────────────
-              Icon(Icons.access_time_rounded,
-                  size: 12,
-                  color: Colors.white.withValues(alpha: AppStoryMetrics.viewerMetaAlpha)),
-              AppGap.w3,
-              Text(
-                _timeAgo(story.createdAt),
-                style: context.storyMetaStyle.copyWith(
-                  color: Colors.white.withValues(alpha: AppStoryMetrics.viewerMetaAlpha),
-                ),
-              ),
-              AppGap.w16,
-              // ── Like button ─────────────────────────────────
-              GestureDetector(
-                onTap: () => _toggleLike(story.id),
-                behavior: HitTestBehavior.opaque,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      transitionBuilder: (child, anim) =>
-                          ScaleTransition(scale: anim, child: child),
-                      child: Icon(
-                        isLiked
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        key: ValueKey(isLiked),
-                        color: isLiked ? AppColors.pinkRed : Colors.white,
-                        size: 26,
-                        shadows: [
-                          Shadow(color: Colors.black.withValues(alpha: 0.54), blurRadius: 6),
-                        ],
+          ),
+          AppGap.w14,
+          // ── Rail like vertical ────────────────────────────
+          GestureDetector(
+            onTap: () => _toggleLike(story.id),
+            behavior: HitTestBehavior.opaque,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  transitionBuilder: (child, anim) =>
+                      ScaleTransition(scale: anim, child: child),
+                  child: Icon(
+                    isLiked
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                    key: ValueKey(isLiked),
+                    color: isLiked ? AppColors.pinkRed : Colors.white,
+                    size: 32,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withValues(alpha: 0.54),
+                        blurRadius: 6,
                       ),
-                    ),
-                    AppGap.w5,
-                    Text(
-                      '$count',
-                      style: context.text.labelSmall?.copyWith(
-                        color: isLiked
-                            ? Colors.white
-                            : Colors.white.withValues(alpha: AppStoryMetrics.viewerMetaAlpha),
-                        fontWeight: FontWeight.w700,
-                        shadows: [
-                          Shadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 4),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                AppGap.h2,
+                Text(
+                  '$count',
+                  style: context.text.labelSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withValues(alpha: 0.45),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
-
 
   String _timeAgo(DateTime dt) {
     final diff = DateTime.now().difference(dt);
@@ -636,7 +696,10 @@ class _OwnerOptionsSheet extends StatelessWidget {
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Container(
                     color: context.colors.primary.withValues(alpha: 0.14),
-                    child: Icon(Icons.image_rounded, color: context.colors.primary),
+                    child: Icon(
+                      Icons.image_rounded,
+                      color: context.colors.primary,
+                    ),
                   ),
                 ),
               ),
@@ -655,7 +718,10 @@ class _OwnerOptionsSheet extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text(_timeAgo(story.createdAt), style: context.text.labelMedium),
+                  Text(
+                    _timeAgo(story.createdAt),
+                    style: context.text.labelMedium,
+                  ),
                 ],
               ),
             ),
@@ -723,7 +789,8 @@ class _EditStorySheetState extends State<_EditStorySheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bottom = MediaQuery.of(context).viewInsets.bottom +
+    final bottom =
+        MediaQuery.of(context).viewInsets.bottom +
         MediaQuery.of(context).padding.bottom;
 
     return Padding(
@@ -760,116 +827,126 @@ class _EditStorySheetState extends State<_EditStorySheet> {
           ],
         ),
         child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // ── Aperçu image + légende ───────────────────────────
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.input),
-                child: SizedBox(
-                  width: 62,
-                  height: 78,
-                  child: Image.network(
-                    widget.story.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: context.colors.primary.withValues(alpha: 0.14),
-                      child: Icon(Icons.image_rounded, color: context.colors.primary),
-                    ),
-                  ),
-                ),
-              ),
-              AppGap.w12,
-              Expanded(
-                child: TextField(
-                  controller: _caption,
-                  maxLines: 4,
-                  minLines: 3,
-                  maxLength: 200,
-                  style: context.storyEditFieldStyle,
-                  decoration: AppInputDecorations.formField(
-                    context,
-                    hintText: 'Ajouter une légende…',
-                    hintStyle: context.storyEditHintStyle,
-                    fillColor: context.colors.surfaceAlt,
-                    contentPadding: AppInsets.h12v10,
-                  ).copyWith(
-                    counterStyle: context.storyEditCounterStyle,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // ── Catégorie ─────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
-            child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Aperçu image + légende ───────────────────────────
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Catégorie',
-                    style: context.storySectionFieldLabelStyle),
-                const Spacer(),
-                if (_categoryId.isNotEmpty)
-                  GestureDetector(
-                    onTap: () => setState(() => _categoryId = ''),
-                    child: Text('Retirer', style: context.storySecondaryActionStyle),
-                  ),
-              ],
-            ),
-          ),
-
-          // Chips horizontaux
-          SizedBox(
-            height: AppStoryMetrics.editSheetChipHeight,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: AppInsets.h16,
-              itemCount: ServiceCategory.all.length,
-              itemBuilder: (_, i) {
-                final cat = ServiceCategory.all[i];
-                final sel = _categoryId == cat.id;
-                final catColor = cat.themedColor(context);
-                return GestureDetector(
-                  onTap: () =>
-                      setState(() => _categoryId = sel ? '' : cat.id),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: AppStoryMetrics.editChipAnimationMs),
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 13, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: sel ? catColor : catColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppRadius.xl),
-                      border: Border.all(
-                        color: sel
-                            ? catColor
-                            : catColor.withValues(alpha: 0.3),
-                        width: 1.5,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.input),
+                  child: SizedBox(
+                    width: 62,
+                    height: 78,
+                    child: Image.network(
+                      widget.story.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: context.colors.primary.withValues(alpha: 0.14),
+                        child: Icon(
+                          Icons.image_rounded,
+                          color: context.colors.primary,
+                        ),
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(cat.icon,
+                  ),
+                ),
+                AppGap.w12,
+                Expanded(
+                  child: TextField(
+                    controller: _caption,
+                    maxLines: 4,
+                    minLines: 3,
+                    maxLength: 200,
+                    style: context.storyEditFieldStyle,
+                    decoration: AppInputDecorations.formField(
+                      context,
+                      hintText: 'Ajouter une légende…',
+                      hintStyle: context.storyEditHintStyle,
+                      fillColor: context.colors.surfaceAlt,
+                      contentPadding: AppInsets.h12v10,
+                    ).copyWith(counterStyle: context.storyEditCounterStyle),
+                  ),
+                ),
+              ],
+            ),
+
+            // ── Catégorie ─────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+              child: Row(
+                children: [
+                  Text('Catégorie', style: context.storySectionFieldLabelStyle),
+                  const Spacer(),
+                  if (_categoryId.isNotEmpty)
+                    GestureDetector(
+                      onTap: () => setState(() => _categoryId = ''),
+                      child: Text(
+                        'Retirer',
+                        style: context.storySecondaryActionStyle,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            // Chips horizontaux
+            SizedBox(
+              height: AppStoryMetrics.editSheetChipHeight,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: AppInsets.h16,
+                itemCount: ServiceCategory.all.length,
+                itemBuilder: (_, i) {
+                  final cat = ServiceCategory.all[i];
+                  final sel = _categoryId == cat.id;
+                  final catColor = cat.themedColor(context);
+                  return GestureDetector(
+                    onTap: () =>
+                        setState(() => _categoryId = sel ? '' : cat.id),
+                    child: AnimatedContainer(
+                      duration: const Duration(
+                        milliseconds: AppStoryMetrics.editChipAnimationMs,
+                      ),
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 13,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: sel ? catColor : catColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppRadius.xl),
+                        border: Border.all(
+                          color: sel
+                              ? catColor
+                              : catColor.withValues(alpha: 0.3),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            cat.icon,
                             size: 14,
-                            color: sel ? Colors.white : catColor),
-                        AppGap.w5,
-                        Text(cat.name,
+                            color: sel ? Colors.white : catColor,
+                          ),
+                          AppGap.w5,
+                          Text(
+                            cat.name,
                             style: context.storyChipLabelStyle.copyWith(
                               color: sel ? Colors.white : catColor,
-                            )),
-                      ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

@@ -47,7 +47,10 @@ Future<void> pickAndOpenComposer(BuildContext context) async {
   );
   if (source == null || !context.mounted) return;
 
-  final picked = await ImagePicker().pickImage(source: source, imageQuality: 85);
+  final picked = await ImagePicker().pickImage(
+    source: source,
+    imageQuality: 85,
+  );
   if (picked == null || !context.mounted) return;
 
   Navigator.push(

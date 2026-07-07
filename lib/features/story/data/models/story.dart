@@ -34,10 +34,10 @@ class Story {
     final authorName =
         '${author?['first_name'] ?? ''} ${author?['last_name'] ?? ''}'.trim();
     // Likes depuis la table post_likes (jointure)
-    final likedByRows =
-        List<Map<String, dynamic>>.from(json['post_likes'] as List? ?? []);
-    final likedByIds =
-        likedByRows.map((r) => r['user_id'].toString()).toList();
+    final likedByRows = List<Map<String, dynamic>>.from(
+      json['post_likes'] as List? ?? [],
+    );
+    final likedByIds = likedByRows.map((r) => r['user_id'].toString()).toList();
     return Story(
       id: json['id'] as String,
       authorId: json['author_id'] as String,
@@ -58,20 +58,19 @@ class Story {
     String? serviceCategory,
     int? likesCount,
     bool? isLiked,
-  }) =>
-      Story(
-        id: id,
-        authorId: authorId,
-        authorName: authorName,
-        authorAvatar: authorAvatar,
-        imageUrl: imageUrl,
-        caption: caption ?? this.caption,
-        serviceCategory: serviceCategory ?? this.serviceCategory,
-        createdAt: createdAt,
-        isOwner: isOwner,
-        likesCount: likesCount ?? this.likesCount,
-        isLiked: isLiked ?? this.isLiked,
-      );
+  }) => Story(
+    id: id,
+    authorId: authorId,
+    authorName: authorName,
+    authorAvatar: authorAvatar,
+    imageUrl: imageUrl,
+    caption: caption ?? this.caption,
+    serviceCategory: serviceCategory ?? this.serviceCategory,
+    createdAt: createdAt,
+    isOwner: isOwner,
+    likesCount: likesCount ?? this.likesCount,
+    isLiked: isLiked ?? this.isLiked,
+  );
 }
 
 /// A group of stories displayed as one circle.
@@ -79,10 +78,10 @@ class Story {
 ///   • Author group  (isAuthorGroup = true)  → one circle per freelancer (home bars)
 ///   • Category group (isAuthorGroup = false) → one circle per service category (profile views)
 class StoryGroup {
-  final String groupId;      // authorId  OR  categoryId
-  final String groupName;    // author first name  OR  category label
-  final String avatarUrl;    // author avatar (empty for category groups)
-  final String categoryId;   // "" for author groups, filled for category groups
+  final String groupId; // authorId  OR  categoryId
+  final String groupName; // author first name  OR  category label
+  final String avatarUrl; // author avatar (empty for category groups)
+  final String categoryId; // "" for author groups, filled for category groups
   final List<Story> stories; // sorted newest first
 
   const StoryGroup({
@@ -112,7 +111,7 @@ class StoryGroup {
         groupId: e.key,
         groupName: sorted.first.authorName.split(' ').first,
         avatarUrl: sorted.first.authorAvatar,
-        categoryId: '',          // author group → no categoryId
+        categoryId: '', // author group → no categoryId
         stories: sorted,
       );
     }).toList();
@@ -133,7 +132,7 @@ class StoryGroup {
       return StoryGroup(
         groupId: e.key,
         groupName: _categoryLabel(e.key),
-        avatarUrl: '',           // category group → no avatar
+        avatarUrl: '', // category group → no avatar
         categoryId: e.key,
         stories: sorted,
       );
