@@ -4,7 +4,7 @@ import '../../../../core/design/app_design_system.dart';
 import '../../../../app/app_bar/location_app_bar.dart';
 import '../../../../app/widgets/app_segmented_tab_bar.dart';
 import '../../../story/story.dart';
-import '../../../story/presentation/widgets/stories_section.dart';
+import '../../../story/presentation/widgets/posts_grid.dart';
 import '../../../profile/profile_provider.dart';
 import '../../../mission/data/models/mission.dart';
 import '../../../mission/presentation/mission_provider.dart';
@@ -83,7 +83,7 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
   @override
   void initState() {
     super.initState();
-    _discoverTabController = TabController(length: 2, vsync: this);
+    _discoverTabController = TabController(length: 3, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProfileProvider>().loadFreelancers();
     });
@@ -113,6 +113,7 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
           controller: _discoverTabController,
           tabs: const [
             AppSegmentedTab(icon: Icons.home_rounded, label: 'Home'),
+            AppSegmentedTab(icon: Icons.grid_view_rounded, label: 'Posts'),
             AppSegmentedTab(icon: Icons.search_rounded, label: 'Freelancer'),
           ],
         ),
@@ -125,26 +126,6 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
             color: context.colors.primary,
             child: CustomScrollView(
               slivers: [
-                // ── Stories des freelancers ──────────────────────────
-                SliverToBoxAdapter(
-                  child: Consumer<StoryProvider>(
-                    builder: (context, storyProvider, _) => StoriesSection(
-                      storyGroups: storyProvider.storyGroups,
-                      isFreelancer: false,
-                      onProfileTap: (group) => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => FreelancerProfileView(
-                            freelancerId: group.groupId,
-                            freelancerName: group.groupName,
-                            freelancerAvatar: group.avatarUrl,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
                 // ── Missions en cours — remplit l'espace restant ─────
                 SliverFillRemaining(
                   hasScrollBody: false,
@@ -153,6 +134,18 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
                   ),
                 ),
               ],
+            ),
+          ),
+          PostsGrid(
+            onProfileTap: (group) => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => FreelancerProfileView(
+                  freelancerId: group.groupId,
+                  freelancerName: group.groupName,
+                  freelancerAvatar: group.avatarUrl,
+                ),
+              ),
             ),
           ),
           const _FreelancerDiscoveryView(),

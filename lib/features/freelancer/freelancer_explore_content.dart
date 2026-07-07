@@ -8,7 +8,7 @@ import '../client/presentation/pages/freelancer_profile_view.dart';
 import '../mission/data/models/mission.dart';
 import '../mission/presentation/mission_provider.dart';
 import '../mission/presentation/pages/freelancer/mission_browse_page.dart';
-import '../story/presentation/widgets/stories_section.dart';
+import '../story/presentation/widgets/posts_grid.dart';
 import '../story/story.dart';
 
 /// Accueil prestataire façon TikTok : le contenu d'abord.
@@ -31,7 +31,7 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -64,7 +64,6 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
   @override
   Widget build(BuildContext context) {
     final allMissions = context.watch<MissionProvider>().publicMissions;
-    final storyGroups = context.watch<StoryProvider>().storyGroups;
 
     final openMissions = allMissions
         .where(
@@ -83,23 +82,13 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
       body: SafeArea(
         child: Column(
           children: [
-            StoriesSection(
-              storyGroups: storyGroups,
-              isFreelancer: true,
-              onProfileTap: (group) => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => FreelancerProfileView(
-                    freelancerId: group.groupId,
-                    freelancerName: group.groupName,
-                    freelancerAvatar: group.avatarUrl,
-                  ),
-                ),
-              ),
-            ),
             AppSegmentedTabBar(
               controller: _tabController,
               tabs: [
+                const AppSegmentedTab(
+                  icon: Icons.grid_view_rounded,
+                  label: 'Posts',
+                ),
                 AppSegmentedTab(
                   icon: Icons.person_outline_rounded,
                   label: particulierCount > 0
@@ -115,12 +104,25 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: const [
-                  MissionBrowsePage(
+                children: [
+                  PostsGrid(
+                    onCreateTap: () => pickAndOpenComposer(context),
+                    onProfileTap: (group) => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FreelancerProfileView(
+                          freelancerId: group.groupId,
+                          freelancerName: group.groupName,
+                          freelancerAvatar: group.avatarUrl,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const MissionBrowsePage(
                     publisherType: PublisherType.particulier,
                     embedded: true,
                   ),
-                  MissionBrowsePage(
+                  const MissionBrowsePage(
                     publisherType: PublisherType.agence,
                     embedded: true,
                   ),
