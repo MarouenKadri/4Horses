@@ -4,7 +4,7 @@ import '../../../../core/design/app_design_system.dart';
 import '../../../../app/app_bar/location_app_bar.dart';
 import '../../../../app/widgets/app_segmented_tab_bar.dart';
 import '../../../story/story.dart';
-import '../../../story/presentation/widgets/posts_grid.dart';
+import '../../../story/presentation/widgets/posts_feed.dart';
 import '../../../profile/profile_provider.dart';
 import '../../../mission/data/models/mission.dart';
 import '../../../mission/presentation/mission_provider.dart';
@@ -136,7 +136,7 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
               ],
             ),
           ),
-          PostsGrid(
+          PostsFeed(
             onProfileTap: (group) => Navigator.push(
               context,
               MaterialPageRoute(

@@ -8,7 +8,7 @@ import '../client/presentation/pages/freelancer_profile_view.dart';
 import '../mission/data/models/mission.dart';
 import '../mission/presentation/mission_provider.dart';
 import '../mission/presentation/pages/freelancer/mission_browse_page.dart';
-import '../story/presentation/widgets/posts_grid.dart';
+import '../story/presentation/widgets/posts_feed.dart';
 import '../story/story.dart';
 
 /// Accueil prestataire façon TikTok : le contenu d'abord.
@@ -105,7 +105,7 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  PostsGrid(
+                  PostsFeed(
                     onCreateTap: () => pickAndOpenComposer(context),
                     onProfileTap: (group) => Navigator.push(
                       context,
