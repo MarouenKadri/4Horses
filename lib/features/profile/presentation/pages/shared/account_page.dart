@@ -6,8 +6,6 @@ import '../../../../../app/enum/user_role.dart';
 import '../../../../../app/app_bar/app_section_bar.dart';
 import '../../../../auth/services/image_picker_service.dart';
 import '../../../../reviews/presentation/pages/my_reviews_page.dart';
-import '../../../../story/story.dart';
-import '../../../../mission/data/models/service_category.dart';
 import '../client/client_payment_methods_page.dart';
 import '../shared/archives_page.dart';
 import '../freelancer/freelancer_activity_page.dart';
@@ -47,7 +45,6 @@ class _AccountPageState extends State<AccountPage> {
         child: ListView(
           children: [
             _ProfileHeader(),
-            if (isFreelancer) ...[AppGap.h24, const _MyStoriesSection()],
             AppGap.h28,
             _FlatSection(
               label: 'Compte',
@@ -62,7 +59,7 @@ class _AccountPageState extends State<AccountPage> {
                     ),
                   ),
                 ),
-                if (isFreelancer)
+                if (isFreelancer) ...[
                   _FlatTile(
                     icon: Icons.work_history_rounded,
                     title: 'Tableau de bord',
@@ -73,6 +70,18 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                     ),
                   ),
+                  _FlatTile(
+                    icon: Icons.grid_view_rounded,
+                    title: 'Mes publications',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const FreelancerActivityPage(initialTab: 1),
+                      ),
+                    ),
+                  ),
+                ],
                 _FlatTile(
                   icon: Icons.history_rounded,
                   title: 'Missions archivées',
@@ -611,180 +620,3 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
 
 // ─── Mes stories par catégorie ───────────────────────────────────────────────
 
-class _MyStoriesSection extends StatefulWidget {
-  const _MyStoriesSection();
-
-  @override
-  State<_MyStoriesSection> createState() => _MyStoriesSectionState();
-}
-
-class _MyStoriesSectionState extends State<_MyStoriesSection> {
-  final Set<String> _viewed = {};
-
-  @override
-  Widget build(BuildContext context) {
-    final groups = context.watch<StoryProvider>().myStoryGroups;
-    final profile = context.watch<ProfileProvider>().profile;
-    final entries = CategoryStoryEntries.build(
-      selectedCategories: profile?.serviceCategories ?? const <String>[],
-      groups: groups,
-    );
-
-    final items = entries
-        .map((entry) {
-          final viewed = entry.hasStories
-              ? _viewed.contains(entry.categoryId)
-              : true;
-          return CategoryStoryStripItem(
-            categoryId: entry.categoryId,
-            label: entry.label,
-            count: entry.count,
-            viewed: viewed,
-            onTap: entry.hasStories
-                ? () {
-                    final index = groups.indexWhere(
-                      (g) => g.groupId == entry.categoryId,
-                    );
-                    if (index >= 0) _openViewer(context, groups, index);
-                  }
-                : null,
-            onLongPress: entry.hasStories
-                ? () => _showOptions(context, entry.group!)
-                : null,
-          );
-        })
-        .toList(growable: false);
-
-    return CategoryStoryStrip(
-      addAction: CategoryStoryStripAddAction(
-        label: 'Ajouter',
-        onTap: () => pickAndOpenComposer(context),
-      ),
-      items: items,
-    );
-  }
-
-  void _openViewer(BuildContext context, List<StoryGroup> groups, int index) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        opaque: false,
-        pageBuilder: (_, __, ___) => StoryViewerPage(
-          groups: groups,
-          initialIndex: index,
-          onViewed: (id) => setState(() => _viewed.add(id)),
-        ),
-        transitionsBuilder: (_, anim, __, child) =>
-            FadeTransition(opacity: anim, child: child),
-        transitionDuration: const Duration(milliseconds: 200),
-      ),
-    );
-  }
-
-  void _showOptions(BuildContext context, StoryGroup group) {
-    final cat = ServiceCategory.findById(group.categoryId);
-    showAppBottomSheet(
-      context: context,
-      wrapWithSurface: false,
-      child: AppActionSheet(
-        title: group.groupName,
-        dark: false,
-        header: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color:
-                      cat?.color.withValues(alpha: 0.12) ??
-                      context.colors.surfaceAlt,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  cat?.icon ?? Icons.photo_library_rounded,
-                  size: 18,
-                  color: cat?.color ?? AppColors.primary,
-                ),
-              ),
-              AppGap.w10,
-              Text(
-                group.groupName,
-                style: context.text.bodyMedium?.copyWith(
-                  fontSize: AppFontSize.body,
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.textPrimary,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                '${group.stories.length} story${group.stories.length > 1 ? 's' : ''}',
-                style: context.text.bodySmall?.copyWith(
-                  fontSize: AppFontSize.sm,
-                  color: context.colors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-        children: [
-          Divider(height: 1, indent: 20, endIndent: 20),
-          AppActionSheetItem(
-            icon: Icons.play_circle_outline_rounded,
-            title: 'Voir les stories',
-            dark: false,
-            onTap: () {
-              Navigator.pop(context);
-              final gs = context.read<StoryProvider>().myStoryGroups;
-              final idx = gs.indexWhere((g) => g.groupId == group.groupId);
-              if (idx >= 0) _openViewer(context, gs, idx);
-            },
-          ),
-          AppActionSheetItem(
-            icon: Icons.add_a_photo_rounded,
-            title: 'Ajouter une story',
-            dark: false,
-            onTap: () {
-              Navigator.pop(context);
-              pickAndOpenComposer(context);
-            },
-          ),
-          AppActionSheetItem(
-            icon: Icons.delete_outline_rounded,
-            title: 'Supprimer cette catégorie',
-            destructive: true,
-            dark: false,
-            onTap: () {
-              Navigator.pop(context);
-              _confirmDeleteCategory(context, group);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _confirmDeleteCategory(BuildContext context, StoryGroup group) {
-    showAppDialog(
-      context: context,
-      title: Text(
-        'Supprimer "${group.groupName}"',
-        style: context.accountDialogTitleStyle,
-      ),
-      content: Text(
-        'Supprimer les ${group.stories.length} story${group.stories.length > 1 ? 's' : ''} de cette catégorie ? Action irréversible.',
-      ),
-      cancelLabel: 'Annuler',
-      confirmLabel: 'Supprimer',
-      confirmVariant: ButtonVariant.destructive,
-      onConfirm: () async {
-        Navigator.pop(context);
-        final provider = context.read<StoryProvider>();
-        for (final story in group.stories) {
-          await provider.deleteStory(story.id);
-        }
-      },
-    );
-  }
-}

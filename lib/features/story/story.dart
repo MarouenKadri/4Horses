@@ -1,10 +1,6 @@
 export 'data/models/story.dart';
 export 'story_provider.dart';
-export 'presentation/pages/story_viewer_page.dart';
 export 'presentation/pages/post_composer_page.dart';
 export 'presentation/pages/post_photos_viewer.dart';
 export 'presentation/widgets/stories_bar.dart';
-export 'presentation/widgets/category_story_strip.dart';
-export 'presentation/mappers/category_story_entries.dart';
-export 'presentation/mappers/story_category_presentation.dart';
 export 'shared/story_category_mapper.dart';

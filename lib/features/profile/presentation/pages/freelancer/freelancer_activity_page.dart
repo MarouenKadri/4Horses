@@ -8,14 +8,17 @@ import 'freelancer_activity/activity_tab.dart';
 import 'freelancer_activity/my_publications_tab.dart';
 
 class FreelancerActivityPage extends StatefulWidget {
-  const FreelancerActivityPage({super.key});
+  /// Onglet initial : 0 = activité, 1 = mes publications.
+  final int initialTab;
+
+  const FreelancerActivityPage({super.key, this.initialTab = 0});
 
   @override
   State<FreelancerActivityPage> createState() => _FreelancerActivityPageState();
 }
 
 class _FreelancerActivityPageState extends State<FreelancerActivityPage> {
-  int _selectedTabIndex = 0;
+  late int _selectedTabIndex = widget.initialTab;
 
   final _hourlyRateController = TextEditingController();
   double _zoneRadius = 10;

@@ -62,20 +62,14 @@ class _FreelancerMyPublicationsTabState
   }
 
   void _openViewer(BuildContext context, List<Story> stories, int index) {
-    final groups = StoryGroup.fromStoriesByCategory(stories);
-    final targetStory = stories[index];
-    final groupIdx = groups.indexWhere(
-      (group) => group.stories.contains(targetStory),
-    );
-    final safeIdx = groupIdx >= 0 ? groupIdx : 0;
+    final story = stories[index];
     Navigator.push(
       context,
       PageRouteBuilder(
         opaque: false,
-        pageBuilder: (_, __, ___) => StoryViewerPage(
-          groups: groups,
-          initialIndex: safeIdx,
-          onViewed: (_) {},
+        pageBuilder: (_, __, ___) => PostPhotosViewer(
+          images: story.images,
+          caption: story.caption,
         ),
         transitionsBuilder: (_, anim, __, child) =>
             FadeTransition(opacity: anim, child: child),
