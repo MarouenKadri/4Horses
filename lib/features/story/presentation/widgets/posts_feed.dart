@@ -5,6 +5,7 @@ import '../../../../core/design/app_design_system.dart';
 import '../../../mission/data/models/service_category.dart';
 import '../../data/models/story.dart';
 import '../../story_provider.dart';
+import '../pages/post_photos_viewer.dart';
 
 /// Fil de posts façon Quora : un post après l'autre, en-tête auteur,
 /// légende, image pleine largeur et vote ♥ directement dans le fil.
@@ -35,9 +36,10 @@ class _PostsFeedState extends State<PostsFeed> {
       context,
       PageRouteBuilder(
         opaque: false,
-        pageBuilder: (_, __, ___) => _PostPhotosViewer(
+        pageBuilder: (_, __, ___) => PostPhotosViewer(
           images: story.images,
           initialIndex: initialIndex,
+          caption: story.caption,
         ),
         transitionsBuilder: (_, anim, __, child) =>
             FadeTransition(opacity: anim, child: child),
@@ -56,11 +58,9 @@ class _PostsFeedState extends State<PostsFeed> {
   Widget build(BuildContext context) {
     final provider = context.watch<StoryProvider>();
     final groups = provider.storyGroups;
+    // Tri par récence : un post fraîchement publié apparaît en haut du fil.
     final posts = groups.expand((g) => g.stories).toList()
-      ..sort((a, b) {
-        final byLikes = b.likesCount.compareTo(a.likesCount);
-        return byLikes != 0 ? byLikes : b.createdAt.compareTo(a.createdAt);
-      });
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     return RefreshIndicator(
       onRefresh: provider.refresh,
@@ -358,99 +358,6 @@ class _PostImagesState extends State<_PostImages> {
           ),
         ],
       ],
-    );
-  }
-}
-
-/// Visionneuse plein écran des photos d'UN post (swipe + zoom) —
-/// remplace le viewer de stories au tap sur l'image du fil.
-class _PostPhotosViewer extends StatefulWidget {
-  final List<String> images;
-  final int initialIndex;
-
-  const _PostPhotosViewer({required this.images, this.initialIndex = 0});
-
-  @override
-  State<_PostPhotosViewer> createState() => _PostPhotosViewerState();
-}
-
-class _PostPhotosViewerState extends State<_PostPhotosViewer> {
-  late final PageController _controller;
-  late int _current;
-
-  @override
-  void initState() {
-    super.initState();
-    _current = widget.initialIndex;
-    _controller = PageController(initialPage: widget.initialIndex);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          PageView.builder(
-            controller: _controller,
-            itemCount: widget.images.length,
-            onPageChanged: (i) => setState(() => _current = i),
-            itemBuilder: (context, i) => InteractiveViewer(
-              maxScale: 4,
-              child: Center(
-                child: Image.network(
-                  widget.images[i],
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Icon(
-                    Icons.broken_image_rounded,
-                    size: 48,
-                    color: Colors.white38,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    behavior: HitTestBehavior.opaque,
-                    child: Icon(
-                      Icons.close_rounded,
-                      size: 26,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withValues(alpha: 0.45),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Spacer(),
-                  if (widget.images.length > 1)
-                    Text(
-                      '${_current + 1}/${widget.images.length}',
-                      style: context.text.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -507,16 +507,14 @@ class _FreelancerPublicationsContent extends StatefulWidget {
 
 class _FreelancerPublicationsContentState
     extends State<_FreelancerPublicationsContent> {
-  void _openViewer(BuildContext context, List<StoryGroup> groups, Story story) {
-    final groupIdx = groups.indexWhere((g) => g.stories.contains(story));
+  void _openPost(BuildContext context, Story story) {
     Navigator.push(
       context,
       PageRouteBuilder(
         opaque: false,
-        pageBuilder: (_, __, ___) => StoryViewerPage(
-          groups: groups,
-          initialIndex: groupIdx >= 0 ? groupIdx : 0,
-          onViewed: (_) {},
+        pageBuilder: (_, __, ___) => PostPhotosViewer(
+          images: story.images,
+          caption: story.caption,
         ),
         transitionsBuilder: (_, anim, __, child) =>
             FadeTransition(opacity: anim, child: child),
@@ -596,7 +594,7 @@ class _FreelancerPublicationsContentState
       itemBuilder: (context, i) {
         final story = stories[i];
         return GestureDetector(
-          onTap: () => _openViewer(context, groups, story),
+          onTap: () => _openPost(context, story),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -619,32 +617,58 @@ class _FreelancerPublicationsContentState
                         color: AppColors.primary,
                       ),
                     ),
-              if (story.caption.isNotEmpty)
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 4),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        stops: const [0, 0.7],
-                        colors: [
-                          Colors.black.withValues(alpha: 0.45),
-                          Colors.transparent,
+              // Badge multi-photos (coin haut droit)
+              if (story.images.length > 1)
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: Icon(
+                    Icons.collections_rounded,
+                    size: 14,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                ),
+              // Compteur ♥ (coin bas gauche) — identité « post »
+              if (story.likesCount > 0)
+                Positioned(
+                  left: 5,
+                  bottom: 4,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.favorite_rounded,
+                        size: 12,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            blurRadius: 4,
+                          ),
                         ],
                       ),
-                    ),
-                    child: Text(
-                      story.caption,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: AppFontSize.tiny,
+                      AppGap.w3,
+                      Text(
+                        '${story.likesCount}',
+                        style: context.text.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          height: 1,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
             ],
