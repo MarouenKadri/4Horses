@@ -101,7 +101,7 @@ class DetailLuxuryPill extends StatelessWidget {
     decoration: BoxDecoration(
       color: context.colors.surface,
       borderRadius: BorderRadius.circular(999),
-      border: Border.all(color: AppColors.inkDark, width: 0.5),
+      border: Border.all(color: context.colors.border),
     ),
     child: Text(label, style: context.missionPillStyle),
   );
@@ -125,22 +125,16 @@ class DetailSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Carte plate : liseré fin sans ombre, rayon aligné sur le feed.
     return Container(
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(12),
         border: showBorder
-            ? Border.all(color: context.colors.border, width: 0.8)
+            ? Border.all(color: context.colors.border)
             : null,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
       ),
       child: child,
     );
@@ -493,15 +487,8 @@ class DetailStatusBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: context.colors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.03),
-            blurRadius: 24,
-            offset: Offset(0, 10),
-          ),
-        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
