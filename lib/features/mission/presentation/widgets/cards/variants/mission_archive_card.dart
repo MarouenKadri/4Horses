@@ -36,7 +36,7 @@ class MissionArchiveCard extends StatelessWidget {
 
     return MissionCardFrame(
       onTap: onTap,
-      radius: MissionCardFrame.radiusSmall,
+      radius: MissionCardFrame.radiusFlat,
       color: context.colors.surfaceAlt,
       shadows: MissionCardFrame.noShadow,
       child: Padding(

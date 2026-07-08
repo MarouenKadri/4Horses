@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../core/design/app_design_system.dart';
 import '../../../../data/models/mission.dart';
 import '../../shared/mission_finance_ui.dart';
 import '../../shared/mission_shared_widgets.dart';
@@ -60,6 +61,9 @@ class MissionSummaryCard extends StatelessWidget {
 
     return MissionCardFrame(
       onTap: onTap,
+      radius: MissionCardFrame.radiusFlat,
+      shadows: MissionCardFrame.noShadow,
+      border: Border.all(color: context.colors.border),
       child: Padding(
         padding: const EdgeInsets.all(MissionCardFrame.paddingDefault),
         child: Column(
