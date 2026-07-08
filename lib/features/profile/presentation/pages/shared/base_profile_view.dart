@@ -223,7 +223,7 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
               ),
             ),
           ),
-          AppGap.h8,
+          AppGap.h16,
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
