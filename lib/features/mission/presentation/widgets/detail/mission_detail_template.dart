@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:latlong2/latlong.dart';
 
 import '../../../../../core/design/app_design_system.dart';
 import '../../../data/models/mission.dart';
@@ -183,93 +182,63 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
     );
   }
 
+  /// Adresse en texte direct, carte plein écran à un tap — plus de
+  /// preview de map incrustée (économie d'écran et de tuiles réseau).
   Widget _buildFullMap(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 182,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: context.colors.border),
-          ),
-          clipBehavior: Clip.hardEdge,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: _DetailMapPreview(address: mission.address),
-                ),
-              ),
-              Positioned.fill(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MissionMapPage(address: mission.address),
-                    ),
-                  ),
-                  child: const SizedBox.expand(),
-                ),
-              ),
-              const Center(child: DetailMiniMapPin()),
-              Positioned(
-                right: 12,
-                bottom: 12,
-                child: GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MissionMapPage(address: mission.address),
-                    ),
-                  ),
-                  child: Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.96),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: context.colors.border,
-                        width: 0.8,
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.search_rounded,
-                      size: 18,
-                      color: context.colors.textPrimary,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+    final address = mission.address.fullAddress.isNotEmpty
+        ? mission.address.fullAddress
+        : mission.address.shortAddress;
+
+    return InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MissionMapPage(address: mission.address),
         ),
-        AppGap.h14,
-        Row(
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 2),
               child: Icon(
                 Icons.location_on_outlined,
-                size: 16,
+                size: 18,
                 color: context.colors.textTertiary,
               ),
             ),
-            AppGap.w8,
+            AppGap.w10,
             Expanded(
-              child: Text(
-                mission.address.shortAddress.isNotEmpty
-                    ? mission.address.shortAddress
-                    : mission.address.fullAddress,
-                style: context.missionEntityNameStyle.copyWith(height: 1.35),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    address,
+                    style: context.missionEntityNameStyle.copyWith(
+                      height: 1.35,
+                    ),
+                  ),
+                  AppGap.h2,
+                  Text(
+                    'Voir sur la carte',
+                    style: context.text.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
               ),
+            ),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: context.colors.textTertiary,
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 
@@ -339,23 +308,3 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
   }
 }
 
-class _DetailMapPreview extends StatelessWidget {
-  final MissionAddress address;
-
-  const _DetailMapPreview({required this.address});
-
-  LatLng? get _knownLatLng {
-    final lat = address.latitude;
-    final lon = address.longitude;
-    return lat != null && lon != null ? LatLng(lat, lon) : null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AppMap.preview(
-      latLng: _knownLatLng,
-      address: _knownLatLng == null ? address.fullAddress : null,
-      tile: AppMapTile.cartoLight,
-    );
-  }
-}
