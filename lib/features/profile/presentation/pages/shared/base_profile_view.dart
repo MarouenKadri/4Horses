@@ -251,12 +251,6 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
                     AppGap.h8,
                     Row(
                       children: [
-                        Icon(
-                          Icons.workspace_premium_rounded,
-                          size: 15,
-                          color: context.colors.textPrimary,
-                        ),
-                        AppGap.w4,
                         Flexible(
                           child: Text(
                             profileLevel,

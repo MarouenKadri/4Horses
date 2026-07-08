@@ -172,13 +172,20 @@ class _FreelancerProfilePageState
   double get _zoneRadius => _profileProvider.profile?.zoneRadius ?? 10;
   double get _rate => _profileProvider.profile?.hourlyRate ?? widget.hourlyRate;
 
-  String get _responseStat {
-    final dbRaw = _profileProvider.profile?.responseTime?.trim();
-    if (dbRaw != null && dbRaw.isNotEmpty) return dbRaw;
-    final raw = widget.responseTime?.trim();
-    if (raw != null && raw.isNotEmpty) return raw;
-    return '15 min';
+  String get _experienceStat {
+    final createdAt = _profileProvider.profile?.createdAt;
+    if (createdAt != null) {
+      final years = DateTime.now().difference(createdAt).inDays ~/ 365;
+      return years <= 1 ? '1 an' : '$years ans';
+    }
+    final match = RegExp(r'(20\d{2})').firstMatch(widget.memberSince);
+    if (match == null) return '2 ans';
+    final year = int.tryParse(match.group(1)!);
+    if (year == null) return '2 ans';
+    final years = DateTime.now().year - year;
+    return years <= 1 ? '1 an' : '$years ans';
   }
+
 
   CancellationLevel get _cancellationLevel {
     final rate = _profileProvider.profile?.cancellationRate;
@@ -216,9 +223,9 @@ class _FreelancerProfilePageState
   @override
   List<ProfileStatData> buildProfileStats() => [
     ProfileStatData(
-      icon: Icons.sell_outlined,
-      value: '${_rate.toInt()}€/h',
-      label: 'Tarif',
+      icon: Icons.workspace_premium_rounded,
+      value: _experienceStat,
+      label: 'Expérience',
     ),
     ProfileStatData(
       icon: Icons.task_alt_rounded,
@@ -226,9 +233,9 @@ class _FreelancerProfilePageState
       label: 'Missions',
     ),
     ProfileStatData(
-      icon: Icons.schedule_outlined,
-      value: _responseStat,
-      label: 'Réponse',
+      icon: Icons.sell_outlined,
+      value: '${_rate.toInt()}€/h',
+      label: 'Tarif',
     ),
   ];
 
