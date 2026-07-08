@@ -468,6 +468,8 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Respiration sous la barre d'onglets
+            AppGap.h16,
             if (proposal != null) proposal,
             _buildVerifiedSection(context),
             if (extra != null) extra,
