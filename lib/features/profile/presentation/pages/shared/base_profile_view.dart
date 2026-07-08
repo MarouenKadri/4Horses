@@ -205,7 +205,7 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
               padding: EdgeInsets.only(bottom: 8),
               child: LinearProgressIndicator(minHeight: 2),
             ),
-          // Flèche de retour nue façon TikTok : icône noire sur fond blanc,
+          // Flèche de retour complète façon TikTok : icône noire nue,
           // sans cercle — zone de tap 44px conservée.
           GestureDetector(
             onTap: () => Navigator.pop(context),
@@ -216,8 +216,8 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 24,
+                  Icons.arrow_back_rounded,
+                  size: 26,
                   color: context.colors.textPrimary,
                 ),
               ),
