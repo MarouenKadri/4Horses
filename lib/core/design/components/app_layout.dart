@@ -340,6 +340,8 @@ class AppEmptyStateBlock extends StatelessWidget {
   final String title;
   final String? message;
   final Widget? action;
+  final EdgeInsetsGeometry padding;
+  final double maxWidth;
 
   const AppEmptyStateBlock({
     super.key,
@@ -347,37 +349,134 @@ class AppEmptyStateBlock extends StatelessWidget {
     required this.title,
     this.message,
     this.action,
+    this.padding = const EdgeInsets.symmetric(horizontal: 28, vertical: 36),
+    this.maxWidth = 360,
   });
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 64, color: context.colors.border),
-          AppGap.h16,
-          Text(
-            title,
-            style: context.text.titleMedium?.copyWith(
-              fontSize: AppFontSize.lg,
-              fontWeight: FontWeight.w600,
-              color: context.colors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          if (message != null) ...[
-            AppGap.h8,
-            Text(
-              message!,
-              style: context.text.bodyMedium?.copyWith(
-                fontSize: AppFontSize.base,
-                color: context.colors.textHint,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: Padding(
+          padding: padding,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: context.colors.surfaceAlt,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: context.colors.border),
+                ),
+                child: Icon(icon, size: 32, color: context.colors.primary),
               ),
-              textAlign: TextAlign.center,
+              AppGap.h18,
+              Text(
+                title,
+                style: context.text.titleMedium?.copyWith(
+                  fontSize: AppFontSize.xl,
+                  fontWeight: FontWeight.w800,
+                  color: context.colors.textPrimary,
+                  height: 1.18,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (message != null) ...[
+                AppGap.h8,
+                Text(
+                  message!,
+                  style: context.text.bodyMedium?.copyWith(
+                    fontSize: AppFontSize.base,
+                    color: context.colors.textSecondary,
+                    height: 1.42,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+              if (action != null) ...[
+                AppGap.h22,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 260),
+                  child: action!,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AppInlineState
+// ─────────────────────────────────────────────────────────────────────────────
+
+class AppInlineState extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? message;
+  final Widget? action;
+  final Color? tone;
+
+  const AppInlineState({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.message,
+    this.action,
+    this.tone,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveTone = tone ?? context.colors.primary;
+    return AppSurfaceCard(
+      padding: AppInsets.a16,
+      borderRadius: BorderRadius.circular(AppRadius.card),
+      border: Border.all(color: context.colors.border),
+      color: context.colors.surface,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppIconCircle(
+            icon: icon,
+            size: 40,
+            iconSize: 20,
+            backgroundColor: effectiveTone.withValues(alpha: 0.10),
+            iconColor: effectiveTone,
+          ),
+          AppGap.w12,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: context.text.titleSmall?.copyWith(
+                    fontSize: AppFontSize.base,
+                    fontWeight: FontWeight.w800,
+                    color: context.colors.textPrimary,
+                  ),
+                ),
+                if (message != null) ...[
+                  AppGap.h4,
+                  Text(
+                    message!,
+                    style: context.text.bodySmall?.copyWith(
+                      fontSize: AppFontSize.md,
+                      color: context.colors.textSecondary,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+                if (action != null) ...[AppGap.h12, action!],
+              ],
             ),
-          ],
-          if (action != null) ...[AppGap.h24, action!],
+          ),
         ],
       ),
     );
@@ -602,12 +701,12 @@ class AppFlowHeader extends StatelessWidget {
             onPressed: onBack,
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              size: 18,
+              size: 22,
               color: context.colors.textPrimary,
             ),
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
           ),
           AppGap.w8,
           Expanded(

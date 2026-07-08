@@ -140,7 +140,7 @@ class StepDate extends StatelessWidget {
                 builder: (ctx, child) => Theme(
                   data: Theme.of(ctx).copyWith(
                     colorScheme: const ColorScheme.light(
-                      primary: AppColors.stepBlue,
+                      primary: AppColors.primary,
                       onPrimary: Colors.white,
                       surface: Colors.white,
                       onSurface: AppColors.inkDark,
@@ -282,7 +282,7 @@ class StepTime extends StatelessWidget {
                 builder: (ctx, child) => Theme(
                   data: Theme.of(ctx).copyWith(
                     colorScheme: const ColorScheme.light(
-                      primary: AppColors.stepBlue,
+                      primary: AppColors.primary,
                       onPrimary: Colors.white,
                       surface: Colors.white,
                       onSurface: AppColors.inkDark,

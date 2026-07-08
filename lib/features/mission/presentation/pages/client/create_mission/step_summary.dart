@@ -260,7 +260,7 @@ class StepSummary extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: MissionStepHelper(
               text: isEdit
-                  ? 'Vos modifications seront visibles immediatement par les freelancers.'
+                  ? 'Vos modifications seront visibles immédiatement par les prestataires.'
                   : 'Votre demande sera transmise aux meilleurs experts disponibles.',
             ),
           ),

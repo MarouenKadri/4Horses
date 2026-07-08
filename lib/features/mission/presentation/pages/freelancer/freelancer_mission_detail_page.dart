@@ -167,8 +167,8 @@ class _FreelancerMissionDetailPageState
         return StatusBannerConfig(
           color: AppColors.secondary,
           icon: Icons.directions_car_rounded,
-          title: 'Vous etes en route',
-          subtitle: 'Le client suit votre arrivee depuis son detail mission.',
+          title: 'Vous êtes en route',
+          subtitle: 'Le client suit votre arrivée depuis son détail mission.',
           pulse: true,
           style: DetailBannerStyle.card,
         );
@@ -178,7 +178,7 @@ class _FreelancerMissionDetailPageState
           icon: Icons.handyman_rounded,
           title: 'Mission en cours',
           subtitle:
-              'Continuez la prestation puis marquez-la comme terminee une fois finie.',
+              'Continuez la prestation puis marquez-la comme terminée une fois finie.',
           pulse: true,
           style: DetailBannerStyle.card,
         );
@@ -186,9 +186,9 @@ class _FreelancerMissionDetailPageState
         return StatusBannerConfig(
           color: AppColors.warning,
           icon: Icons.hourglass_top_rounded,
-          title: 'Fin signalee au client',
+          title: 'Fin signalée au client',
           subtitle:
-              'Le client doit maintenant confirmer la mission ou signaler un probleme.',
+              'Le client doit maintenant confirmer la mission ou signaler un problème.',
           style: DetailBannerStyle.card,
         );
       case MissionStatus.paymentHeld:
@@ -214,9 +214,9 @@ class _FreelancerMissionDetailPageState
         return StatusBannerConfig(
           color: AppColors.primary,
           icon: Icons.check_circle_outline_rounded,
-          title: 'Mission terminee',
+          title: 'Mission terminée',
           subtitle:
-              'Le paiement a ete envoye et la mission est maintenant cloturee.',
+              'Le paiement a été envoyé et la mission est maintenant clôturée.',
           style: DetailBannerStyle.card,
         );
       case MissionStatus.inDispute:
@@ -233,9 +233,9 @@ class _FreelancerMissionDetailPageState
         return StatusBannerConfig(
           color: AppColors.error,
           icon: Icons.close_rounded,
-          title: 'Mission annulee',
+          title: 'Mission annulée',
           subtitle:
-              "Cette mission est closee et aucune action supplementaire n'est attendue.",
+              "Cette mission est clôturée et aucune action supplémentaire n'est attendue.",
           style: DetailBannerStyle.card,
         );
       default:
@@ -322,7 +322,7 @@ class _FreelancerMissionDetailPageState
         ),
         _ => (
           Icons.close_rounded,
-          'Mission annulee',
+          'Mission annulée',
           'Cette mission est maintenant closee',
         ),
       };
@@ -367,7 +367,7 @@ class _FreelancerMissionDetailPageState
     // Candidature déjà envoyée (explorer) ou isOwn en attente
     if (alreadyApplied || (widget.isOwn && !_isAccepted)) {
       return DetailBottomArea(
-        caption: 'En attente de la decision du client',
+        caption: 'En attente de la décision du client',
         child: Container(
           width: double.infinity,
           height: 52,

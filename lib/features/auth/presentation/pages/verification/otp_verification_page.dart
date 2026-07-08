@@ -213,7 +213,7 @@ class _SuccessPage extends StatelessWidget {
             ),
             AppGap.h12,
             Text(
-              'Votre compte a été créé avec succès.\nVous pouvez maintenant utiliser Inkern.',
+              'Votre compte a été créé avec succès.\nVous pouvez maintenant utiliser BYRSA.',
               textAlign: TextAlign.center,
               style: context.text.bodyMedium?.copyWith(
                 fontSize: AppFontSize.body,

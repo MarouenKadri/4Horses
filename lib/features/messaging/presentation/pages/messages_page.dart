@@ -63,8 +63,23 @@ class _MessagesPageState extends State<MessagesPage> {
         child: Consumer<MessagingProvider>(
           builder: (context, provider, _) {
             if (provider.isLoadingConversations) {
-              return Center(
-                child: CircularProgressIndicator(color: context.colors.primary),
+              return const Center(
+                child: AppLoadingIndicator(size: 28, strokeWidth: 2.6),
+              );
+            }
+
+            if (provider.conversationError != null) {
+              return AppEmptyStateBlock(
+                icon: Icons.wifi_off_rounded,
+                title: 'Messages indisponibles',
+                message: provider.conversationError,
+                action: AppButton(
+                  label: 'Réessayer',
+                  icon: Icons.refresh_rounded,
+                  variant: ButtonVariant.secondary,
+                  onPressed: () =>
+                      provider.loadConversations(forceRefresh: true),
+                ),
               );
             }
 
@@ -73,7 +88,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 icon: Icons.forum_rounded,
                 title: 'Aucune conversation',
                 message:
-                    'Vos échanges avec vos clients\net freelancers apparaîtront ici.',
+                    'Vos échanges avec vos clients et prestataires apparaîtront ici.',
               );
             }
 

@@ -90,7 +90,7 @@ class _FreelancersRowState extends State<FreelancersRow> {
     );
     return Freelancer(
       name: fullName.isEmpty ? 'Prestataire' : fullName,
-      job: hourlyRate > 0 ? '$hourlyRate€/h' : 'Freelancer',
+      job: hourlyRate > 0 ? '$hourlyRate€/h' : 'Prestataire',
       rating: rating > 0 ? rating : 4.8,
       subtitle: categoryNames.isNotEmpty ? categoryNames.join(' · ') : '',
       imageUrl: (row['avatar_url'] ?? '') as String,

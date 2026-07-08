@@ -82,41 +82,57 @@ class ClientFinanceMethodsTab extends StatelessWidget {
       children: [
         const PaymentSectionLabel('MES CARTES'),
         AppGap.h10,
-        Container(
-          decoration: BoxDecoration(
-            color: context.colors.surface,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: context.colors.border),
-          ),
-          child: Column(
-            children: [
-              ...cards.asMap().entries.expand(
-                (entry) => [
-                  _CardRow(
-                    card: entry.value,
-                    onTap: () => _showCardOptions(context, entry.value),
-                  ),
-                  if (entry.key < cards.length - 1)
-                    Divider(
-                      height: 1,
-                      indent: 68,
-                      color: context.colors.divider,
+        if (cards.isEmpty)
+          AppEmptyStateBlock(
+            icon: Icons.credit_card_off_rounded,
+            title: 'Aucune carte enregistrée',
+            message:
+                'Ajoutez une carte pour réserver plus vite vos prochaines missions.',
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 34),
+            action: AppButton(
+              label: 'Ajouter une carte',
+              icon: Icons.add_rounded,
+              variant: ButtonVariant.black,
+              onPressed: () => _showAddCardSheet(context),
+            ),
+          )
+        else ...[
+          Container(
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: context.colors.border),
+            ),
+            child: Column(
+              children: [
+                ...cards.asMap().entries.expand(
+                  (entry) => [
+                    _CardRow(
+                      card: entry.value,
+                      onTap: () => _showCardOptions(context, entry.value),
                     ),
-                ],
-              ),
-            ],
+                    if (entry.key < cards.length - 1)
+                      Divider(
+                        height: 1,
+                        indent: 68,
+                        color: context.colors.divider,
+                      ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        AppGap.h10,
-        PaymentAddButton(
-          label: 'Ajouter une carte',
-          onTap: () => _showAddCardSheet(context),
-        ),
+          AppGap.h10,
+          PaymentAddButton(
+            label: 'Ajouter une carte',
+            onTap: () => _showAddCardSheet(context),
+          ),
+        ],
         AppGap.h16,
         const PaymentInfoNote(
           icon: Icons.lock_outline_rounded,
           body:
-              'Chiffrement SSL · Inkern ne stocke jamais vos numéros de carte complets.',
+              'Chiffrement SSL · BYRSA ne stocke jamais vos numéros de carte complets.',
         ),
       ],
     );

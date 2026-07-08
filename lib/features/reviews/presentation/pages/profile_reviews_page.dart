@@ -68,7 +68,7 @@ class _ProfileReviewsPageState extends State<ProfileReviewsPage> {
   Widget build(BuildContext context) {
     final subtitle = _fromClients
         ? 'Avis donnés par des clients'
-        : 'Avis donnés par des freelancers';
+        : 'Avis donnés par des prestataires';
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -138,7 +138,7 @@ class _ProfileReviewsPageState extends State<ProfileReviewsPage> {
                       reviews: _reviews,
                       emptyLabel: _fromClients
                           ? 'Aucun avis client pour le moment'
-                          : 'Aucun avis freelancer pour le moment',
+                          : 'Aucun avis prestataire pour le moment',
                       isReceived: true,
                     ),
                   ),

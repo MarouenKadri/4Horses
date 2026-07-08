@@ -210,7 +210,7 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
           if (ok) {
             showAppSnackBar(
               context,
-              'Code valide. Mission demarree.',
+              'Code valide. Mission démarrée.',
               icon: Icons.check_circle_rounded,
             );
           }
@@ -221,11 +221,11 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
   }
 
   String get _pageTitle => switch (_mission.status) {
-    MissionStatus.confirmed => 'Pret pour le code',
+    MissionStatus.confirmed => 'Prêt pour le code',
     MissionStatus.onTheWay => 'En route',
     MissionStatus.inProgress => 'Mission en cours',
-    MissionStatus.completionRequested => 'Fin signalee',
-    MissionStatus.awaitingRelease => 'Mission terminee',
+    MissionStatus.completionRequested => 'Fin signalée',
+    MissionStatus.awaitingRelease => 'Mission terminée',
     _ => 'Suivi de mission',
   };
 

@@ -51,7 +51,7 @@ class _FreelancerFinanceActivityTabState
       status: TransactionStatus.completed,
       amount: 8.50,
       date: DateTime.now().subtract(const Duration(hours: 2)),
-      description: 'Commission Inkern 10%',
+      description: 'Commission BYRSA 10%',
     ),
     Transaction(
       id: '4',
@@ -76,7 +76,7 @@ class _FreelancerFinanceActivityTabState
       status: TransactionStatus.completed,
       amount: 12.00,
       date: DateTime.now().subtract(const Duration(days: 2)),
-      description: 'Commission Inkern 10%',
+      description: 'Commission BYRSA 10%',
     ),
     Transaction(
       id: '7',
@@ -101,7 +101,7 @@ class _FreelancerFinanceActivityTabState
       status: TransactionStatus.completed,
       amount: 6.50,
       date: DateTime.now().subtract(const Duration(days: 5)),
-      description: 'Commission Inkern 10%',
+      description: 'Commission BYRSA 10%',
     ),
     Transaction(
       id: '10',

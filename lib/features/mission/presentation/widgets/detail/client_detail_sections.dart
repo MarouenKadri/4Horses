@@ -297,7 +297,7 @@ class ClientTrackingCard extends StatelessWidget {
         icon: Icons.task_alt_rounded,
         title: 'Le prestataire a signale la fin',
         subtitle:
-            'Verifiez la prestation puis confirmez la mission ou signalez un probleme.',
+            'Vérifiez la prestation puis confirmez la mission ou signalez un problème.',
         accent: AppColors.warning,
         cta: 'Verifier la mission',
       ),
@@ -501,7 +501,7 @@ class ClientCompletionRequestedCard extends StatelessWidget {
           ),
           AppGap.h14,
           Text(
-            '$prestaName a signale avoir termine la mission. Confirmez la fin si tout est bon ou signalez un probleme.',
+            '$prestaName a signalé avoir terminé la mission. Confirmez la fin si tout est bon ou signalez un problème.',
             style: context.missionEmphasisBodyStyle,
           ),
           AppGap.h16,

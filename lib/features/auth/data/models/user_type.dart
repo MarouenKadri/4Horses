@@ -5,7 +5,7 @@ enum UserType { client, freelancer }
 extension UserTypeExtension on UserType {
   String get label {
     if (this == UserType.client) return 'Client';
-    return 'Freelancer';
+    return 'Prestataire';
   }
 
   String get description {

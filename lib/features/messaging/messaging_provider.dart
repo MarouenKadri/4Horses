@@ -13,11 +13,13 @@ class MessagingProvider extends ChangeNotifier {
 
   List<Conversation> _conversations = [];
   bool isLoadingConversations = false;
+  String? _conversationError;
   int _conversationLoadToken = 0;
   bool _isClientMode = true;
   StreamSubscription<AuthState>? _authSub;
 
   List<Conversation> get conversations => List.unmodifiable(_conversations);
+  String? get conversationError => _conversationError;
   int get totalUnread =>
       _conversations.fold(0, (sum, c) => sum + c.unreadCount);
   String? get currentUserId => _supabase.auth.currentUser?.id;
@@ -45,16 +47,24 @@ class MessagingProvider extends ChangeNotifier {
     if (isClientMode != null) _isClientMode = isClientMode;
 
     final token = ++_conversationLoadToken;
+    _conversationError = null;
     _setLoading(true);
 
-    final result = await _repo.getConversations(
-      userId,
-      isClientMode: _isClientMode,
-    );
-    if (token != _conversationLoadToken) return;
+    try {
+      final result = await _repo.getConversations(
+        userId,
+        isClientMode: _isClientMode,
+      );
+      if (token != _conversationLoadToken) return;
 
-    _conversations = result;
-    _setLoading(false);
+      _conversations = result;
+    } catch (e) {
+      if (token != _conversationLoadToken) return;
+      debugPrint('loadConversations error: $e');
+      _conversationError = 'Impossible de charger vos conversations.';
+    } finally {
+      if (token == _conversationLoadToken) _setLoading(false);
+    }
   }
 
   Future<String?> getOrCreateConversation({
@@ -157,6 +167,7 @@ class MessagingProvider extends ChangeNotifier {
   void _resetState() {
     _conversationLoadToken++;
     _conversations = [];
+    _conversationError = null;
     isLoadingConversations = false;
     notifyListeners();
   }

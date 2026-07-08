@@ -175,7 +175,7 @@ class _StepDetailsState extends State<StepDetails> {
                 const MissionStepHeader(
                   title: 'Décrivez votre besoin',
                   subtitle:
-                      'Quelques détails bien choisis aideront les freelancers à vous répondre plus précisément.',
+                      'Quelques détails bien choisis aideront les prestataires à vous répondre plus précisément.',
                 ),
                 const SizedBox(height: 28),
                 _buildDescriptionSection(),
@@ -205,7 +205,7 @@ class _StepDetailsState extends State<StepDetails> {
               AppInputDecorations.profileField(
                 context,
                 hintText:
-                    "Ex: Je recherche quelqu'un pour un menage complet de mon appartement. Merci de prevoir les zones difficiles d'acces et les surfaces fragiles.",
+                    "Ex: Je recherche quelqu'un pour un ménage complet de mon appartement. Merci de prévoir les zones difficiles d'accès et les surfaces fragiles.",
                 radius: 18,
                 prefixIcon: Icon(
                   Icons.notes_rounded,
@@ -481,13 +481,7 @@ class _StepDetailsState extends State<StepDetails> {
         margin: const EdgeInsets.only(right: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.button),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: context.colors.border),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppRadius.button),

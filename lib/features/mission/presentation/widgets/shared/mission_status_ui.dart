@@ -106,24 +106,24 @@ class MissionStatusUi {
           MissionStatus.closed => 'Verse',
           MissionStatus.cancelled => 'Annulee',
           MissionStatus.inDispute => 'Litige',
-          MissionStatus.expired => 'Annulee',
+          MissionStatus.expired => 'Annulée',
         };
       case MissionUiRole.freelancer:
         return switch (status) {
-          MissionStatus.draft => 'Postulee',
-          MissionStatus.waitingCandidates => 'Postulee',
-          MissionStatus.candidateReceived => 'Postulee',
-          MissionStatus.confirmed => 'Confirmee',
+          MissionStatus.draft => 'Postulée',
+          MissionStatus.waitingCandidates => 'Postulée',
+          MissionStatus.candidateReceived => 'Postulée',
+          MissionStatus.confirmed => 'Confirmée',
           MissionStatus.onTheWay => 'En cours',
           MissionStatus.inProgress => 'En cours',
           MissionStatus.completionRequested => 'Validation client',
-          MissionStatus.completed => 'Fonds reserves',
-          MissionStatus.paymentHeld => 'Fonds reserves',
+          MissionStatus.completed => 'Fonds réservés',
+          MissionStatus.paymentHeld => 'Fonds réservés',
           MissionStatus.awaitingRelease => 'Versement 24h',
-          MissionStatus.closed => 'Versement effectue',
-          MissionStatus.cancelled => 'Annulee',
+          MissionStatus.closed => 'Versement effectué',
+          MissionStatus.cancelled => 'Annulée',
           MissionStatus.inDispute => 'Litige en cours',
-          MissionStatus.expired => 'Annulee',
+          MissionStatus.expired => 'Annulée',
         };
     }
   }

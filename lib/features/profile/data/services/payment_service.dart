@@ -90,7 +90,7 @@ class PaymentService {
         setupIntentClientSecret: data['setupIntentClientSecret'] as String,
         customerId: data['customerId'] as String,
         customerEphemeralKeySecret: data['ephemeralKey'] as String,
-        merchantDisplayName: 'Inkern',
+        merchantDisplayName: 'BYRSA',
         style: ThemeMode.dark,
       ),
     );
@@ -153,7 +153,7 @@ class PaymentService {
     await Stripe.instance.initPaymentSheet(
       paymentSheetParameters: SetupPaymentSheetParameters(
         paymentIntentClientSecret: data['clientSecret'] as String,
-        merchantDisplayName: 'Inkern',
+        merchantDisplayName: 'BYRSA',
         style: ThemeMode.dark,
       ),
     );

@@ -138,7 +138,7 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
                         ),
                         AppGap.h8,
                         _PaymentRow(
-                          label: 'Commission Inkern (10%)',
+                          label: 'Commission BYRSA (10%)',
                           amount: _cigaleAmount,
                           color: context.colors.textSecondary,
                         ),
@@ -287,7 +287,7 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
       context: context,
       title: const Text('Ouvrir un litige'),
       content: const Text(
-        'Un conseiller Inkern vous contactera sous 24h. Le paiement reste bloqué pendant la procédure.',
+        'Un conseiller BYRSA vous contactera sous 24h. Le paiement reste bloqué pendant la procédure.',
       ),
       cancelLabel: 'Annuler',
       confirmLabel: 'Confirmer',

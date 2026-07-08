@@ -43,7 +43,7 @@ class WelcomePage extends StatelessWidget {
                         ),
                         AppGap.h6,
                         Text(
-                          'Des freelancers vérifiés, notés par la communauté.',
+                          'Des prestataires vérifiés, notés par la communauté.',
                           style: context.text.bodySmall?.copyWith(
                             color: context.colors.textSecondary,
                           ),
@@ -95,7 +95,7 @@ class _HeroSection extends StatelessWidget {
               ),
               AppGap.w10,
               Text(
-                'Inkern',
+                'BYRSA',
                 style: context.text.headlineSmall?.copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w700,
@@ -127,43 +127,70 @@ class _HeroSection extends StatelessWidget {
 
           AppGap.h20,
 
-          // ─── Indicateurs de confiance ───
-          Row(
-            children: [
-              const Icon(Icons.star_rounded, color: AppColors.rating, size: 16),
-              AppGap.w4,
-              Text(
-                '4.8/5',
-                style: context.text.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.textPrimary,
-                ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: const [
+              _TrustMetric(
+                icon: Icons.star_rounded,
+                iconColor: AppColors.rating,
+                value: '4.8/5',
+                label: 'note moyenne',
               ),
-              AppGap.w4,
-              Text(
-                'note moyenne',
-                style: context.text.bodySmall?.copyWith(
-                  color: context.colors.textTertiary,
-                ),
-              ),
-              AppGap.w12,
-              Container(width: 1, height: 14, color: context.colors.border),
-              AppGap.w12,
-              Text(
-                '10K+',
-                style: context.text.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
-                ),
-              ),
-              AppGap.w4,
-              Text(
-                'prestataires',
-                style: context.text.bodySmall?.copyWith(
-                  color: context.colors.textTertiary,
-                ),
+              _TrustMetric(
+                icon: Icons.verified_user_rounded,
+                iconColor: AppColors.primary,
+                value: '10K+',
+                label: 'prestataires',
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrustMetric extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String value;
+  final String label;
+
+  const _TrustMetric({
+    required this.icon,
+    required this.iconColor,
+    required this.value,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceAlt,
+        borderRadius: BorderRadius.circular(AppRadius.chip),
+        border: Border.all(color: context.colors.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: iconColor, size: 15),
+          AppGap.w5,
+          Text(
+            value,
+            style: context.text.bodySmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: context.colors.textPrimary,
+            ),
+          ),
+          AppGap.w4,
+          Text(
+            label,
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.textTertiary,
+            ),
           ),
         ],
       ),

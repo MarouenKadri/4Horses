@@ -117,7 +117,7 @@ class _TarifCardState extends State<_TarifCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const InlineHelper(
-            text: 'Définissez le tarif affiché sur votre profil freelancer.',
+            text: 'Définissez le tarif affiché sur votre profil prestataire.',
           ),
           AppGap.h12,
           ProfileField(

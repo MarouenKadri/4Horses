@@ -95,7 +95,7 @@ class _CandidatesPageState extends State<CandidatesPage> {
 
     return Candidate(
       id: (row['freelancer_id'] ?? row['id'] ?? '').toString(),
-      name: fullName.isNotEmpty ? fullName : 'Freelancer',
+      name: fullName.isNotEmpty ? fullName : 'Prestataire',
       avatar: (f['avatar_url'] ?? '').toString(),
       rating: _asDouble(f['rating']),
       reviewsCount: _asInt(f['reviews_count']),

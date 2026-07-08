@@ -45,10 +45,10 @@ extension MissionStatusX on MissionStatus {
     MissionStatus.inProgress => 'En cours',
     MissionStatus.completionRequested => 'Fin demandée',
     MissionStatus.completed => 'Terminée',
-    MissionStatus.paymentHeld => 'Fonds reserves',
+    MissionStatus.paymentHeld => 'Fonds réservés',
     MissionStatus.awaitingRelease => 'Versement 24h',
     MissionStatus.inDispute => 'Litige en cours',
-    MissionStatus.closed => 'Versement effectue',
+    MissionStatus.closed => 'Versement effectué',
     MissionStatus.cancelled => 'Annulée',
     MissionStatus.expired => 'Expirée',
   };

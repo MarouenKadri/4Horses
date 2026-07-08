@@ -200,17 +200,26 @@ class _FlatSection extends StatelessWidget {
             color: context.colors.textPrimary,
           ),
         ),
-        AppGap.h8,
-        Divider(height: 1, thickness: 1, color: context.colors.divider),
-        for (int i = 0; i < children.length; i++) ...[
-          children[i],
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: context.colors.divider,
-            indent: i < children.length - 1 ? 34 : 0,
+        AppGap.h10,
+        AppSurfaceCard(
+          padding: EdgeInsets.zero,
+          borderRadius: BorderRadius.circular(AppRadius.card),
+          border: Border.all(color: context.colors.border),
+          child: Column(
+            children: [
+              for (int i = 0; i < children.length; i++) ...[
+                children[i],
+                if (i < children.length - 1)
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: context.colors.divider,
+                    indent: 54,
+                  ),
+              ],
+            ],
           ),
-        ],
+        ),
       ],
     );
   }
@@ -238,14 +247,23 @@ class _FlatTile extends StatelessWidget {
     final iconColor = titleColor ?? context.colors.textTertiary;
     return InkWell(
       onTap: onTap,
-      splashColor: Colors.transparent,
+      borderRadius: BorderRadius.circular(AppRadius.card),
+      splashColor: context.colors.primary.withValues(alpha: 0.04),
       highlightColor: context.colors.surfaceAlt,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 13),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, size: 20, color: iconColor),
-            AppGap.w14,
+            AppIconCircle(
+              icon: icon,
+              size: 34,
+              iconSize: 18,
+              backgroundColor: titleColor == null
+                  ? context.colors.surfaceAlt
+                  : context.colors.errorLight,
+              iconColor: iconColor,
+            ),
+            AppGap.w12,
             Expanded(
               child: Text(
                 title,
@@ -631,4 +649,3 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
 }
 
 // ─── Mes stories par catégorie ───────────────────────────────────────────────
-

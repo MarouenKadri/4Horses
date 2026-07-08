@@ -56,7 +56,7 @@ class ArchivesPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 28),
                 child: Text(
-                  'Aucune mission archivee pour le moment.',
+                  'Aucune mission archivée pour le moment.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,

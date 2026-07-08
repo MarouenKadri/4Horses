@@ -142,21 +142,21 @@ class MissionFinanceUi {
     return switch (role) {
       MissionUiRole.client => switch (state) {
         MissionFinanceState.pending => 'Paiement a venir',
-        MissionFinanceState.secured => 'Montant reserve',
-        MissionFinanceState.awaitingRelease24h => 'Liberation programmee',
-        MissionFinanceState.paidOut => 'Paiement libere',
+        MissionFinanceState.secured => 'Montant réservé',
+        MissionFinanceState.awaitingRelease24h => 'Libération programmée',
+        MissionFinanceState.paidOut => 'Paiement libéré',
         MissionFinanceState.disputeHold => 'Paiement suspendu',
-        MissionFinanceState.refund100 => 'Remboursement integral',
+        MissionFinanceState.refund100 => 'Remboursement intégral',
         MissionFinanceState.refund50 => 'Remboursement partiel',
       },
       MissionUiRole.freelancer => switch (state) {
         MissionFinanceState.pending => 'Paiement en attente',
-        MissionFinanceState.secured => 'Fonds reserves',
-        MissionFinanceState.awaitingRelease24h => 'Versement programme',
-        MissionFinanceState.paidOut => 'Versement effectue',
+        MissionFinanceState.secured => 'Fonds réservés',
+        MissionFinanceState.awaitingRelease24h => 'Versement programmé',
+        MissionFinanceState.paidOut => 'Versement effectué',
         MissionFinanceState.disputeHold => 'Versement suspendu',
         MissionFinanceState.refund100 ||
-        MissionFinanceState.refund50 => 'Mission annulee',
+        MissionFinanceState.refund50 => 'Mission annulée',
       },
     };
   }
@@ -168,33 +168,33 @@ class MissionFinanceUi {
     return switch (role) {
       MissionUiRole.client => switch (state) {
         MissionFinanceState.pending =>
-          'Vous payez uniquement lorsque la mission est terminee et validee.',
+          'Vous payez uniquement lorsque la mission est terminée et validée.',
         MissionFinanceState.secured =>
-          'Le montant est preleve et conserve de maniere securisee.',
+          'Le montant est prélevé et conservé de manière sécurisée.',
         MissionFinanceState.awaitingRelease24h =>
-          'Le freelancer sera verse automatiquement apres 24h sans litige.',
+          'Le prestataire sera versé automatiquement après 24h sans litige.',
         MissionFinanceState.paidOut =>
-          'Le paiement a ete envoye au freelancer.',
+          'Le paiement a été envoyé au prestataire.',
         MissionFinanceState.disputeHold =>
-          'L argent reste bloque jusqu a resolution du probleme.',
+          'L’argent reste bloqué jusqu’à résolution du problème.',
         MissionFinanceState.refund100 =>
           'Annulation plus de 24h avant la mission: remboursement 100%.',
         MissionFinanceState.refund50 =>
-          'Annulation a moins de 24h ou le jour J: remboursement 50%.',
+          'Annulation à moins de 24h ou le jour J: remboursement 50%.',
       },
       MissionUiRole.freelancer => switch (state) {
         MissionFinanceState.pending =>
-          'Le client n a pas encore valide et regle la mission.',
+          'Le client n’a pas encore validé et réglé la mission.',
         MissionFinanceState.secured =>
-          'Les fonds sont bloques, ils sont bien reserves pour vous.',
+          'Les fonds sont bloqués, ils sont bien réservés pour vous.',
         MissionFinanceState.awaitingRelease24h =>
           'Le versement arrive automatiquement sous 24 heures sans litige.',
         MissionFinanceState.paidOut =>
-          'Le versement est effectue sur votre portefeuille.',
+          'Le versement est effectué sur votre portefeuille.',
         MissionFinanceState.disputeHold =>
           'Le versement est suspendu le temps de traiter le litige.',
         MissionFinanceState.refund100 || MissionFinanceState.refund50 =>
-          'Mission annulee: aucun versement pour cette mission.',
+          'Mission annulée: aucun versement pour cette mission.',
       },
     };
   }
@@ -209,27 +209,27 @@ class MissionFinanceUi {
 
     if (role == MissionUiRole.client) {
       if (state == MissionFinanceState.pending) {
-        return 'Montant a payer: ${_euro(total)}';
+        return 'Montant à payer: ${_euro(total)}';
       }
       if (state == MissionFinanceState.refund100) {
-        return 'Remboursement estime: ${_euro(total)}';
+        return 'Remboursement estimé: ${_euro(total)}';
       }
       if (state == MissionFinanceState.refund50) {
-        return 'Remboursement estime: ${_euro(total * 0.5)}';
+        return 'Remboursement estimé: ${_euro(total * 0.5)}';
       }
-      return 'Montant paye: ${_euro(total)}';
+      return 'Montant payé: ${_euro(total)}';
     }
 
     if (state == MissionFinanceState.pending) {
       return 'Montant potentiel: ${_euro(freelancerPayout)}';
     }
     if (state == MissionFinanceState.paidOut) {
-      return 'Montant recu: ${_euro(freelancerPayout)}';
+      return 'Montant reçu: ${_euro(freelancerPayout)}';
     }
     if (isRefund(state)) {
-      return 'Montant a recevoir: 0 €';
+      return 'Montant à recevoir: 0 €';
     }
-    return 'Montant a recevoir: ${_euro(freelancerPayout)}';
+    return 'Montant à recevoir: ${_euro(freelancerPayout)}';
   }
 
   static IconData amountIcon({

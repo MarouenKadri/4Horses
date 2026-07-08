@@ -48,7 +48,7 @@ class NominatimPlace {
 class NominatimService {
   const NominatimService._();
 
-  static const _userAgent = 'InkernApp/1.0';
+  static const _userAgent = 'BYRSAApp/1.0';
 
   static Map<String, String> _headers({String language = 'fr'}) => {
     'Accept-Language': language,

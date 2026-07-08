@@ -138,7 +138,7 @@ class _ClientMissionDetailPageState
           title: mission.assignedPresta != null
               ? '${mission.assignedPresta!.name} est en route'
               : 'Votre prestataire est en route',
-          subtitle: 'Suivez son arrivee en temps reel depuis cette page.',
+          subtitle: 'Suivez son arrivée en temps réel depuis cette page.',
         );
       case MissionStatus.inProgress:
         return StatusBannerConfig(
@@ -156,7 +156,7 @@ class _ClientMissionDetailPageState
           icon: Icons.hourglass_top_rounded,
           title: 'Le prestataire a signale la fin',
           subtitle:
-              'Confirmez la mission ou signalez un probleme pour bloquer le paiement.',
+              'Confirmez la mission ou signalez un problème pour bloquer le paiement.',
         );
       case MissionStatus.paymentHeld:
         return StatusBannerConfig(

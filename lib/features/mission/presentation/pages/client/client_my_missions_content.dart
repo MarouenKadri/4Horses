@@ -7,6 +7,7 @@ import '../../mission_provider.dart';
 import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/shared/mission_status_ui.dart';
 import '../../widgets/cards/variants/mission_summary_card.dart';
+import 'create_mission_page.dart';
 import 'client_mission_detail_page.dart';
 import '../../../../../app/app_bar/app_section_bar.dart';
 import '../../../../../app/widgets/app_segmented_tab_bar.dart';
@@ -107,11 +108,12 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
       transitionBuilder: (child, animation) =>
           FadeTransition(opacity: animation, child: child),
       child: missions.isEmpty
-          ? EmptyState(
+          ? AppEmptyStateBlock(
               key: const ValueKey('empty'),
               icon: _emptyIcon,
               title: _emptyTitle,
-              subtitle: _emptySubtitle,
+              message: _emptySubtitle,
+              action: _emptyAction(context),
             )
           : ListView.builder(
               key: const ValueKey('list'),
@@ -153,11 +155,24 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
 
   String get _emptySubtitle => switch (widget.filter) {
     _ClientTabFilter.published =>
-      'Créez une mission pour trouver un prestataire',
+      'Décrivez votre besoin, choisissez un créneau et recevez des offres qualifiées.',
     _ClientTabFilter.confirmed =>
-      'Les missions avec un prestataire choisi apparaîtront ici',
-    _ClientTabFilter.inProgress => 'Vos missions du jour apparaîtront ici',
+      'Les missions avec un prestataire choisi apparaîtront ici.',
+    _ClientTabFilter.inProgress => 'Vos missions du jour apparaîtront ici.',
   };
+
+  Widget? _emptyAction(BuildContext context) {
+    if (widget.filter != _ClientTabFilter.published) return null;
+    return AppButton(
+      label: 'Publier une mission',
+      icon: Icons.add_rounded,
+      variant: ButtonVariant.black,
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const PostMissionFlow()),
+      ),
+    );
+  }
 }
 
 class _CandidatesBadge extends StatelessWidget {

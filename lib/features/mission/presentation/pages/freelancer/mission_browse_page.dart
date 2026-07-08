@@ -261,7 +261,7 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                                 ? 'Aucune mission postulée'
                                 : 'Aucune mission trouvée',
                             subtitle: _showAppliedOnly
-                                ? 'Vous n avez pas encore postulé à une mission dans cette liste.'
+                                ? 'Vous n’avez pas encore postulé à une mission dans cette liste.'
                                 : 'Ajustez vos filtres ou revenez plus tard pour découvrir de nouvelles missions.',
                           ),
                         ),
@@ -393,7 +393,9 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
           color: _hasActiveFilters ? AppColors.inkDark : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: _hasActiveFilters ? AppColors.inkDark : context.colors.border,
+            color: _hasActiveFilters
+                ? AppColors.inkDark
+                : context.colors.border,
           ),
         ),
         child: Icon(

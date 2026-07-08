@@ -68,7 +68,6 @@ abstract class AppColors {
   static const gray700 = Color(0xFF2C3137);
   static const grayD1 = Color(0xFFD1D5DB);
   static const grayStory = Color(0xFFCDD3DA);
-  static const stepBlue = Color(0xFF1847A8);
 
   // Business / accent colors
   static const amber = Color(0xFFFFB800);

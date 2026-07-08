@@ -708,37 +708,15 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.search_off_rounded,
-            size: 64,
-            color: context.colors.border,
-          ),
-          AppGap.h16,
-          Text(
-            'Aucun freelancer trouvé',
-            style: context.text.titleMedium?.copyWith(
-              color: context.colors.textSecondary,
-            ),
-          ),
-          AppGap.h8,
-          Text(
-            'Essayez de modifier vos filtres',
-            style: context.text.bodyMedium?.copyWith(
-              color: context.colors.textTertiary,
-            ),
-          ),
-          AppGap.h24,
-          AppButton(
-            label: 'Réinitialiser les filtres',
-            variant: ButtonVariant.ghost,
-            icon: Icons.refresh_rounded,
-            onPressed: _resetFilters,
-          ),
-        ],
+    return AppEmptyStateBlock(
+      icon: Icons.search_off_rounded,
+      title: 'Aucun prestataire trouvé',
+      message: 'Essayez de modifier vos filtres ou votre recherche.',
+      action: AppButton(
+        label: 'Réinitialiser les filtres',
+        variant: ButtonVariant.secondary,
+        icon: Icons.refresh_rounded,
+        onPressed: _resetFilters,
       ),
     );
   }

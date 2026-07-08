@@ -444,13 +444,11 @@ class _MessageList extends StatelessWidget {
     if (conversationId == null) {
       return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Center(
-          child: Text(
-            'Démarrez la conversation',
-            style: context.chatEmptyStateStyle.copyWith(
-              color: AppColors.textHint,
-            ),
-          ),
+        child: const AppEmptyStateBlock(
+          icon: Icons.chat_bubble_outline_rounded,
+          title: 'Démarrez la conversation',
+          message:
+              'Envoyez un premier message pour préciser votre besoin ou poser une question.',
         ),
       );
     }
@@ -458,58 +456,21 @@ class _MessageList extends StatelessWidget {
     return Consumer<ChatProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 1.5,
-              color: AppColors.textTertiary,
-            ),
-          );
+          return const Center(child: AppLoadingIndicator());
         }
 
         // ── Erreur réseau ─────────────────────────────────────────────────
         if (provider.error != null) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.wifi_off_rounded,
-                    size: 40,
-                    color: AppColors.textTertiary,
-                  ),
-                  AppGap.h12,
-                  Text(
-                    provider.error!,
-                    style: context.text.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  AppGap.h16,
-                  GestureDetector(
-                    onTap: () =>
-                        provider.open(conversationId!, forceRefresh: true),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _kInk,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        'Réessayer',
-                        style: context.chatPrimaryActionStyle.copyWith(
-                          color: _kWhite,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+          return AppEmptyStateBlock(
+            icon: Icons.wifi_off_rounded,
+            title: 'Conversation indisponible',
+            message: provider.error!,
+            action: AppButton(
+              label: 'Réessayer',
+              icon: Icons.refresh_rounded,
+              variant: ButtonVariant.black,
+              onPressed: () =>
+                  provider.open(conversationId!, forceRefresh: true),
             ),
           );
         }
@@ -521,6 +482,18 @@ class _MessageList extends StatelessWidget {
           if (currentUserId.isNotEmpty) return msg.senderId == currentUserId;
           if (contactUserId != null) return msg.senderId != contactUserId;
           return false;
+        }
+
+        if (messages.isEmpty) {
+          return GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: const AppEmptyStateBlock(
+              icon: Icons.forum_outlined,
+              title: 'Aucun message',
+              message:
+                  'La conversation commencera dès que vous enverrez votre premier message.',
+            ),
+          );
         }
 
         // ── Liste avec pagination ─────────────────────────────────────────

@@ -412,10 +412,9 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
           ),
           AppGap.h10,
           Text(
-            'Paiement securise. Aucun debit avant la fin de la mission.',
+            'Paiement sécurisé. Aucun débit avant la fin de la mission.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 11,
+            style: context.text.labelSmall?.copyWith(
               fontWeight: FontWeight.w400,
               color: context.colors.textTertiary,
             ),

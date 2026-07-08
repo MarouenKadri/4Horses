@@ -476,11 +476,11 @@ class PaymentMissionPipelineInline extends StatelessWidget {
 
   String _defaultCaption(PaymentMissionPipelineStage stage) {
     return switch (stage) {
-      PaymentMissionPipelineStage.secured => 'Paiement securise',
+      PaymentMissionPipelineStage.secured => 'Paiement sécurisé',
       PaymentMissionPipelineStage.waiting24h =>
         'Versement automatique sous 24h',
-      PaymentMissionPipelineStage.paid => 'Paiement verse',
-      PaymentMissionPipelineStage.dispute => 'Litige ouvert, versement bloque',
+      PaymentMissionPipelineStage.paid => 'Paiement versé',
+      PaymentMissionPipelineStage.dispute => 'Litige ouvert, versement bloqué',
     };
   }
 }
