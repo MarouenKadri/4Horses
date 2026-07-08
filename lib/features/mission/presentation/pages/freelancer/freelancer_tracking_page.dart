@@ -302,7 +302,7 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
                   borderRadius: BorderRadius.circular(AppDesign.radiusFull),
                   onTap: () => Navigator.pop(context),
                   child: AppIconCircle(
-                    icon: Icons.arrow_back_ios_new_rounded,
+                    icon: Icons.arrow_back_rounded,
                     size: 42,
                     iconSize: 18,
                     backgroundColor: context.colors.surface,

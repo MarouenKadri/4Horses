@@ -656,7 +656,7 @@ class AppProgressHeader extends StatelessWidget {
           child: Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                icon: const Icon(Icons.arrow_back_rounded, size: 20),
                 color: context.colors.textPrimary,
                 onPressed: onBack,
               ),
@@ -700,7 +700,7 @@ class AppFlowHeader extends StatelessWidget {
           IconButton(
             onPressed: onBack,
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              Icons.arrow_back_rounded,
               size: 22,
               color: context.colors.textPrimary,
             ),
@@ -1194,7 +1194,7 @@ class AppHeroSliverBar extends StatelessWidget {
           leadingBack ??
           IconButton(
             icon: const Icon(
-              Icons.arrow_back_ios_new_rounded,
+              Icons.arrow_back_rounded,
               color: Colors.white,
               size: 20,
             ),

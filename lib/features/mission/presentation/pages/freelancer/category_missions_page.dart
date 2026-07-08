@@ -74,7 +74,7 @@ class _CategoryMissionsPageState extends State<CategoryMissionsPage> {
             elevation: 0,
             surfaceTintColor: Colors.transparent,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+              icon: const Icon(Icons.arrow_back_rounded, size: 18),
               color: context.colors.textPrimary,
               onPressed: () => Navigator.pop(context),
             ),

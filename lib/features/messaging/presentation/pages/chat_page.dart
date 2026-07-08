@@ -358,7 +358,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
       leading: IconButton(
         icon: const Icon(
-          Icons.arrow_back_ios_new_rounded,
+          Icons.arrow_back_rounded,
           color: _kInk,
           size: 18,
         ),

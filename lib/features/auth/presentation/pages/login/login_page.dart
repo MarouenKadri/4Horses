@@ -266,7 +266,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       IconButton(
                         icon: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
+                          Icons.arrow_back_rounded,
                           size: 20,
                         ),
                         onPressed: () => Navigator.pop(context),

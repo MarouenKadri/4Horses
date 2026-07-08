@@ -104,7 +104,7 @@ class _MissionDetailHeroState extends State<MissionDetailHero> {
             child: Row(
               children: [
                 DetailCircleBtn(
-                  icon: Icons.arrow_back_ios_new_rounded,
+                  icon: Icons.arrow_back_rounded,
                   onTap: widget.onBack,
                 ),
                 const Spacer(),

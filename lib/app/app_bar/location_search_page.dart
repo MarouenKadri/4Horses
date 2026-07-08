@@ -356,7 +356,7 @@ class _LocationSearchPageState extends State<LocationSearchPage>
                   top: top + AppBarMetrics.mapTopInset,
                   left: AppBarMetrics.mapSideInset,
                   child: AppBarActionCircleButton(
-                    icon: Icons.arrow_back_ios_new_rounded,
+                    icon: Icons.arrow_back_rounded,
                     onTap: () => Navigator.pop(context),
                     size: AppBarMetrics.mapBackButtonSize,
                     iconSize: AppBarMetrics.mapBackButtonIconSize,

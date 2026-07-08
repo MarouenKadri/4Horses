@@ -339,7 +339,7 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+            icon: const Icon(Icons.arrow_back_rounded, size: 18),
             color: context.colors.textPrimary,
             onPressed: () => Navigator.pop(context),
           ),
