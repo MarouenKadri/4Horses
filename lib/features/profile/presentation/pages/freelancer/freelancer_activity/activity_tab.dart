@@ -38,19 +38,19 @@ class FreelancerActivityTab extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 116),
       children: [
         _TarifCard(controller: hourlyRateController, onChanged: onRateChanged),
-        AppGap.h24,
+        AppGap.h28,
         _SkillsCard(
           allSkills: allSkills,
           selectedSkills: selectedSkills,
           onToggle: onSkillToggle,
         ),
-        AppGap.h24,
+        AppGap.h28,
         _LocationMapCard(
           initialLatLng: locationLatLng,
           initialAddress: locationAddress,
           onChanged: onLocationChanged,
         ),
-        AppGap.h24,
+        AppGap.h28,
         _ZoneCard(zoneRadius: zoneRadius, onChanged: onZoneChanged),
       ],
     );
@@ -71,9 +71,6 @@ class _LocationMapCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SectionCard(
-      icon: Icons.location_on_rounded,
-      iconColor: AppColors.error,
-      iconBg: context.colors.errorLight,
       title: 'Ma localisation',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,9 +106,6 @@ class _TarifCardState extends State<_TarifCard> {
   @override
   Widget build(BuildContext context) {
     return _SectionCard(
-      icon: Icons.euro_rounded,
-      iconColor: AppColors.primary,
-      iconBg: AppColors.secondary,
       title: 'Tarif horaire',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,11 +125,7 @@ class _TarifCardState extends State<_TarifCard> {
               widget.onChanged();
               setState(() {});
             },
-            textStyle: TextStyle(
-              fontSize: AppFontSize.h2,
-              fontWeight: FontWeight.w800,
-              color: context.colors.textPrimary,
-            ),
+            textStyle: context.text.displaySmall,
             prefixIconConstraints: const BoxConstraints(minWidth: 44),
             suffixText: '€ / heure',
             suffixStyle: context.text.bodyMedium?.copyWith(
@@ -186,9 +176,6 @@ class _SkillsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SectionCard(
-      icon: Icons.build_rounded,
-      iconColor: AppColors.purple,
-      iconBg: AppColors.purpleLight,
       title: 'Compétences',
       trailing: AppTagPill(
         label: '${selectedSkills.length}/${allSkills.length}',
@@ -240,9 +227,6 @@ class _ZoneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SectionCard(
-      icon: Icons.radar_rounded,
-      iconColor: AppColors.error,
-      iconBg: context.colors.errorLight,
       title: "Rayon d'intervention",
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,28 +235,22 @@ class _ZoneCard extends StatelessWidget {
             text: 'Indiquez jusqu’où vous acceptez de vous déplacer.',
           ),
           AppGap.h12,
-          AppSurfaceCard(
-            padding: AppInsets.h14v10,
-            color: AppColors.secondary,
-            borderRadius: BorderRadius.circular(AppRadius.input),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.social_distance_rounded,
-                  size: 18,
-                  color: AppColors.primary,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                '${zoneRadius.toInt()} km',
+                style: context.text.displaySmall,
+              ),
+              AppGap.w8,
+              Text(
+                'autour de votre position',
+                style: context.text.bodySmall?.copyWith(
+                  color: context.colors.textSecondary,
                 ),
-                AppGap.w8,
-                Text('Rayon : ', style: context.text.bodySmall),
-                Text(
-                  '${zoneRadius.toInt()} km',
-                  style: context.text.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
           SliderTheme(
             data: SliderThemeData(
@@ -318,53 +296,32 @@ class _ZoneCard extends StatelessWidget {
   }
 }
 
+/// Section à plat : titre noir sur fond blanc, sans carte-boîte ni
+/// pastille d'icône colorée — même langage que les profils et le compte.
 class _SectionCard extends StatelessWidget {
-  final IconData icon;
-  final Color iconBg;
-  final Color iconColor;
   final String title;
   final Widget? trailing;
   final Widget child;
 
-  const _SectionCard({
-    required this.icon,
-    required this.iconBg,
-    required this.iconColor,
-    required this.title,
-    this.trailing,
-    required this.child,
-  });
+  const _SectionCard({required this.title, this.trailing, required this.child});
 
   @override
-  Widget build(BuildContext context) => AppSurfaceCard(
-    padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-    borderRadius: BorderRadius.circular(AppRadius.card),
-    border: Border.all(color: context.colors.border),
-    color: context.colors.surface,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            AppSurfaceCard(
-              padding: AppInsets.a8,
-              color: iconBg,
-              borderRadius: BorderRadius.circular(AppRadius.badge),
-              child: Icon(icon, size: 18, color: iconColor),
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          Text(
+            title,
+            style: context.text.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
             ),
-            AppGap.w10,
-            Text(
-              title,
-              style: context.text.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            if (trailing != null) ...[const Spacer(), trailing!],
-          ],
-        ),
-        AppGap.h16,
-        child,
-      ],
-    ),
+          ),
+          if (trailing != null) ...[const Spacer(), trailing!],
+        ],
+      ),
+      AppGap.h10,
+      child,
+    ],
   );
 }
