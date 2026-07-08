@@ -8,12 +8,11 @@ import '../../shared/my_information/my_information_fields.dart';
 
 class FreelancerActivityTab extends StatelessWidget {
   final TextEditingController hourlyRateController;
+  final TextEditingController bioController;
   final List<Map<String, dynamic>> allSkills;
   final Set<String> selectedSkills;
-  final double zoneRadius;
   final LatLng? locationLatLng;
   final String locationAddress;
-  final ValueChanged<double> onZoneChanged;
   final ValueChanged<String> onSkillToggle;
   final VoidCallback onRateChanged;
   final void Function(LatLng latlng, String address) onLocationChanged;
@@ -21,12 +20,11 @@ class FreelancerActivityTab extends StatelessWidget {
   const FreelancerActivityTab({
     super.key,
     required this.hourlyRateController,
+    required this.bioController,
     required this.allSkills,
     required this.selectedSkills,
-    required this.zoneRadius,
     required this.locationLatLng,
     required this.locationAddress,
-    required this.onZoneChanged,
     required this.onSkillToggle,
     required this.onRateChanged,
     required this.onLocationChanged,
@@ -45,13 +43,13 @@ class FreelancerActivityTab extends StatelessWidget {
           onToggle: onSkillToggle,
         ),
         AppGap.h28,
+        _BioCard(controller: bioController),
+        AppGap.h28,
         _LocationMapCard(
           initialLatLng: locationLatLng,
           initialAddress: locationAddress,
           onChanged: onLocationChanged,
         ),
-        AppGap.h28,
-        _ZoneCard(zoneRadius: zoneRadius, onChanged: onZoneChanged),
       ],
     );
   }
@@ -218,77 +216,51 @@ class _SkillsCard extends StatelessWidget {
   }
 }
 
-class _ZoneCard extends StatelessWidget {
-  final double zoneRadius;
-  final ValueChanged<double> onChanged;
+class _BioCard extends StatelessWidget {
+  final TextEditingController controller;
 
-  const _ZoneCard({required this.zoneRadius, required this.onChanged});
+  const _BioCard({required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return _SectionCard(
-      title: "Rayon d'intervention",
+      title: 'Présentation',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const InlineHelper(
-            text: 'Indiquez jusqu’où vous acceptez de vous déplacer.',
+            text:
+                'Ce texte est affiché sur votre profil public, sous « Présentation ».',
           ),
           AppGap.h12,
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(
-                '${zoneRadius.toInt()} km',
-                style: context.text.displaySmall,
+          TextField(
+            controller: controller,
+            minLines: 4,
+            maxLines: 8,
+            maxLength: 500,
+            style: context.text.bodyMedium?.copyWith(height: 1.5),
+            decoration: InputDecoration(
+              hintText:
+                  'Présentez-vous : votre parcours, vos spécialités, votre façon de travailler…',
+              hintStyle: context.text.bodyMedium?.copyWith(
+                color: context.colors.textHint,
+                height: 1.5,
               ),
-              AppGap.w8,
-              Text(
-                'autour de votre position',
-                style: context.text.bodySmall?.copyWith(
-                  color: context.colors.textSecondary,
-                ),
+              filled: true,
+              fillColor: context.colors.surface,
+              contentPadding: const EdgeInsets.all(14),
+              counterStyle: context.text.labelSmall?.copyWith(
+                color: context.colors.textHint,
               ),
-            ],
-          ),
-          SliderTheme(
-            data: SliderThemeData(
-              trackHeight: 4,
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-              overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
-              activeTrackColor: AppColors.primary,
-              inactiveTrackColor: context.colors.divider,
-              thumbColor: AppColors.primary,
-              overlayColor: AppColors.primary.withValues(alpha: 0.15),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: context.colors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: context.colors.textPrimary),
+              ),
             ),
-            child: Slider(
-              value: zoneRadius,
-              min: 5,
-              max: 100,
-              divisions: 19,
-              onChanged: (value) {
-                HapticFeedback.selectionClick();
-                onChanged(value);
-              },
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '5 km',
-                style: context.text.labelSmall?.copyWith(
-                  color: context.colors.textHint,
-                ),
-              ),
-              Text(
-                '100 km',
-                style: context.text.labelSmall?.copyWith(
-                  color: context.colors.textHint,
-                ),
-              ),
-            ],
           ),
         ],
       ),

@@ -309,29 +309,57 @@ class _FreelancerMyPublicationsTabState
                               color: AppColors.primary,
                             ),
                           ),
-                    if (story.caption.isNotEmpty && !_selectionMode)
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.fromLTRB(5, 0, 5, 4),
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              stops: [0, 0.7],
-                              colors: [Colors.black45, Colors.transparent],
+                    // Badges façon grille du profil public
+                    if (story.images.length > 1 && !_selectionMode)
+                      Positioned(
+                        top: 5,
+                        right: 5,
+                        child: Icon(
+                          Icons.collections_rounded,
+                          size: 14,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              blurRadius: 4,
                             ),
-                          ),
-                          child: Text(
-                            story.caption,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                          ],
+                        ),
+                      ),
+                    if (story.likesCount > 0 && !_selectionMode)
+                      Positioned(
+                        left: 5,
+                        bottom: 4,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.favorite_rounded,
+                              size: 12,
                               color: Colors.white,
-                              fontSize: AppFontSize.tiny,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.5),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
-                          ),
+                            AppGap.w3,
+                            Text(
+                              '${story.likesCount}',
+                              style: context.text.labelSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                height: 1,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     if (_selectionMode)

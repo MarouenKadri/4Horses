@@ -150,11 +150,7 @@ class _PasswordField extends StatelessWidget {
       controller: controller,
       obscureText: obscure,
       validator: validator,
-      style: TextStyle(
-        fontSize: AppFontSize.body,
-        fontWeight: FontWeight.w400,
-        color: context.colors.textPrimary,
-      ),
+      style: context.profileInputStyle,
       decoration:
           AppInputDecorations.profileField(
             context,

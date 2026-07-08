@@ -21,7 +21,7 @@ class _FreelancerActivityPageState extends State<FreelancerActivityPage> {
   late int _selectedTabIndex = widget.initialTab;
 
   final _hourlyRateController = TextEditingController();
-  double _zoneRadius = 10;
+  final _bioController = TextEditingController();
   String _locationAddress = '';
   final Set<String> _selectedSkills = {};
 
@@ -51,6 +51,7 @@ class _FreelancerActivityPageState extends State<FreelancerActivityPage> {
       if (profile.hourlyRate != null) {
         _hourlyRateController.text = profile.hourlyRate!.toStringAsFixed(0);
       }
+      _bioController.text = profile.bio ?? '';
       _selectedSkills
         ..clear()
         ..addAll(profile.serviceCategories);
@@ -61,6 +62,7 @@ class _FreelancerActivityPageState extends State<FreelancerActivityPage> {
   @override
   void dispose() {
     _hourlyRateController.dispose();
+    _bioController.dispose();
     super.dispose();
   }
 
@@ -74,6 +76,7 @@ class _FreelancerActivityPageState extends State<FreelancerActivityPage> {
 
     final updated = profile.copyWith(
       address: _locationAddress,
+      bio: _bioController.text.trim(),
       hourlyRate: double.tryParse(_hourlyRateController.text.trim()),
       serviceCategories: _selectedSkills.toList(),
     );
@@ -133,13 +136,11 @@ class _FreelancerActivityPageState extends State<FreelancerActivityPage> {
                     visible: _selectedTabIndex == 0,
                     child: FreelancerActivityTab(
                       hourlyRateController: _hourlyRateController,
+                      bioController: _bioController,
                       allSkills: _allSkills,
                       selectedSkills: _selectedSkills,
-                      zoneRadius: _zoneRadius,
                       locationLatLng: null,
                       locationAddress: _locationAddress,
-                      onZoneChanged: (value) =>
-                          setState(() => _zoneRadius = value),
                       onSkillToggle: (label) => setState(
                         () => _selectedSkills.contains(label)
                             ? _selectedSkills.remove(label)

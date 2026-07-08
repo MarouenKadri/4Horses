@@ -41,15 +41,7 @@ class ArchivesPage extends StatelessWidget {
         leading: AppBackButtonLeading(
           onPressed: () => Navigator.of(context).pop(),
         ),
-        titleWidget: Text(
-          'Archives',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: context.colors.textPrimary,
-            letterSpacing: -0.3,
-          ),
-        ),
+        titleWidget: Text('Archives', style: context.profilePageTitleStyle),
       ),
       body: missions.isEmpty
           ? Center(
@@ -58,11 +50,8 @@ class ArchivesPage extends StatelessWidget {
                 child: Text(
                   'Aucune mission archivée pour le moment.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
+                  style: context.text.bodyLarge?.copyWith(
                     color: context.colors.textSecondary,
-                    height: 1.5,
                   ),
                 ),
               ),
