@@ -129,8 +129,7 @@ class _FreelancerProfilePageState
   @override
   bool get showPublicationsTab => widget.freelancerId != null;
 
-  /// Métier(s) sous le nom — l'ancienneté vit déjà dans la stat
-  /// « Expérience », pas de doublon.
+  /// Métier(s) sous le nom, façon @handle TikTok.
   @override
   String get profileSubtitle {
     final names = ServiceCategory.resolveNames(
@@ -173,20 +172,6 @@ class _FreelancerProfilePageState
   double get _zoneRadius => _profileProvider.profile?.zoneRadius ?? 10;
   double get _rate => _profileProvider.profile?.hourlyRate ?? widget.hourlyRate;
 
-  String get _experienceStat {
-    final createdAt = _profileProvider.profile?.createdAt;
-    if (createdAt != null) {
-      final years = DateTime.now().difference(createdAt).inDays ~/ 365;
-      return years <= 1 ? '1 an' : '$years ans';
-    }
-    final match = RegExp(r'(20\d{2})').firstMatch(widget.memberSince);
-    if (match == null) return '2 ans';
-    final year = int.tryParse(match.group(1)!);
-    if (year == null) return '2 ans';
-    final years = DateTime.now().year - year;
-    return years <= 1 ? '1 an' : '$years ans';
-  }
-
   String get _responseStat {
     final dbRaw = _profileProvider.profile?.responseTime?.trim();
     if (dbRaw != null && dbRaw.isNotEmpty) return dbRaw;
@@ -224,15 +209,16 @@ class _FreelancerProfilePageState
 
   // ── BaseProfileState overrides ──────────────────────────────────────────────
 
+  // Le tarif vit dans les stats ; la ligne grade reste sans trailing.
   @override
-  String? get profileMetaTrailing => '${_rate.toInt()}€/h';
+  String? get profileMetaTrailing => null;
 
   @override
   List<ProfileStatData> buildProfileStats() => [
     ProfileStatData(
-      icon: Icons.workspace_premium_rounded,
-      value: _experienceStat,
-      label: 'Expérience',
+      icon: Icons.sell_outlined,
+      value: '${_rate.toInt()}€/h',
+      label: 'Tarif',
     ),
     ProfileStatData(
       icon: Icons.task_alt_rounded,
@@ -520,10 +506,8 @@ class _FreelancerPublicationsContentState
       context,
       PageRouteBuilder(
         opaque: false,
-        pageBuilder: (_, __, ___) => PostPhotosViewer(
-          images: story.images,
-          caption: story.caption,
-        ),
+        pageBuilder: (_, __, ___) =>
+            PostPhotosViewer(images: story.images, caption: story.caption),
         transitionsBuilder: (_, anim, __, child) =>
             FadeTransition(opacity: anim, child: child),
         transitionDuration: const Duration(milliseconds: 200),
