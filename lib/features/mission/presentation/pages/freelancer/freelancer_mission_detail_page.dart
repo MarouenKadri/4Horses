@@ -129,12 +129,21 @@ class _FreelancerMissionDetailPageState
           )
         : '${mission.candidatesCount} reaction${mission.candidatesCount > 1 ? 's' : ''}';
 
+    // Texte simple plutôt que pilules — même doctrine que le header profil.
     return Row(
       children: [
-        DetailLuxuryPill(label: daysLabel),
-        AppGap.w10,
-        DetailLuxuryPill(label: secondaryLabel),
-        const Spacer(),
+        Expanded(
+          child: Text(
+            '$daysLabel · $secondaryLabel',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: ctx.text.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: ctx.colors.textSecondary,
+            ),
+          ),
+        ),
+        AppGap.w12,
         BudgetText(budget: mission.budget, large: true),
       ],
     );

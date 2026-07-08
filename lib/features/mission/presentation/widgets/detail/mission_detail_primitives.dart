@@ -90,23 +90,6 @@ class DetailMetaChip extends StatelessWidget {
 
 // ─── DetailLuxuryPill ─────────────────────────────────────────────────────────
 
-class DetailLuxuryPill extends StatelessWidget {
-  final String label;
-
-  const DetailLuxuryPill({super.key, required this.label});
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-    decoration: BoxDecoration(
-      color: context.colors.surface,
-      borderRadius: BorderRadius.circular(999),
-      border: Border.all(color: context.colors.border),
-    ),
-    child: Text(label, style: context.missionPillStyle),
-  );
-}
-
 // ─── DetailSectionCard / Title / Label ───────────────────────────────────────
 
 class DetailSectionCard extends StatelessWidget {

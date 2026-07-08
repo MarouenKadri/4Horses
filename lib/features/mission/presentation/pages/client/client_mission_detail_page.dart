@@ -103,17 +103,27 @@ class _ClientMissionDetailPageState
     final daysLabel = daysLeft > 0 ? '+$daysLeft jours' : "Aujourd'hui";
     final hasAssignedPresta = mission.assignedPresta != null;
 
+    // Texte simple plutôt que pilules — même doctrine que le header profil.
+    final infoLabel = [
+      daysLabel,
+      if (!hasAssignedPresta)
+        '${mission.candidatesCount} candidat${mission.candidatesCount > 1 ? 's' : ''}',
+    ].join(' · ');
+
     return Row(
       children: [
-        DetailLuxuryPill(label: daysLabel),
-        if (!hasAssignedPresta) ...[
-          AppGap.w10,
-          DetailLuxuryPill(
-            label:
-                '${mission.candidatesCount} candidat${mission.candidatesCount > 1 ? 's' : ''}',
+        Expanded(
+          child: Text(
+            infoLabel,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: ctx.text.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: ctx.colors.textSecondary,
+            ),
           ),
-        ],
-        const Spacer(),
+        ),
+        AppGap.w12,
         BudgetText(budget: mission.budget, large: true),
       ],
     );

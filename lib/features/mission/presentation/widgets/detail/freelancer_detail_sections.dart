@@ -653,13 +653,9 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
               padding: EdgeInsets.fromLTRB(22, 12, 22, 16 + bottomPad),
               decoration: BoxDecoration(
                 color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
-                    blurRadius: 18,
-                    offset: const Offset(0, -6),
-                  ),
-                ],
+                border: Border(
+                  top: BorderSide(color: context.colors.divider),
+                ),
               ),
               child: AppButton(
                 label: 'Envoyer ma proposition',
