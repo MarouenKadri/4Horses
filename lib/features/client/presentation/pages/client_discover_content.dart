@@ -9,7 +9,6 @@ import '../../../profile/profile_provider.dart';
 import '../../../mission/data/models/mission.dart';
 import '../../../mission/presentation/mission_provider.dart';
 import '../../../mission/presentation/widgets/shared/mission_shared_widgets.dart';
-import '../../../mission/presentation/widgets/cards/primitives/mission_card_frame.dart';
 import '../../../mission/presentation/pages/client/client_mission_detail_page.dart';
 import '../../../mission/presentation/pages/client/create_mission_page.dart';
 import '../../../auth/data/models/freelancer.dart';
@@ -285,10 +284,7 @@ class _ActiveMissionsSection extends StatelessWidget {
             _EmptyTodayCard(onGoToMissions: onGoToMissions)
           else
             ...missions.map(
-              (m) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _ActiveMissionCard(mission: m, showDate: !isToday),
-              ),
+              (m) => _ActiveMissionCard(mission: m, showDate: !isToday),
             ),
         ],
       ),
@@ -422,70 +418,115 @@ class _ActiveMissionCard extends StatelessWidget {
         : null;
     final topLabel = showDate ? _dateLabel(mission.date) : (timeLabel ?? '—');
 
-    return GestureDetector(
+    // Rangée plate, même anatomie que le feed freelancer :
+    // vignette · catégorie/titre/lieu · heure en gras à droite, filet fin.
+    return InkWell(
       onTap: () => Navigator.push(
         context,
         slideUpRoute(page: ClientMissionDetailPage(mission: mission)),
       ),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
-          border: Border.all(color: context.colors.border),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Date/heure + flèche ────────────────────────────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  topLabel,
-                  style: context.text.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.textSecondary,
-                    letterSpacing: 0.2,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    width: 56,
+                    height: 56,
+                    child: mission.images.isNotEmpty
+                        ? Image.network(
+                            mission.images.first,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => ColoredBox(
+                              color: AppColors.secondary,
+                              child: Icon(
+                                mission.categoryIcon,
+                                size: 22,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          )
+                        : ColoredBox(
+                            color: AppColors.secondary,
+                            child: Icon(
+                              mission.categoryIcon,
+                              size: 22,
+                              color: AppColors.primary,
+                            ),
+                          ),
                   ),
                 ),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 12,
-                  color: context.colors.textSecondary,
+                AppGap.w12,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        mission.categoryName.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.text.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.6,
+                          color: context.colors.textTertiary,
+                        ),
+                      ),
+                      AppGap.h2,
+                      Text(
+                        mission.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.text.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.textPrimary,
+                          height: 1.25,
+                        ),
+                      ),
+                      if (subtitle.isNotEmpty) ...[
+                        AppGap.h2,
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.bodySmall?.copyWith(
+                            color: context.colors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                AppGap.w12,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      topLabel,
+                      style: context.text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: context.colors.textPrimary,
+                      ),
+                    ),
+                    if (showDate && timeLabel != null) ...[
+                      AppGap.h2,
+                      Text(
+                        timeLabel,
+                        style: context.text.labelSmall?.copyWith(
+                          color: context.colors.textTertiary,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            // ── Titre ───────────────────────────────────────────
-            Text(
-              mission.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: context.text.titleMedium!.copyWith(
-                fontSize: AppFontSize.body,
-                fontWeight: FontWeight.w700,
-                color: AppColors.inkDark,
-                letterSpacing: -0.2,
-              ),
-            ),
-            // ── Sous-titre ──────────────────────────────────────
-            if (subtitle.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: MissionCardFrame.metaStyle,
-              ),
-            ],
-            // ── Heure (when showing date in topLabel) ──────────
-            if (showDate && timeLabel != null) ...[
-              const SizedBox(height: 4),
-              Text(timeLabel, style: MissionCardFrame.metaStyle),
-            ],
-          ],
-        ),
+          ),
+          Divider(height: 1, indent: 68, color: context.colors.divider),
+        ],
       ),
     );
   }
