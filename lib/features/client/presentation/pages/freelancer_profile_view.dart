@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/design/app_design_system.dart';
 import '../../../messaging/messaging_provider.dart';
 import '../../../messaging/presentation/pages/chat_page.dart';
+import '../../../mission/data/models/service_category.dart';
 import '../../../profile/presentation/pages/shared/base_profile_view.dart';
 import '../../../story/story.dart';
 import '../providers/freelancer_public_profile_provider.dart';
@@ -128,8 +129,15 @@ class _FreelancerProfilePageState
   @override
   bool get showPublicationsTab => widget.freelancerId != null;
 
+  /// Métier(s) sous le nom — l'ancienneté vit déjà dans la stat
+  /// « Expérience », pas de doublon.
   @override
-  String get profileSubtitle => 'Membre depuis ${widget.memberSince}';
+  String get profileSubtitle {
+    final names = ServiceCategory.resolveNames(
+      _profileProvider.profile?.serviceCategories ?? const <String>[],
+    );
+    return names.take(2).join(' · ');
+  }
 
   @override
   String get profileBio => _bio;
