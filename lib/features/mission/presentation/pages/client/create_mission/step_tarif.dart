@@ -115,7 +115,7 @@ class _StepTarifState extends State<StepTarif> {
               Text(
                 '${widget.estimatedHours.toStringAsFixed(widget.estimatedHours == widget.estimatedHours.truncateToDouble() ? 0 : 1)} h',
                 style: context.missionSectionTitleStyle.copyWith(
-                  fontSize: AppFontSize.h1,
+                  fontSize: AppFontSize.h3,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -214,7 +214,7 @@ class _AmountInput extends StatelessWidget {
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       style: context.text.displayMedium?.copyWith(
-        fontSize: AppFontSize.d3,
+        fontSize: AppFontSize.h2,
         fontWeight: FontWeight.w600,
         color: context.colors.textPrimary,
         letterSpacing: -1,
@@ -228,7 +228,7 @@ class _AmountInput extends StatelessWidget {
             labelText: label,
             hintStyle: context.text.displayMedium?.copyWith(
               color: context.colors.textHint,
-              fontSize: AppFontSize.d3,
+              fontSize: AppFontSize.h2,
               fontWeight: useLightHint ? FontWeight.w300 : FontWeight.w600,
               letterSpacing: -1,
             ),
@@ -306,8 +306,8 @@ class _CounterBtn extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 48,
-        height: 48,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
           color: context.colors.surface,
           shape: BoxShape.circle,

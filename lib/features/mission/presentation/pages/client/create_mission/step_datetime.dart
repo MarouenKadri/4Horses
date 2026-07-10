@@ -92,7 +92,7 @@ class StepDate extends StatelessWidget {
                         Text(
                           '${date.day}',
                           style: context.missionSectionTitleStyle.copyWith(
-                            fontSize: AppFontSize.h1,
+                            fontSize: AppFontSize.h3,
                             height: 1,
                           ),
                         ),

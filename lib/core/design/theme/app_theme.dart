@@ -520,7 +520,7 @@ extension AppMissionDetailTextStyles on BuildContext {
 
 extension AppMissionStepTextStyles on BuildContext {
   TextStyle get missionStepTitleStyle => text.headlineMedium!.copyWith(
-    fontSize: AppFontSize.h2,
+    fontSize: AppFontSize.xl,
     fontWeight: FontWeight.w700,
     color: colors.textPrimary,
   );
@@ -561,10 +561,10 @@ extension AppMissionStepTextStyles on BuildContext {
   );
 
   TextStyle get missionStepHeadlineValueStyle => text.displayMedium!.copyWith(
-    fontSize: 32,
-    fontWeight: FontWeight.w400,
+    fontSize: AppFontSize.h2,
+    fontWeight: FontWeight.w600,
     color: colors.textPrimary,
-    letterSpacing: -1,
+    letterSpacing: -0.5,
   );
 
   TextStyle get missionStepCurrencyStyle => text.bodyMedium!.copyWith(

@@ -186,7 +186,7 @@ class _SubServicesSheetState extends State<_SubServicesSheet> {
                   child: Text(
                     widget.serviceName,
                     style: context.missionSectionTitleStyle.copyWith(
-                      fontSize: AppFontSize.h3,
+                      fontSize: AppFontSize.lg,
                       letterSpacing: -0.3,
                     ),
                   ),
@@ -347,8 +347,8 @@ class _ServiceIconCell extends StatelessWidget {
             AnimatedContainer(
               duration: const Duration(milliseconds: 180),
               curve: Curves.easeOutCubic,
-              width: 56,
-              height: 56,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.inkDark
@@ -357,7 +357,7 @@ class _ServiceIconCell extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                size: 26,
+                size: 22,
                 color: isSelected ? Colors.white : AppColors.gray700,
               ),
             ),

@@ -70,8 +70,8 @@ class StepSummary extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: 48,
-                      height: 48,
+                      width: 40,
+                      height: 40,
                       margin: const EdgeInsets.only(left: 1),
                       decoration: BoxDecoration(
                         color: context.colors.surfaceAlt,
@@ -93,7 +93,7 @@ class StepSummary extends StatelessWidget {
                                 ? subService!
                                 : serviceData['name'] as String,
                             style: context.missionEntityNameStyle.copyWith(
-                              fontSize: AppFontSize.h2,
+                              fontSize: AppFontSize.lg,
                             ),
                           ),
                           AppGap.h4,
