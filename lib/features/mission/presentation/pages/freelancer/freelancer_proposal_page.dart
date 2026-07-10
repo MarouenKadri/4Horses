@@ -71,9 +71,14 @@ class _FreelancerProposalPageState extends State<FreelancerProposalPage> {
         int.tryParse(priceText) != null &&
         int.parse(priceText) > 0;
 
+    // CTA fixe : le clavier passe par-dessus le pied de page, il ne
+    // pousse pas la mise en page. Le scroll compense pour garder le
+    // champ actif visible.
+    final keyboardInset = MediaQuery.of(context).viewInsets.bottom;
+
     return Scaffold(
       backgroundColor: context.colors.background,
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           children: [
@@ -108,7 +113,7 @@ class _FreelancerProposalPageState extends State<FreelancerProposalPage> {
             // ── Champs ──────────────────────────────────────────────────
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+                padding: EdgeInsets.fromLTRB(20, 16, 20, 12 + keyboardInset),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
