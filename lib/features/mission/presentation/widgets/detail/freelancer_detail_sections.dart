@@ -482,8 +482,8 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                     child: Text(
                       'Votre proposition',
                       style: context.text.headlineLarge?.copyWith(
-                        fontSize: AppFontSize.h2Lg,
-                        fontWeight: FontWeight.w600,
+                        fontSize: AppFontSize.xl,
+                        fontWeight: FontWeight.w700,
                         color: context.colors.textPrimary,
                       ),
                     ),
@@ -526,9 +526,9 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                       autofocus: true,
                       onChanged: (_) => setState(() {}),
                       style: context.text.displayMedium?.copyWith(
-                        fontSize: 38,
-                        fontWeight: FontWeight.w300,
-                        letterSpacing: -1.2,
+                        fontSize: AppFontSize.h2,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.5,
                         color: context.colors.textPrimary,
                       ),
                       decoration:
@@ -536,9 +536,9 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                             context,
                             hintText: '0',
                             hintStyle: context.text.displayMedium?.copyWith(
-                              fontSize: 38,
-                              fontWeight: FontWeight.w300,
-                              letterSpacing: -1.2,
+                              fontSize: AppFontSize.h2,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.5,
                               color: context.colors.border,
                             ),
                             contentPadding: EdgeInsets.zero,
@@ -547,8 +547,8 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                           ).copyWith(
                             prefixText: '€ ',
                             prefixStyle: context.text.headlineLarge?.copyWith(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w300,
+                              fontSize: AppFontSize.h3,
+                              fontWeight: FontWeight.w500,
                               color: context.colors.textPrimary,
                             ),
                           ),
@@ -573,17 +573,23 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                             ),
                             decoration: BoxDecoration(
                               color: isActive
-                                  ? Colors.black
-                                  : context.colors.surfaceAlt,
-                              borderRadius: BorderRadius.circular(999),
+                                  ? context.colors.textPrimary.withValues(
+                                      alpha: 0.08,
+                                    )
+                                  : context.colors.surface,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isActive
+                                    ? context.colors.textPrimary
+                                    : context.colors.border,
+                              ),
                             ),
                             child: Text(
                               '$amount €',
-                              style: context.missionButtonStyle.copyWith(
-                                fontSize: AppFontSize.base,
+                              style: context.missionStepChipStyle.copyWith(
                                 color: isActive
-                                    ? Colors.white
-                                    : context.colors.textPrimary,
+                                    ? context.colors.textPrimary
+                                    : context.colors.textSecondary,
                               ),
                             ),
                           ),
@@ -631,7 +637,7 @@ class _FreelancerProposalSheetState extends State<FreelancerProposalSheet> {
                         ),
                         fillColor: Colors.white,
                         contentPadding: const EdgeInsets.all(16),
-                        radius: 18,
+                        radius: AppDesign.radius12,
                       ),
                     ),
                   ],
