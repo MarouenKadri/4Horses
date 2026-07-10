@@ -80,6 +80,7 @@ class SupabaseNotificationRepository implements NotificationRepository {
         'title': title,
         'body': body,
         if (avatarUrl != null) 'avatar_url': avatarUrl,
+        if (data != null) 'data': data,
         'is_read': false,
         'created_at': DateTime.now().toIso8601String(),
       });

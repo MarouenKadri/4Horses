@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/design/app_design_system.dart';
@@ -619,10 +620,25 @@ class _FreelancerMissionDetailPageState
     }
   }
 
+  String get _contactRequestPrefKey => 'contact_request_sent_${mission.id}';
+
   Future<void> _sendContactRequest(dynamic client) async {
     final currentUser = Supabase.instance.client.auth.currentUser;
+    if (currentUser == null) return;
     final freelancerDisplayName =
-        currentUser?.userMetadata?['first_name'] as String? ?? 'Le prestataire';
+        currentUser.userMetadata?['first_name'] as String? ?? 'Le prestataire';
+
+    // Une seule demande par mission — pas de spam côté client
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(_contactRequestPrefKey) ?? false) {
+      if (!mounted) return;
+      showAppSnackBar(
+        context,
+        'Demande déjà envoyée pour cette mission.',
+        icon: Icons.check_rounded,
+      );
+      return;
+    }
 
     try {
       await Supabase.instance.client.from('notifications').insert({
@@ -632,7 +648,15 @@ class _FreelancerMissionDetailPageState
         'body':
             '$freelancerDisplayName souhaite vous contacter pour la mission "${mission.title}".',
         'is_read': false,
+        // Payload actionnable : le client ouvre le chat en tapant la notif
+        'data': {
+          'kind': 'contact_request',
+          'freelancer_id': currentUser.id,
+          'freelancer_name': freelancerDisplayName,
+          'mission_id': mission.id,
+        },
       });
+      await prefs.setBool(_contactRequestPrefKey, true);
       if (!mounted) return;
       showAppSnackBar(
         context,

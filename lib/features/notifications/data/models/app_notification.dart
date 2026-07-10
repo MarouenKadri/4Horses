@@ -10,6 +10,10 @@ class AppNotification {
   final bool isRead;
   final DateTime? createdAt;
 
+  /// Payload structuré pour les actions in-app
+  /// (ex. contact_request : freelancer_id, freelancer_name)
+  final Map<String, dynamic>? data;
+
   const AppNotification({
     required this.id,
     required this.type,
@@ -19,6 +23,7 @@ class AppNotification {
     this.avatarUrl,
     this.isRead = false,
     this.createdAt,
+    this.data,
   });
 
   factory AppNotification.fromJson(Map<String, dynamic> json) {
@@ -36,6 +41,7 @@ class AppNotification {
       isRead: json['is_read'] as bool? ?? false,
       timeAgo: _timeAgo(createdAt),
       createdAt: createdAt,
+      data: json['data'] as Map<String, dynamic>?,
     );
   }
 
@@ -57,5 +63,6 @@ class AppNotification {
     avatarUrl: avatarUrl,
     isRead: isRead ?? this.isRead,
     createdAt: createdAt,
+    data: data,
   );
 }

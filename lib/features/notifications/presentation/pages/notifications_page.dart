@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/design/app_design_system.dart';
+import '../../../messaging/messaging_provider.dart';
+import '../../../messaging/presentation/pages/chat_page.dart';
 import '../../data/models/app_notification.dart';
 import '../../notification_provider.dart';
 
@@ -14,6 +16,38 @@ class NotificationsPage extends StatefulWidget {
 
 class _NotificationsPageState extends State<NotificationsPage> {
   bool _showUnreadOnly = false;
+
+  /// Tap sur une notification : marque lue, et si elle porte un payload
+  /// actionnable (demande de contact), ouvre directement le chat.
+  Future<void> _handleTap(
+    BuildContext context,
+    AppNotification notification,
+  ) async {
+    context.read<NotificationProvider>().markRead(notification.id);
+
+    final data = notification.data;
+    if (data == null || data['kind'] != 'contact_request') return;
+    final freelancerId = data['freelancer_id'] as String?;
+    if (freelancerId == null) return;
+
+    final conversationId = await context
+        .read<MessagingProvider>()
+        .getOrCreateConversation(otherUserId: freelancerId, iAmClient: true);
+    if (!context.mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChatPage(
+          conversationId: conversationId,
+          contactUserId: freelancerId,
+          contactName: data['freelancer_name'] as String? ?? 'Prestataire',
+          contactAvatar: notification.avatarUrl ?? '',
+          isVerified: false,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +138,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           },
                           child: _NotificationCard(
                             notification: notification,
-                            onTap: () => context
-                                .read<NotificationProvider>()
-                                .markRead(notification.id),
+                            onTap: () => _handleTap(context, notification),
                           ),
                         );
                       },
