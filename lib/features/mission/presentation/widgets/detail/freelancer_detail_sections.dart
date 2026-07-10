@@ -22,7 +22,6 @@ class FreelancerClientCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DetailSectionCard(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

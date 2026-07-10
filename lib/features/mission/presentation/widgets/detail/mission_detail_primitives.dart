@@ -85,31 +85,15 @@ class DetailMetaChip extends StatelessWidget {
 
 class DetailSectionCard extends StatelessWidget {
   final Widget child;
-  final EdgeInsetsGeometry padding;
-  final EdgeInsetsGeometry margin;
-  final bool showBorder;
 
-  const DetailSectionCard({
-    super.key,
-    required this.child,
-    this.padding = const EdgeInsets.all(20),
-    this.margin = const EdgeInsets.fromLTRB(16, 0, 16, 16),
-    this.showBorder = true,
-  });
+  const DetailSectionCard({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    // Carte plate : liseré fin sans ombre, rayon aligné sur le feed.
-    return Container(
-      margin: margin,
-      padding: padding,
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: showBorder
-            ? Border.all(color: context.colors.border)
-            : null,
-      ),
+    // Section à plat sur fond blanc — même langage que Progression et
+    // Description : le titre noir structure, pas de boîte.
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
       child: child,
     );
   }

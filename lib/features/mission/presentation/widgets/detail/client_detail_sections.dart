@@ -107,7 +107,6 @@ class ClientPrestaCard extends StatelessWidget {
     final ratingValue = rating ?? presta.rating;
 
     return DetailSectionCard(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
