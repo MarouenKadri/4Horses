@@ -11,6 +11,7 @@ import '../../../data/models/registration_data.dart';
 import '../../../data/models/user_type.dart';
 import '../../utils/auth_formatters.dart';
 import '../../widgets/photo_picker.dart';
+import 'steps/register_shared.dart';
 
 enum _FieldCheckStatus { idle, checking, available, taken }
 
@@ -411,101 +412,6 @@ class _RegisterFlowState extends State<RegisterFlow> {
   }
 }
 
-class _SelectableCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String? subtitle;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _SelectableCard({
-    required this.icon,
-    required this.label,
-    this.subtitle,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: AppInsets.a20,
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(AppDesign.radius16),
-          border: Border.all(
-            color: isSelected
-                ? context.colors.textPrimary
-                : context.colors.border,
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? context.colors.textPrimary.withValues(alpha: 0.08)
-                    : context.colors.surfaceAlt,
-                borderRadius: BorderRadius.circular(AppDesign.radius14),
-              ),
-              child: Icon(
-                icon,
-                color: isSelected
-                    ? context.colors.textPrimary
-                    : context.colors.textSecondary,
-                size: 26,
-              ),
-            ),
-            AppGap.w16,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: context.text.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.textPrimary,
-                    ),
-                  ),
-                  if (subtitle != null) ...[
-                    AppGap.h3,
-                    Text(subtitle!, style: context.text.bodySmall),
-                  ],
-                ],
-              ),
-            ),
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected
-                    ? context.colors.textPrimary
-                    : Colors.transparent,
-                border: Border.all(
-                  color: isSelected
-                      ? context.colors.textPrimary
-                      : context.colors.border,
-                  width: 2,
-                ),
-              ),
-              child: isSelected
-                  ? const Icon(Icons.check, size: 16, color: Colors.white)
-                  : null,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 Widget _pageHeader(BuildContext context, String title, String subtitle) {
   return AppPageHeaderBlock(title: title, subtitle: subtitle);
@@ -1070,7 +976,7 @@ class _FieldStatusRow extends StatelessWidget {
     final color = isChecking
         ? context.colors.textTertiary
         : isAvailable
-        ? AppColors.teal
+        ? AppColors.success
         : AppColors.error;
     final icon = isChecking
         ? null
@@ -1131,7 +1037,7 @@ class _UserTypePage extends StatelessWidget {
           ...UserType.values.map(
             (t) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: _SelectableCard(
+              child: RegisterSelectableCard(
                 icon: t == UserType.client
                     ? Icons.search_rounded
                     : Icons.handyman_outlined,

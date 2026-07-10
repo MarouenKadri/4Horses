@@ -549,7 +549,7 @@ class AppPageHeaderBlock extends StatelessWidget {
         Text(
           title,
           style: context.text.headlineMedium?.copyWith(
-            fontSize: AppFontSize.h2,
+            fontSize: AppFontSize.xl,
             fontWeight: FontWeight.w700,
             color: context.colors.textPrimary,
           ),

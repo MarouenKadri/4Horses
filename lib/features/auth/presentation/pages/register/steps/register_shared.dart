@@ -32,10 +32,10 @@ class RegisterSelectableCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: AppInsets.a20,
+        padding: AppInsets.a18,
         decoration: BoxDecoration(
           color: context.colors.surface,
-          borderRadius: BorderRadius.circular(AppDesign.radius16),
+          borderRadius: BorderRadius.circular(AppDesign.radius12),
           border: Border.all(
             color: isSelected
                 ? context.colors.textPrimary
@@ -46,20 +46,20 @@ class RegisterSelectableCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 52,
-              height: 52,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
                 color: isSelected
                     ? context.colors.textPrimary.withValues(alpha: 0.08)
                     : context.colors.surfaceAlt,
-                borderRadius: BorderRadius.circular(AppDesign.radius14),
+                borderRadius: BorderRadius.circular(AppDesign.radius12),
               ),
               child: Icon(
                 icon,
                 color: isSelected
                     ? context.colors.textPrimary
                     : context.colors.textSecondary,
-                size: 26,
+                size: 24,
               ),
             ),
             AppGap.w16,
@@ -69,7 +69,7 @@ class RegisterSelectableCard extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: context.text.titleLarge?.copyWith(
+                    style: context.text.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: context.colors.textPrimary,
                     ),
@@ -126,7 +126,7 @@ class RegisterFieldStatusRow extends StatelessWidget {
     final color = isChecking
         ? context.colors.textTertiary
         : isAvailable
-        ? AppColors.teal
+        ? AppColors.success
         : AppColors.error;
     final icon = isChecking
         ? null

@@ -105,7 +105,6 @@ abstract class AppColors {
   static const successDark = Color(0xFF059669);
   static const successDarker = Color(0xFF047857);
   static const successDeep = Color(0xFF065F46);
-  static const teal = Color(0xFF00C896);
   static const violet = Color(0xFF8B5CF6);
 
   // Cards / specialized text
