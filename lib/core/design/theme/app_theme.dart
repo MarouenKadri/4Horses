@@ -438,8 +438,9 @@ extension AppMissionDetailTextStyles on BuildContext {
     color: colors.textPrimary,
   );
 
-  TextStyle get missionSectionTitleStyle => text.headlineSmall!.copyWith(
-    fontSize: 19,
+  // Aligné sur le standard des sections (ProfileSectionTitle) :
+  // titleMedium 16 w700 noir — même gabarit dans toute l'app.
+  TextStyle get missionSectionTitleStyle => text.titleMedium!.copyWith(
     fontWeight: FontWeight.w700,
     color: colors.textPrimary,
   );
