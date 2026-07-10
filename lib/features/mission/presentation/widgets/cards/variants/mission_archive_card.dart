@@ -4,12 +4,11 @@ import '../../../../../../core/design/app_design_system.dart';
 import '../../../../data/models/mission.dart';
 import '../../shared/mission_finance_ui.dart';
 import '../../shared/mission_status_ui.dart';
-import '../primitives/mission_card_frame.dart';
-import '../primitives/mission_status_chip.dart';
 
 // ─── Variant : Archives ───────────────────────────────────────────────────────
-// Responsabilité : afficher une mission archivée (layout compact, fond gris).
-// Compose MissionCardFrame + MissionStatusChip.archive.
+// Responsabilité : afficher une mission archivée — rangée à plat compacte,
+// entièrement grisée (l'historique ne rivalise pas avec l'actif).
+// Le séparateur entre rangées est fourni par la page (Divider).
 //
 // Le rôle est résolu par la PAGE (ArchivesPage) et passé en paramètre —
 // cette card ne dépend pas de AuthProvider.
@@ -34,13 +33,10 @@ class MissionArchiveCard extends StatelessWidget {
       role: role,
     );
 
-    return MissionCardFrame(
+    return InkWell(
       onTap: onTap,
-      radius: MissionCardFrame.radiusFlat,
-      color: context.colors.surfaceAlt,
-      shadows: MissionCardFrame.noShadow,
       child: Padding(
-        padding: const EdgeInsets.all(MissionCardFrame.paddingDefault),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -48,29 +44,49 @@ class MissionArchiveCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        mission.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: MissionCardFrame.titleCompactStyle,
-                      ),
-                      const SizedBox(height: 7),
-                      Text(
-                        _formatDate(mission.date),
-                        style: MissionCardFrame.metaStyle,
-                      ),
-                    ],
+                  child: Text(
+                    mission.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.textSecondary,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 14),
-                MissionStatusChip.archive(context, label: statusLabel),
+                AppGap.w12,
+                Text(
+                  _formatDate(mission.date),
+                  style: context.text.labelSmall?.copyWith(
+                    color: context.colors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+            AppGap.h6,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 7,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    color: context.colors.textHint,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                AppGap.w6,
+                Text(
+                  statusLabel,
+                  style: context.text.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.textTertiary,
+                  ),
+                ),
               ],
             ),
             if (MissionFinanceStatusBadge.shouldDisplay(mission)) ...[
-              const SizedBox(height: 10),
+              AppGap.h8,
               Align(
                 alignment: Alignment.centerLeft,
                 child: MissionFinanceStatusBadge(mission: mission, role: role),

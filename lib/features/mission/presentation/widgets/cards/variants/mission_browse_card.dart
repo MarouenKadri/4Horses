@@ -20,24 +20,6 @@ class MissionBrowseCard extends StatelessWidget {
     this.isApplied = false,
   });
 
-  String get _budgetLine {
-    final budget = mission.budget;
-    switch (budget.type) {
-      case BudgetType.hourly:
-        final hours = budget.estimatedHours;
-        return [
-          'Tarif horaire',
-          budget.displayText,
-          if (hours != null && hours > 0)
-            '~${hours.toStringAsFixed(hours.truncateToDouble() == hours ? 0 : 1)} h estimées',
-        ].join(' · ');
-      case BudgetType.fixed:
-        return 'Budget fixe · ${budget.displayText}';
-      case BudgetType.quote:
-        return 'Sur devis';
-    }
-  }
-
   static String _timeAgo(DateTime date) {
     final diff = DateTime.now().difference(date);
     if (diff.inMinutes < 1) return 'À l\'instant';
@@ -97,7 +79,7 @@ class MissionBrowseCard extends StatelessWidget {
                   AppGap.h6,
                   // ── Ligne budget ─────────────────────────────────────
                   Text(
-                    _budgetLine,
+                    mission.budget.detailedLabel,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.text.bodySmall?.copyWith(

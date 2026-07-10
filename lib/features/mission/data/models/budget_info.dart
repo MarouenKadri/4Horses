@@ -23,6 +23,25 @@ class BudgetInfo {
     return '${amount!.toInt()} €';
   }
 
+  /// Ligne budget complète pour les cards de liste
+  /// (type · montant · heures estimées)
+  String get detailedLabel {
+    switch (type) {
+      case BudgetType.hourly:
+        final h = estimatedHours;
+        return [
+          'Tarif horaire',
+          displayText,
+          if (h != null && h > 0)
+            '~${h.toStringAsFixed(h.truncateToDouble() == h ? 0 : 1)} h estimées',
+        ].join(' · ');
+      case BudgetType.fixed:
+        return 'Budget fixe · $displayText';
+      case BudgetType.quote:
+        return 'Sur devis';
+    }
+  }
+
   /// Montant total pour les calculs de paiement et commissions
   /// - Horaire → amount × estimatedHours
   /// - Fixe    → amount

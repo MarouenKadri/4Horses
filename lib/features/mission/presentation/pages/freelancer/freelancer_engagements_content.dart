@@ -186,7 +186,8 @@ class _MissionTabState extends State<_MissionTab> {
               key: const ValueKey('list'),
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
               itemCount: missions.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 14),
+              separatorBuilder: (context, _) =>
+                  Divider(height: 1, color: context.colors.divider),
               itemBuilder: (context, index) {
                 final mission = missions[index];
                 final canWithdraw =

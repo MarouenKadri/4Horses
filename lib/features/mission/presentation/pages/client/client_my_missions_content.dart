@@ -115,13 +115,13 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
               message: _emptySubtitle,
               action: _emptyAction(context),
             )
-          : ListView.builder(
+          : ListView.separated(
               key: const ValueKey('list'),
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
               itemCount: missions.length,
-              itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.only(bottom: 14),
-                child: MissionSummaryCard(
+              separatorBuilder: (context, _) =>
+                  Divider(height: 1, color: context.colors.divider),
+              itemBuilder: (context, index) => MissionSummaryCard(
                   mission: missions[index],
                   role: MissionUiRole.client,
                   showDescription: true,
@@ -135,7 +135,6 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
                   extra: widget.filter == _ClientTabFilter.published
                       ? _CandidatesBadge(count: missions[index].candidatesCount)
                       : null,
-                ),
               ),
             ),
     );

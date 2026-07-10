@@ -59,7 +59,8 @@ class ArchivesPage extends StatelessWidget {
           : ListView.separated(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               itemCount: missions.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (context, _) =>
+          Divider(height: 1, color: context.colors.divider),
               itemBuilder: (context, index) {
                 final mission = missions[index];
                 return MissionArchiveCard(
