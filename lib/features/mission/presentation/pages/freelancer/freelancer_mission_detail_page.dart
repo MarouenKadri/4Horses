@@ -112,7 +112,7 @@ class _FreelancerMissionDetailPageState
 
   @override
   Widget? buildHeroMenu(BuildContext ctx) {
-    return DetailCircleBtn(
+    return DetailHeroBtn(
       icon: Icons.more_horiz_rounded,
       onTap: _showReportSheet,
     );

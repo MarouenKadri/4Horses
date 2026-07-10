@@ -103,7 +103,7 @@ class _MissionDetailHeroState extends State<MissionDetailHero> {
             right: 8,
             child: Row(
               children: [
-                DetailCircleBtn(
+                DetailHeroBtn(
                   icon: Icons.arrow_back_rounded,
                   onTap: widget.onBack,
                 ),
@@ -259,7 +259,7 @@ class _MissionImageViewerPageState extends State<_MissionImageViewerPage> {
             right: 8,
             child: Row(
               children: [
-                DetailCircleBtn(
+                DetailHeroBtn(
                   icon: Icons.close_rounded,
                   onTap: () => Navigator.pop(context),
                 ),

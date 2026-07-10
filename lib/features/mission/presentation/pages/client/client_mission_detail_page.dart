@@ -43,7 +43,6 @@ class ClientMissionDetailPage extends StatefulWidget {
 
 class _ClientMissionDetailPageState
     extends MissionDetailBase<ClientMissionDetailPage> {
-  bool _menuOpen = false;
 
   // ─── Computed flags ─────────────────────────────────────────────────────────
 
@@ -90,9 +89,8 @@ class _ClientMissionDetailPageState
   @override
   Widget? buildHeroMenu(BuildContext ctx) {
     if (!canModify && !canCancel) return null;
-    return DetailCircleBtn(
+    return DetailHeroBtn(
       icon: Icons.more_horiz_rounded,
-      isActive: _menuOpen,
       onTap: _showMissionOptions,
     );
   }
@@ -325,7 +323,6 @@ class _ClientMissionDetailPageState
   // ─── Actions ─────────────────────────────────────────────────────────────
 
   Future<void> _showMissionOptions() async {
-    setState(() => _menuOpen = true);
     await showAppBottomSheet(
       context: context,
       wrapWithSurface: false,
@@ -346,7 +343,6 @@ class _ClientMissionDetailPageState
         },
       ),
     );
-    if (mounted) setState(() => _menuOpen = false);
   }
 
   Future<void> _openPhone(PrestaInfo presta) async {

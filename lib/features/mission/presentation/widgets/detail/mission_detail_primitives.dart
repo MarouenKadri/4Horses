@@ -28,37 +28,28 @@ class StatusBannerConfig {
 
 // ─── DetailCircleBtn ──────────────────────────────────────────────────────────
 
-class DetailCircleBtn extends StatelessWidget {
+/// Icône nue sur photo — même langage que le viewer de posts :
+/// blanc 26px + ombre légère pour rester lisible sur image claire.
+class DetailHeroBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  final bool isActive;
 
-  const DetailCircleBtn({
-    super.key,
-    required this.icon,
-    required this.onTap,
-    this.isActive = false,
-  });
+  const DetailHeroBtn({super.key, required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: onTap,
-    child: Container(
-      width: 38,
-      height: 38,
-      decoration: BoxDecoration(
-        color: isActive
-            ? Colors.white.withValues(alpha: 0.2)
-            : Colors.black.withValues(alpha: 0.14),
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: isActive
-              ? Colors.white.withValues(alpha: 0.42)
-              : Colors.white.withValues(alpha: 0.28),
-          width: 0.6,
-        ),
+    behavior: HitTestBehavior.opaque,
+    child: Padding(
+      padding: const EdgeInsets.all(6),
+      child: Icon(
+        icon,
+        size: 26,
+        color: Colors.white,
+        shadows: [
+          Shadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 8),
+        ],
       ),
-      child: Icon(icon, size: 16, color: Colors.white),
     ),
   );
 }
