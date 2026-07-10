@@ -27,7 +27,7 @@ class StepBudgetType extends StatelessWidget {
             subtitle:
                 'Choisissez la formule qui correspond le mieux à votre mission.',
           ),
-          const SizedBox(height: 30),
+          AppGap.h24,
           _BudgetTypeCard(
             icon: Icons.schedule_outlined,
             title: 'Paiement a l\'heure',

@@ -84,8 +84,8 @@ class StepService extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 8,
-        mainAxisSpacing: 20,
-        childAspectRatio: 0.95,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1.05,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) {
@@ -382,7 +382,7 @@ class _ServiceIconCell extends StatelessWidget {
               ),
           ],
         ),
-        AppGap.h8,
+        AppGap.h6,
         Text(
           title,
           textAlign: TextAlign.center,

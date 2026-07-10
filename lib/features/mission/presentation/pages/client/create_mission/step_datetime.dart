@@ -37,7 +37,7 @@ class StepDate extends StatelessWidget {
             title: 'Quel jour ?',
             subtitle: 'Choisissez une date pour planifier votre mission.',
           ),
-          const SizedBox(height: 30),
+          AppGap.h24,
           Row(
             children: quickDates.map((date) {
               final isSelected =
@@ -63,7 +63,7 @@ class StepDate extends StatelessWidget {
                       right: date != quickDates.last ? 10 : 0,
                     ),
                     padding: const EdgeInsets.symmetric(
-                      vertical: 16,
+                      vertical: 12,
                       horizontal: 6,
                     ),
                     decoration: BoxDecoration(
@@ -88,7 +88,7 @@ class StepDate extends StatelessWidget {
                             letterSpacing: 1.8,
                           ),
                         ),
-                        AppGap.h10,
+                        AppGap.h6,
                         Text(
                           '${date.day}',
                           style: context.missionSectionTitleStyle.copyWith(
@@ -105,7 +105,7 @@ class StepDate extends StatelessWidget {
                             letterSpacing: 1.8,
                           ),
                         ),
-                        AppGap.h10,
+                        AppGap.h8,
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 180),
                           width: 6,
@@ -220,14 +220,14 @@ class StepTime extends StatelessWidget {
             title: 'À quelle heure ?',
             subtitle: 'Choisissez le créneau qui vous convient le mieux.',
           ),
-          const SizedBox(height: 30),
+          AppGap.h24,
           GridView.count(
             crossAxisCount: 4,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: 1.55,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 1.9,
             children: quickTimes.map((time) {
               final isSelected =
                   selectedTime?.hour == time.hour &&

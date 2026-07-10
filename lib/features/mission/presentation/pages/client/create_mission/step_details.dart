@@ -344,10 +344,10 @@ class _StepDetailsState extends State<StepDetails> {
 
   Widget _buildLoadingState() {
     return Container(
-      height: 152,
+      height: 120,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(AppDesign.radius12),
         border: Border.all(color: context.colors.border),
       ),
       child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
@@ -358,10 +358,10 @@ class _StepDetailsState extends State<StepDetails> {
     return GestureDetector(
       onTap: widget.photos.length < 10 ? _showAddPhotoOptions : null,
       child: Container(
-        height: 156,
+        height: 120,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppDesign.radius12),
           border: Border.all(color: context.colors.border),
         ),
         child: Center(
@@ -370,10 +370,10 @@ class _StepDetailsState extends State<StepDetails> {
             children: [
               const Icon(
                 Icons.photo_camera_outlined,
-                size: 30,
+                size: 24,
                 color: AppColors.gray600,
               ),
-              AppGap.h12,
+              AppGap.h8,
               Text(
                 'Ajouter des photos',
                 style: context.missionButtonStyle.copyWith(
@@ -395,7 +395,7 @@ class _StepDetailsState extends State<StepDetails> {
     return Column(
       children: [
         SizedBox(
-          height: 118,
+          height: 96,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount:
@@ -412,25 +412,6 @@ class _StepDetailsState extends State<StepDetails> {
           ),
         ),
 
-        // Photo count indicator
-        if (widget.photos.isNotEmpty) ...[
-          AppGap.h12,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              widget.photos.length > 5 ? 5 : widget.photos.length,
-              (index) => Container(
-                width: 8,
-                height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                decoration: BoxDecoration(
-                  color: index == 0 ? AppColors.info : context.colors.border,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -439,19 +420,19 @@ class _StepDetailsState extends State<StepDetails> {
     return GestureDetector(
       onTap: _showAddPhotoOptions,
       child: SizedBox(
-        width: 110,
-        height: 118,
+        width: 88,
+        height: 96,
         child: AppSurfaceCard(
           margin: const EdgeInsets.only(right: 10),
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppDesign.radius12),
           border: Border.all(color: context.colors.border),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(
                 Icons.photo_camera_outlined,
-                size: 28,
+                size: 22,
                 color: AppColors.gray600,
               ),
               AppGap.h6,
@@ -476,9 +457,9 @@ class _StepDetailsState extends State<StepDetails> {
     return GestureDetector(
       onTap: () => _viewPhoto(photo, index),
       child: Container(
-        width: 110,
-        height: 118,
-        margin: const EdgeInsets.only(right: 10),
+        width: 88,
+        height: 96,
+        margin: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.button),
           border: Border.all(color: context.colors.border),

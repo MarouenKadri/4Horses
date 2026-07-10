@@ -71,7 +71,7 @@ class _StepTarifState extends State<StepTarif> {
             subtitle:
                 'Choisissez ou saisissez un montant adapte a votre mission.',
           ),
-          const SizedBox(height: 30),
+          AppGap.h24,
           _AmountInput(
             controller: _rateCtrl,
             label: 'Tarif horaire',
@@ -155,7 +155,7 @@ class _StepTarifState extends State<StepTarif> {
             subtitle:
                 'Renseignez un montant clair pour recevoir des propositions precises.',
           ),
-          const SizedBox(height: 30),
+          AppGap.h24,
           _AmountInput(
             controller: _fixedCtrl,
             label: 'Budget fixe',
