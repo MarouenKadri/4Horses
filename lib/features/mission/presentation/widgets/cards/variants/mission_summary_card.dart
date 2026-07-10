@@ -27,6 +27,10 @@ class MissionSummaryCard extends StatelessWidget {
   final bool showAddress;
   final Widget? extra;
 
+  /// Action texte discrète alignée à droite de la ligne de statut
+  /// (ex. « Retirer ma candidature »)
+  final Widget? statusTrailing;
+
   const MissionSummaryCard({
     super.key,
     required this.mission,
@@ -35,6 +39,7 @@ class MissionSummaryCard extends StatelessWidget {
     this.showDescription = false,
     this.showAddress = false,
     this.extra,
+    this.statusTrailing,
   });
 
   @override
@@ -118,7 +123,6 @@ class MissionSummaryCard extends StatelessWidget {
             AppGap.h8,
             // ── Statut : point d'accent + texte, sans pilule ───────────
             Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: 7,
@@ -129,13 +133,21 @@ class MissionSummaryCard extends StatelessWidget {
                   ),
                 ),
                 AppGap.w6,
-                Text(
-                  statusLabel,
-                  style: context.text.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.textSecondary,
+                Expanded(
+                  child: Text(
+                    statusLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.textSecondary,
+                    ),
                   ),
                 ),
+                if (statusTrailing != null) ...[
+                  AppGap.w12,
+                  statusTrailing!,
+                ],
               ],
             ),
             if (MissionFinanceStatusBadge.shouldDisplay(mission)) ...[

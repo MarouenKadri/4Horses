@@ -194,33 +194,31 @@ class _MissionTabState extends State<_MissionTab> {
                     widget.filter == _TabFilter.applied &&
                     (mission.status == MissionStatus.waitingCandidates ||
                         mission.status == MissionStatus.candidateReceived);
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    MissionSummaryCard(
-                      mission: mission,
-                      role: MissionUiRole.freelancer,
-                      showDescription: false,
-                      onTap: () => Navigator.push(
-                        context,
-                        slideUpRoute(
-                          page: FreelancerMissionDetailPage(
-                            mission: mission,
-                            isOwn: true,
-                          ),
-                        ),
+                return MissionSummaryCard(
+                  mission: mission,
+                  role: MissionUiRole.freelancer,
+                  showDescription: false,
+                  onTap: () => Navigator.push(
+                    context,
+                    slideUpRoute(
+                      page: FreelancerMissionDetailPage(
+                        mission: mission,
+                        isOwn: true,
                       ),
                     ),
-                    if (canWithdraw)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: AppButton(
-                          label: 'Retirer ma candidature',
-                          variant: ButtonVariant.ghost,
-                          onPressed: () => _confirmWithdraw(context, mission),
-                        ),
-                      ),
-                  ],
+                  ),
+                  statusTrailing: canWithdraw
+                      ? InkWell(
+                          onTap: () => _confirmWithdraw(context, mission),
+                          child: Text(
+                            'Retirer ma candidature',
+                            style: context.text.labelSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.error,
+                            ),
+                          ),
+                        )
+                      : null,
                 );
               },
             ),
