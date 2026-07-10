@@ -307,18 +307,7 @@ class ClientTrackingCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DetailSectionTitle(
-            title: 'Suivi mission',
-            trailing: Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                color: config.accent.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(config.icon, size: 20, color: config.accent),
-            ),
-          ),
+          const DetailSectionTitle(title: 'Suivi mission'),
           AppGap.h8,
           Text(config.title, style: context.missionPrimaryValueStyle),
           AppGap.h14,
@@ -332,7 +321,7 @@ class ClientTrackingCard extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
               decoration: BoxDecoration(
                 color: AppColors.ink,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(AppDesign.radius12),
               ),
               child: Row(
                 children: [
@@ -414,7 +403,7 @@ class ClientTrackingCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
               color: context.colors.surfaceAlt,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppDesign.radius12),
             ),
             child: Row(
               children: [
@@ -471,22 +460,7 @@ class ClientCompletionRequestedCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DetailSectionTitle(
-            title: 'Fin de mission',
-            trailing: Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                color: AppColors.warning.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(
-                Icons.task_alt_rounded,
-                size: 20,
-                color: AppColors.warning,
-              ),
-            ),
-          ),
+          const DetailSectionTitle(title: 'Fin de mission'),
           AppGap.h8,
           Text(
             'Fin de mission signalee',
@@ -503,7 +477,7 @@ class ClientCompletionRequestedCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
               color: context.colors.surfaceAlt,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppDesign.radius12),
             ),
             child: Row(
               children: [

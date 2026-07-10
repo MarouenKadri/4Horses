@@ -206,18 +206,7 @@ class FreelancerLocationShareCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DetailSectionTitle(
-            title: 'Suivi mission',
-            trailing: Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                color: config.accent.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(config.icon, size: 20, color: config.accent),
-            ),
-          ),
+          const DetailSectionTitle(title: 'Suivi mission'),
           AppGap.h8,
           Text(config.title, style: context.missionPrimaryValueStyle),
           AppGap.h14,
@@ -228,7 +217,7 @@ class FreelancerLocationShareCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
               color: context.colors.surfaceAlt,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppDesign.radius12),
             ),
             child: Row(
               children: [
@@ -271,11 +260,13 @@ class _ClientAvatarFallback extends StatelessWidget {
         .map((w) => w.isNotEmpty ? w[0].toUpperCase() : '')
         .join();
     return Container(
-      color: AppColors.primary.withValues(alpha: 0.2),
+      color: context.colors.surfaceAlt,
       child: Center(
         child: Text(
           initials.isEmpty ? '?' : initials,
-          style: context.text.headlineSmall?.copyWith(color: AppColors.primary),
+          style: context.text.headlineSmall?.copyWith(
+            color: context.colors.textSecondary,
+          ),
         ),
       ),
     );
