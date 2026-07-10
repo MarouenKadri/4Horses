@@ -138,11 +138,6 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          mission.categoryName.toUpperCase(),
-          style: context.missionCategoryStyle,
-        ),
-        AppGap.h12,
         Row(
           children: [
             Expanded(
@@ -293,6 +288,11 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Description', style: context.missionSectionTitleStyle),
+          AppGap.h8,
+          Text(
+            mission.categoryName.toUpperCase(),
+            style: context.missionCategoryStyle,
+          ),
           AppGap.h8,
           Text(mission.description, style: context.missionBodyStyle),
         ],

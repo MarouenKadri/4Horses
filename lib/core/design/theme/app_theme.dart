@@ -438,9 +438,9 @@ extension AppMissionDetailTextStyles on BuildContext {
     color: colors.textPrimary,
   );
 
-  // Aligné sur le standard des sections (ProfileSectionTitle) :
-  // titleMedium 16 w700 noir — même gabarit dans toute l'app.
-  TextStyle get missionSectionTitleStyle => text.titleMedium!.copyWith(
+  // Titre de section compact : même taille que le corps (14), la
+  // hiérarchie vient du poids et du noir — corps allégé en w400.
+  TextStyle get missionSectionTitleStyle => text.titleSmall!.copyWith(
     fontWeight: FontWeight.w700,
     color: colors.textPrimary,
   );
@@ -455,14 +455,14 @@ extension AppMissionDetailTextStyles on BuildContext {
   TextStyle get missionBodyStyle => text.bodyMedium!.copyWith(
     fontSize: AppFontSize.base,
     height: 1.65,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w400,
     color: colors.textSecondary,
   );
 
   TextStyle get missionEmphasisBodyStyle => text.bodyMedium!.copyWith(
     fontSize: AppFontSize.base,
     height: 1.45,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: colors.textSecondary,
   );
 
