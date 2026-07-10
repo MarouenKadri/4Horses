@@ -113,45 +113,29 @@ class _MissionDetailHeroState extends State<MissionDetailHero> {
             ),
           ),
 
-          // ── Titre + pagination dots ──────────────────────────────────────
-          Positioned(
-            left: 20,
-            right: 20,
-            bottom: 34,
-            child: IgnorePointer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.mission.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.missionHeroTitleStyle,
-                  ),
-                  if (hasImages && widget.mission.images.length > 1) ...[
-                    AppGap.h14,
-                    Row(
-                      children: List.generate(
-                        widget.mission.images.length,
-                        (i) => AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          margin: const EdgeInsets.only(right: 6),
-                          width: _index == i ? 18 : 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: _index == i ? Colors.white : Colors.white38,
-                            borderRadius: BorderRadius.circular(
-                              AppRadius.micro,
-                            ),
-                          ),
-                        ),
+          // ── Pagination dots (le titre vit sous l'image, dans le header) ──
+          if (hasImages && widget.mission.images.length > 1)
+            Positioned(
+              left: 20,
+              bottom: 16,
+              child: IgnorePointer(
+                child: Row(
+                  children: List.generate(
+                    widget.mission.images.length,
+                    (i) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: const EdgeInsets.only(right: 6),
+                      width: _index == i ? 18 : 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: _index == i ? Colors.white : Colors.white38,
+                        borderRadius: BorderRadius.circular(AppRadius.micro),
                       ),
                     ),
-                  ],
-                ],
+                  ),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

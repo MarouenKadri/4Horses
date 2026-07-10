@@ -138,6 +138,22 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Catégorie + sous-catégorie directement sous l'image du hero
+        Text(
+          mission.categoryName.toUpperCase(),
+          style: context.missionCategoryStyle,
+        ),
+        AppGap.h6,
+        Text(
+          mission.title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: context.text.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.textPrimary,
+          ),
+        ),
+        AppGap.h12,
         Row(
           children: [
             Expanded(
@@ -211,8 +227,9 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
                 children: [
                   Text(
                     address,
-                    style: context.missionEntityNameStyle.copyWith(
+                    style: context.missionBodyStyle.copyWith(
                       height: 1.35,
+                      color: context.colors.textPrimary,
                     ),
                   ),
                   AppGap.h2,
@@ -263,7 +280,9 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
                   mission.address.shortAddress.isNotEmpty
                       ? mission.address.shortAddress
                       : 'Adresse non disponible',
-                  style: context.missionEntityNameStyle,
+                  style: context.missionBodyStyle.copyWith(
+                    color: context.colors.textPrimary,
+                  ),
                 ),
                 AppGap.h4,
                 Text(
@@ -288,11 +307,6 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Description', style: context.missionSectionTitleStyle),
-          AppGap.h8,
-          Text(
-            mission.categoryName.toUpperCase(),
-            style: context.missionCategoryStyle,
-          ),
           AppGap.h8,
           Text(mission.description, style: context.missionBodyStyle),
         ],
