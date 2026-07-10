@@ -442,20 +442,20 @@ class _ActiveMissionCard extends StatelessWidget {
                             mission.images.first,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => ColoredBox(
-                              color: AppColors.secondary,
+                              color: context.colors.surfaceAlt,
                               child: Icon(
                                 mission.categoryIcon,
                                 size: 22,
-                                color: AppColors.primary,
+                                color: context.colors.textTertiary,
                               ),
                             ),
                           )
                         : ColoredBox(
-                            color: AppColors.secondary,
+                            color: context.colors.surfaceAlt,
                             child: Icon(
                               mission.categoryIcon,
                               size: 22,
-                              color: AppColors.primary,
+                              color: context.colors.textTertiary,
                             ),
                           ),
                   ),

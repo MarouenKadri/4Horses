@@ -95,11 +95,23 @@ class MissionBrowseCard extends StatelessWidget {
                       BudgetText(budget: mission.budget),
                       AppGap.h4,
                       if (isApplied)
-                        Text(
-                          'Postulé',
-                          style: context.text.labelSmall?.copyWith(
-                            color: context.colors.textTertiary,
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.check_rounded,
+                              size: 12,
+                              color: context.colors.textTertiary,
+                            ),
+                            AppGap.w3,
+                            Text(
+                              'Postulé',
+                              style: context.text.labelSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: context.colors.textTertiary,
+                              ),
+                            ),
+                          ],
                         )
                       else if (mission.candidatesCount > 0)
                         Row(
@@ -159,7 +171,11 @@ class _Thumbnail extends StatelessWidget {
   }
 
   Widget _fallback(BuildContext context) => ColoredBox(
-        color: AppColors.secondary,
-        child: Icon(mission.categoryIcon, size: 26, color: AppColors.primary),
+        color: context.colors.surfaceAlt,
+        child: Icon(
+          mission.categoryIcon,
+          size: 26,
+          color: context.colors.textTertiary,
+        ),
       );
 }
