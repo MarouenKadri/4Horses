@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/design/app_design_system.dart';
 import '../../../../data/models/mission.dart';
-import '../../shared/mission_shared_widgets.dart' show BudgetText;
 
 // ─── Variant : Marketplace freelancer ────────────────────────────────────────
 // Responsabilité : afficher une mission disponible dans le feed.
-// Rangée plate façon résultats TikTok, cohérente avec FreelancerListTile :
-// vignette à gauche · infos au centre · budget à droite · filet fin dessous.
+// Card façon job board (Upwork) : pas de photo, la card est un dossier de
+// décision — fraîcheur, titre, budget, extrait, confiance client, tension.
 // ─────────────────────────────────────────────────────────────────────────────
 
 class MissionBrowseCard extends StatelessWidget {
@@ -21,161 +20,194 @@ class MissionBrowseCard extends StatelessWidget {
     this.isApplied = false,
   });
 
+  String get _budgetLine {
+    final budget = mission.budget;
+    switch (budget.type) {
+      case BudgetType.hourly:
+        final hours = budget.estimatedHours;
+        return [
+          'Tarif horaire',
+          budget.displayText,
+          if (hours != null && hours > 0)
+            '~${hours.toStringAsFixed(hours.truncateToDouble() == hours ? 0 : 1)} h estimées',
+        ].join(' · ');
+      case BudgetType.fixed:
+        return 'Budget fixe · ${budget.displayText}';
+      case BudgetType.quote:
+        return 'Sur devis';
+    }
+  }
+
+  static String _timeAgo(DateTime date) {
+    final diff = DateTime.now().difference(date);
+    if (diff.inMinutes < 1) return 'À l\'instant';
+    if (diff.inMinutes < 60) return 'Il y a ${diff.inMinutes} min';
+    if (diff.inHours < 24) return 'Il y a ${diff.inHours} h';
+    if (diff.inDays < 7) return 'Il y a ${diff.inDays} j';
+    return 'Il y a ${diff.inDays ~/ 7} sem';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final client = mission.client;
     final distance = mission.address.distance;
+
+    final trustParts = [
+      if (client != null && client.isVerified) 'Client vérifié',
+      mission.address.shortAddress,
+      if (distance != null) distance,
+    ].join(' · ');
 
     return Opacity(
       opacity: isApplied ? 0.72 : 1.0,
       child: InkWell(
         onTap: onTap,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _Thumbnail(mission: mission),
-                  AppGap.w12,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                mission.categoryName.toUpperCase(),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: context.text.labelSmall?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.6,
-                                  color: context.colors.textTertiary,
-                                ),
-                              ),
-                            ),
-                            if (distance != null)
-                              Text(
-                                ' · $distance',
-                                style: context.text.labelSmall?.copyWith(
-                                  color: context.colors.textTertiary,
-                                ),
-                              ),
-                          ],
+                  // ── Fraîcheur + catégorie ────────────────────────────
+                  Text(
+                    '${_timeAgo(mission.createdAt)} · ${mission.categoryName.toUpperCase()}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4,
+                      color: context.colors.textTertiary,
+                    ),
+                  ),
+                  AppGap.h6,
+                  // ── Titre ────────────────────────────────────────────
+                  Text(
+                    mission.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.titleSmall?.copyWith(
+                      fontSize: AppFontSize.body,
+                      fontWeight: FontWeight.w700,
+                      color: context.colors.textPrimary,
+                      height: 1.3,
+                    ),
+                  ),
+                  AppGap.h6,
+                  // ── Ligne budget ─────────────────────────────────────
+                  Text(
+                    _budgetLine,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.textPrimary,
+                    ),
+                  ),
+                  if (mission.description.isNotEmpty) ...[
+                    AppGap.h8,
+                    // ── Extrait description ────────────────────────────
+                    Text(
+                      mission.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.textSecondary,
+                        height: 1.45,
+                      ),
+                    ),
+                  ],
+                  AppGap.h10,
+                  // ── Ligne de confiance client ──────────────────────
+                  Row(
+                    children: [
+                      if (client != null && client.rating > 0) ...[
+                        const Icon(
+                          Icons.star_rounded,
+                          size: 13,
+                          color: AppColors.rating,
                         ),
-                        AppGap.h4,
+                        AppGap.w3,
                         Text(
-                          mission.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.text.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: context.colors.textPrimary,
-                            height: 1.25,
-                          ),
-                        ),
-                        AppGap.h4,
-                        Text(
-                          '${mission.formattedDate} · ${mission.address.shortAddress}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.text.bodySmall?.copyWith(
+                          client.rating.toStringAsFixed(1),
+                          style: context.text.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
                             color: context.colors.textSecondary,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  AppGap.w12,
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      BudgetText(budget: mission.budget),
-                      AppGap.h4,
-                      if (isApplied)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.check_rounded,
-                              size: 12,
-                              color: context.colors.textTertiary,
-                            ),
-                            AppGap.w3,
-                            Text(
-                              'Postulé',
-                              style: context.text.labelSmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: context.colors.textTertiary,
-                              ),
-                            ),
-                          ],
-                        )
-                      else if (mission.candidatesCount > 0)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.people_outline_rounded,
-                              size: 12,
-                              color: context.colors.textHint,
-                            ),
-                            AppGap.w3,
-                            Text(
-                              '${mission.candidatesCount}',
-                              style: context.text.labelSmall?.copyWith(
-                                color: context.colors.textTertiary,
-                              ),
-                            ),
-                          ],
+                        Text(
+                          ' · ',
+                          style: context.text.labelSmall?.copyWith(
+                            color: context.colors.textTertiary,
+                          ),
                         ),
+                      ],
+                      Expanded(
+                        child: Text(
+                          trustParts,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.labelSmall?.copyWith(
+                            color: context.colors.textTertiary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  AppGap.h8,
+                  // ── Tension + échéance ─────────────────────────────
+                  Row(
+                    children: [
+                      Expanded(
+                        child: isApplied
+                            ? Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.check_rounded,
+                                    size: 13,
+                                    color: context.colors.textTertiary,
+                                  ),
+                                  AppGap.w3,
+                                  Text(
+                                    'Postulé',
+                                    style: context.text.labelSmall?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: context.colors.textTertiary,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                mission.candidatesCount > 0
+                                    ? '${mission.candidatesCount} candidat${mission.candidatesCount > 1 ? 's' : ''}'
+                                    : 'Soyez le premier à postuler',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.text.labelSmall?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: context.colors.textSecondary,
+                                ),
+                              ),
+                      ),
+                      AppGap.w12,
+                      Text(
+                        mission.formattedDate,
+                        style: context.text.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.textSecondary,
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
-            Divider(height: 1, indent: 84, color: context.colors.divider),
+            Divider(height: 1, color: context.colors.divider),
           ],
         ),
       ),
     );
   }
-}
-
-class _Thumbnail extends StatelessWidget {
-  final Mission mission;
-
-  const _Thumbnail({required this.mission});
-
-  @override
-  Widget build(BuildContext context) {
-    return Hero(
-      tag: 'mission-img-${mission.id}',
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: SizedBox(
-          width: 72,
-          height: 72,
-          child: mission.images.isNotEmpty
-              ? Image.network(
-                  mission.images.first,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _fallback(context),
-                )
-              : _fallback(context),
-        ),
-      ),
-    );
-  }
-
-  Widget _fallback(BuildContext context) => ColoredBox(
-        color: context.colors.surfaceAlt,
-        child: Icon(
-          mission.categoryIcon,
-          size: 26,
-          color: context.colors.textTertiary,
-        ),
-      );
 }
