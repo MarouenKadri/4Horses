@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../app/auth_provider.dart';
+import '../../../../../app/widgets/app_brand_mark.dart';
 import '../../../../../core/design/app_design_system.dart';
 import '../../widgets/google_sign_in_button.dart';
 import '../login/login_page.dart';
@@ -77,32 +78,8 @@ class _HeroSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ─── Marque ───
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(AppDesign.radius10),
-                ),
-                child: const Icon(
-                  Icons.eco_rounded,
-                  color: Colors.white,
-                  size: 18,
-                ),
-              ),
-              AppGap.w10,
-              Text(
-                'BYRSA',
-                style: context.text.headlineSmall?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
+          // ─── Marque — la même que les homes connectés ───
+          const AppBrandMark(),
 
           AppGap.h22,
 
@@ -110,7 +87,7 @@ class _HeroSection extends StatelessWidget {
           Text(
             'Trouvez le prestataire\nqu\'il vous faut',
             style: context.text.bodyMedium?.copyWith(
-              fontSize: AppFontSize.d1,
+              fontSize: AppFontSize.h2,
               fontWeight: FontWeight.w800,
               color: context.colors.textPrimary,
               height: 1.2,
@@ -125,72 +102,27 @@ class _HeroSection extends StatelessWidget {
             ),
           ),
 
-          AppGap.h20,
+          AppGap.h16,
 
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: const [
-              _TrustMetric(
-                icon: Icons.star_rounded,
-                iconColor: AppColors.rating,
-                value: '4.8/5',
-                label: 'note moyenne',
+          // ─── Ligne de confiance — texte, pas de pilules ───
+          Row(
+            children: [
+              const Icon(Icons.star_rounded, size: 15, color: AppColors.rating),
+              AppGap.w4,
+              Text(
+                '4.8',
+                style: context.text.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.textPrimary,
+                ),
               ),
-              _TrustMetric(
-                icon: Icons.verified_user_rounded,
-                iconColor: AppColors.primary,
-                value: '10K+',
-                label: 'prestataires',
+              Text(
+                ' · 10 000+ prestataires vérifiés',
+                style: context.text.labelMedium?.copyWith(
+                  color: context.colors.textSecondary,
+                ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TrustMetric extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String value;
-  final String label;
-
-  const _TrustMetric({
-    required this.icon,
-    required this.iconColor,
-    required this.value,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: context.colors.surfaceAlt,
-        borderRadius: BorderRadius.circular(AppRadius.chip),
-        border: Border.all(color: context.colors.border),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: iconColor, size: 15),
-          AppGap.w5,
-          Text(
-            value,
-            style: context.text.bodySmall?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: context.colors.textPrimary,
-            ),
-          ),
-          AppGap.w4,
-          Text(
-            label,
-            style: context.text.bodySmall?.copyWith(
-              color: context.colors.textTertiary,
-            ),
           ),
         ],
       ),

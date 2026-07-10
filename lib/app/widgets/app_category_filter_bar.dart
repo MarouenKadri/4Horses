@@ -90,7 +90,7 @@ class AppCategoryChip extends StatelessWidget {
     final selectedEnd = _tone(color, -0.09);
     final borderColor = selected ? Colors.transparent : context.colors.border;
     final textColor = selected ? Colors.white : context.colors.textSecondary;
-    final iconColor = selected ? Colors.white : color;
+    final iconColor = selected ? Colors.white : context.colors.textSecondary;
     final iconBg = selected
         ? Colors.white.withValues(alpha: 0.18)
         : color.withValues(alpha: 0.12);
