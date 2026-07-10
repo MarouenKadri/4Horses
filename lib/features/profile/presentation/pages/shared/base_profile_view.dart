@@ -115,6 +115,10 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
   /// Label du bouton bas (peut être surchargé)
   String get contactButtonLabel => 'Contacter';
 
+  /// Action « Réserver » optionnelle — si non-null, le bas de page devient
+  /// double CTA : Contacter (secondaire) + Réserver (principal noir).
+  VoidCallback? buildReserveAction(BuildContext context) => null;
+
   // ── Chat — implémentation commune ────────────────────────────────────────
 
   Future<void> openChat(BuildContext context) async {
@@ -159,11 +163,33 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
                     top: BorderSide(color: context.colors.divider),
                   ),
                 ),
-                child: AppButton(
-                  label: isOpeningChat ? 'Connexion...' : contactButtonLabel,
-                  variant: ButtonVariant.black,
-                  icon: Icons.chat_bubble_outline_rounded,
-                  onPressed: isOpeningChat ? null : () => openChat(context),
+                child: Builder(
+                  builder: (context) {
+                    final reserve = buildReserveAction(context);
+                    final contactBtn = AppButton(
+                      label: isOpeningChat ? 'Connexion...' : contactButtonLabel,
+                      variant: reserve == null
+                          ? ButtonVariant.black
+                          : ButtonVariant.outline,
+                      icon: Icons.chat_bubble_outline_rounded,
+                      onPressed: isOpeningChat ? null : () => openChat(context),
+                    );
+                    if (reserve == null) return contactBtn;
+                    return Row(
+                      children: [
+                        Expanded(child: contactBtn),
+                        AppGap.w10,
+                        Expanded(
+                          child: AppButton(
+                            label: 'Réserver',
+                            variant: ButtonVariant.black,
+                            icon: Icons.event_available_rounded,
+                            onPressed: reserve,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             )
