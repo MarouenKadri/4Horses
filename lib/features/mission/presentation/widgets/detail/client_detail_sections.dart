@@ -70,11 +70,13 @@ class ClientCandidatesCard extends StatelessWidget {
               ),
             ],
           ),
-          AppGap.h18,
-          DetailTealButton(
-            label: 'Voir les candidatures',
-            onTap: count > 0 ? onViewCandidates : null,
-          ),
+          if (count > 0) ...[
+            AppGap.h18,
+            DetailTealButton(
+              label: 'Voir les candidatures',
+              onTap: onViewCandidates,
+            ),
+          ],
         ],
       ),
     );
