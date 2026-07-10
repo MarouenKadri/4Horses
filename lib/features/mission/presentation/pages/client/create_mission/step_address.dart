@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import '../../../../../../core/design/app_design_system.dart';
 import '../../../../../../core/location/nominatim_service.dart';
 import 'mission_step_ui.dart';
 
 /// ─────────────────────────────────────────────────────────────
-/// 📍 Step 4 — Adresse avec carte dynamique
+/// 📍 Step 4 — Adresse directe (recherche + suggestions, sans carte)
+/// La carte n'apportait rien : seule l'adresse texte est conservée,
+/// et le détail mission offre déjà « Voir sur la carte ».
 /// ─────────────────────────────────────────────────────────────
 class StepAddress extends StatefulWidget {
   final String address;
@@ -25,18 +25,17 @@ class StepAddress extends StatefulWidget {
 class _StepAddressState extends State<StepAddress> {
   final TextEditingController _ctrl = TextEditingController();
   final FocusNode _focus = FocusNode();
-  final MapController _mapController = MapController();
 
-  LatLng _mapCenter = const LatLng(48.8566, 2.3522); // Paris par défaut
-  LatLng? _selectedLatLng;
   List<NominatimPlace> _suggestions = [];
   bool _isSearching = false;
   bool _showSuggestions = false;
+  bool _hasSelection = false;
 
   @override
   void initState() {
     super.initState();
     _ctrl.text = widget.address;
+    _hasSelection = widget.address.trim().isNotEmpty;
     _focus.addListener(() {
       if (!_focus.hasFocus) setState(() => _showSuggestions = false);
     });
@@ -46,7 +45,6 @@ class _StepAddressState extends State<StepAddress> {
   void dispose() {
     _ctrl.dispose();
     _focus.dispose();
-    _mapController.dispose();
     super.dispose();
   }
 
@@ -82,222 +80,104 @@ class _StepAddressState extends State<StepAddress> {
     _focus.unfocus();
 
     setState(() {
-      _selectedLatLng = place.latLng;
-      _mapCenter = _selectedLatLng!;
+      _hasSelection = true;
       _showSuggestions = false;
       _suggestions = [];
     });
-
-    _mapController.move(_selectedLatLng!, 15);
   }
 
   void _clearSelection() {
     _ctrl.clear();
     widget.onAddressChanged('');
     setState(() {
-      _selectedLatLng = null;
+      _hasSelection = false;
       _showSuggestions = false;
       _suggestions = [];
     });
   }
 
   void _useCurrentLocation() {
-    const current = LatLng(48.8566, 2.3522);
     _ctrl.text = 'Paris, France';
     widget.onAddressChanged(_ctrl.text);
     _focus.unfocus();
     setState(() {
-      _selectedLatLng = current;
-      _mapCenter = current;
+      _hasSelection = true;
       _showSuggestions = false;
       _suggestions = [];
     });
-    _mapController.move(current, 15);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // ── Carte ─────────────────────────────────────────────
-        FlutterMap(
-          mapController: _mapController,
-          options: MapOptions(
-            initialCenter: _mapCenter,
-            initialZoom: 13,
-            onTap: (_, __) {
-              _focus.unfocus();
-              setState(() => _showSuggestions = false);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 110),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const MissionStepHeader(
+            title: 'Où se déroule la mission ?',
+            subtitle:
+                'L\'adresse exacte ne sera partagée qu\'au prestataire confirmé.',
+          ),
+          AppGap.h24,
+          _SearchBar(
+            controller: _ctrl,
+            focusNode: _focus,
+            isSearching: _isSearching,
+            hasValue: _ctrl.text.isNotEmpty,
+            onChanged: (v) {
+              widget.onAddressChanged(v);
+              _search(v);
+              setState(() {
+                _hasSelection = false;
+                _showSuggestions = v.isNotEmpty;
+              });
             },
+            onClear: _clearSelection,
           ),
-          children: [
-            TileLayer(
-              urlTemplate:
-                  'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
-              subdomains: const ['a', 'b', 'c', 'd'],
-              userAgentPackageName: 'com.example.homservice',
+          if (_showSuggestions && _suggestions.isNotEmpty) ...[
+            AppGap.h8,
+            _SuggestionsList(
+              suggestions: _suggestions,
+              onSelected: _selectPlace,
             ),
-            if (_selectedLatLng != null)
-              MarkerLayer(
-                markers: [
-                  Marker(
-                    point: _selectedLatLng!,
-                    width: 44,
-                    height: 52,
-                    child: const AppMapPin(),
-                  ),
-                ],
-              ),
           ],
-        ),
-        IgnorePointer(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.center,
-                colors: [
-                  Colors.white.withValues(alpha: 0.14),
-                  Colors.transparent,
-                ],
-              ),
-            ),
-            child: const SizedBox.expand(),
-          ),
-        ),
-
-        // ── Barre de recherche (flottante en haut) ────────────
-        Positioned(
-          top: 16,
-          left: 16,
-          right: 16,
-          child: Column(
-            children: [
-              _SearchBar(
-                controller: _ctrl,
-                focusNode: _focus,
-                isSearching: _isSearching,
-                hasValue: _ctrl.text.isNotEmpty,
-                onChanged: (v) {
-                  widget.onAddressChanged(v);
-                  _search(v);
-                  setState(() => _showSuggestions = v.isNotEmpty);
-                },
-                onClear: _clearSelection,
-              ),
-
-              // ── Suggestions ───────────────────────────────
-              if (_showSuggestions && _suggestions.isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.only(top: 6),
-                  decoration: BoxDecoration(
-                    color: context.colors.surface,
-                    borderRadius: BorderRadius.circular(AppDesign.radius12),
-                    border: Border.all(color: context.colors.border),
+          AppGap.h16,
+          // ── Position actuelle — action texte, comme le détail ──────
+          InkWell(
+            onTap: _useCurrentLocation,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.my_location_outlined,
+                    size: 18,
+                    color: context.colors.textSecondary,
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppDesign.radius12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: _suggestions.asMap().entries.map((e) {
-                        final i = e.key;
-                        final place = e.value;
-                        return Column(
-                          children: [
-                            InkWell(
-                              onTap: () => _selectPlace(place),
-                              child: Padding(
-                                padding: AppInsets.h16v12,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_on_rounded,
-                                      size: 18,
-                                      color: AppColors.primary,
-                                    ),
-                                    AppGap.w12,
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            place.displayName
-                                                .split(',')
-                                                .first
-                                                .trim(),
-                                            style: TextStyle(
-                                              fontSize: AppFontSize.baseHalf,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.inkDark,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          Text(
-                                            place.displayName
-                                                .split(',')
-                                                .skip(1)
-                                                .take(2)
-                                                .join(',')
-                                                .trim(),
-                                            style: context.text.labelMedium
-                                                ?.copyWith(
-                                                  color: context
-                                                      .colors
-                                                      .textTertiary,
-                                                ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            if (i < _suggestions.length - 1)
-                              Divider(height: 1, color: context.colors.divider),
-                          ],
-                        );
-                      }).toList(),
+                  AppGap.w10,
+                  Text(
+                    'Utiliser ma position actuelle',
+                    style: context.text.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.textPrimary,
                     ),
                   ),
-                ),
-            ],
-          ),
-        ),
-
-        Positioned(
-          left: 16,
-          right: 16,
-          bottom: _selectedLatLng != null && !_showSuggestions ? 96 : 30,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: AppButton(
-              label: 'Utiliser ma position actuelle',
-              onPressed: _useCurrentLocation,
-              variant: ButtonVariant.outline,
-              icon: Icons.my_location_outlined,
-              iconTrailing: false,
-              height: 48,
-              width: null,
+                ],
+              ),
             ),
           ),
-        ),
-
-        if (_selectedLatLng != null && !_showSuggestions)
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _SelectedAddressCard(
+          if (_hasSelection && !_showSuggestions) ...[
+            AppGap.h20,
+            Divider(height: 1, color: context.colors.divider),
+            AppGap.h16,
+            _SelectedAddressRow(
               address: _ctrl.text,
               onEdit: () => _focus.requestFocus(),
             ),
-          ),
-      ],
+          ],
+        ],
+      ),
     );
   }
 }
@@ -332,7 +212,7 @@ class _SearchBar extends StatelessWidget {
           AppInputDecorations.profileField(
             context,
             hintText: 'Rechercher une adresse...',
-            radius: 18,
+            radius: AppDesign.radius12,
             prefixIcon: isSearching
                 ? Padding(
                     padding: AppInsets.a14,
@@ -369,66 +249,140 @@ class _SearchBar extends StatelessWidget {
   }
 }
 
-class _SelectedAddressCard extends StatelessWidget {
-  final String address;
-  final VoidCallback onEdit;
+class _SuggestionsList extends StatelessWidget {
+  final List<NominatimPlace> suggestions;
+  final ValueChanged<NominatimPlace> onSelected;
 
-  const _SelectedAddressCard({required this.address, required this.onEdit});
+  const _SuggestionsList({required this.suggestions, required this.onSelected});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      padding: AppInsets.a16,
       decoration: BoxDecoration(
-        color: context.colors.surface.withValues(alpha: 0.98),
-        borderRadius: BorderRadius.circular(20),
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(AppDesign.radius12),
         border: Border.all(color: context.colors.border),
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: AppInsets.a10,
-            decoration: BoxDecoration(
-              color: AppColors.inkDark,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.check_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-          ),
-          AppGap.w14,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppDesign.radius12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: suggestions.asMap().entries.map((e) {
+            final i = e.key;
+            final place = e.value;
+            return Column(
               children: [
-                const MissionSectionLabel(label: 'Adresse sélectionnée'),
-                AppGap.h2,
-                Text(
-                  address,
-                  style: TextStyle(
-                    fontSize: AppFontSize.baseHalf,
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.textPrimary,
+                InkWell(
+                  onTap: () => onSelected(place),
+                  child: Padding(
+                    padding: AppInsets.h16v12,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 18,
+                          color: context.colors.textTertiary,
+                        ),
+                        AppGap.w12,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                place.displayName.split(',').first.trim(),
+                                style: context.text.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                place.displayName
+                                    .split(',')
+                                    .skip(1)
+                                    .take(2)
+                                    .join(',')
+                                    .trim(),
+                                style: context.text.labelMedium?.copyWith(
+                                  color: context.colors.textTertiary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
+                if (i < suggestions.length - 1)
+                  Divider(
+                    height: 1,
+                    indent: 46,
+                    color: context.colors.divider,
+                  ),
               ],
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.edit_rounded,
-              size: 18,
-              color: context.colors.textSecondary,
-            ),
-            onPressed: onEdit,
-          ),
-        ],
+            );
+          }).toList(),
+        ),
       ),
+    );
+  }
+}
+
+class _SelectedAddressRow extends StatelessWidget {
+  final String address;
+  final VoidCallback onEdit;
+
+  const _SelectedAddressRow({required this.address, required this.onEdit});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: context.colors.surfaceAlt,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.check_rounded,
+            size: 18,
+            color: context.colors.textPrimary,
+          ),
+        ),
+        AppGap.w12,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const MissionSectionLabel(label: 'Adresse sélectionnée'),
+              AppGap.h4,
+              Text(
+                address,
+                style: context.text.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  height: 1.35,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.edit_rounded,
+            size: 18,
+            color: context.colors.textSecondary,
+          ),
+          onPressed: onEdit,
+        ),
+      ],
     );
   }
 }
