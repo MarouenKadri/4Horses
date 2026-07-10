@@ -129,7 +129,6 @@ class _FreelancerProposalPageState extends State<FreelancerProposalPage> {
                     TextFormField(
                       controller: widget.priceController,
                       keyboardType: TextInputType.number,
-                      autofocus: true,
                       onChanged: (_) => setState(() {}),
                       style: context.text.displayMedium?.copyWith(
                         fontSize: AppFontSize.h2,
