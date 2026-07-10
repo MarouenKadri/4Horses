@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+
 import '../../../../../../core/design/app_design_system.dart';
 import '../../../../../../core/location/nominatim_service.dart';
 import 'mission_step_ui.dart';
@@ -34,6 +37,7 @@ class _StepAddressState extends State<StepAddress> {
   bool _showSuggestions = false;
   bool _hasSelection = false;
   bool _noResults = false;
+  bool _isLocating = false;
 
   @override
   void initState() {
@@ -117,18 +121,65 @@ class _StepAddressState extends State<StepAddress> {
     });
   }
 
-  void _useCurrentLocation() {
-    _ctrl.text = 'Paris, France';
-    widget.onAddressChanged(_ctrl.text);
+  Future<void> _useCurrentLocation() async {
+    if (_isLocating) return;
     _focus.unfocus();
-    _debounce?.cancel();
-    setState(() {
-      _hasSelection = true;
-      _showSuggestions = false;
-      _suggestions = [];
-      _noResults = false;
-      _isSearching = false;
-    });
+    setState(() => _isLocating = true);
+    try {
+      var perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.denied) {
+        perm = await Geolocator.requestPermission();
+      }
+      if (perm == LocationPermission.denied ||
+          perm == LocationPermission.deniedForever) {
+        if (!mounted) return;
+        showAppSnackBar(
+          context,
+          'Autorisez la localisation pour utiliser votre position.',
+          type: SnackBarType.error,
+        );
+        return;
+      }
+
+      final pos = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 10),
+        ),
+      );
+      final place = await NominatimService.reverse(
+        LatLng(pos.latitude, pos.longitude),
+      );
+      if (!mounted) return;
+      if (place == null) {
+        showAppSnackBar(
+          context,
+          'Adresse introuvable pour votre position. Saisissez-la manuellement.',
+          type: SnackBarType.error,
+        );
+        return;
+      }
+
+      _ctrl.text = place.displayName;
+      widget.onAddressChanged(place.displayName);
+      _debounce?.cancel();
+      setState(() {
+        _hasSelection = true;
+        _showSuggestions = false;
+        _suggestions = [];
+        _noResults = false;
+        _isSearching = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      showAppSnackBar(
+        context,
+        'Position indisponible. Vérifiez le GPS et réessayez.',
+        type: SnackBarType.error,
+      );
+    } finally {
+      if (mounted) setState(() => _isLocating = false);
+    }
   }
 
   @override
@@ -189,14 +240,23 @@ class _StepAddressState extends State<StepAddress> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.my_location_outlined,
-                    size: 18,
-                    color: context.colors.textSecondary,
-                  ),
+                  if (_isLocating)
+                    const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  else
+                    Icon(
+                      Icons.my_location_outlined,
+                      size: 18,
+                      color: context.colors.textSecondary,
+                    ),
                   AppGap.w10,
                   Text(
-                    'Utiliser ma position actuelle',
+                    _isLocating
+                        ? 'Localisation en cours...'
+                        : 'Utiliser ma position actuelle',
                     style: context.text.labelLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: context.colors.textPrimary,
