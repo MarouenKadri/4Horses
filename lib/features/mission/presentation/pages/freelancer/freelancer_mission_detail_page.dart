@@ -18,6 +18,7 @@ import '../../widgets/shared/mission_status_ui.dart';
 import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/detail/freelancer_detail_sections.dart';
 import '../../../../profile/presentation/pages/freelancer/freelancer_activity_page.dart';
+import 'freelancer_proposal_page.dart';
 import 'freelancer_tracking_page.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -683,22 +684,22 @@ class _FreelancerMissionDetailPageState
   }
 
   void _openProposalSheet() {
-    showAppBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      wrapWithSurface: false,
-      child: FreelancerProposalSheet(
-        mission: mission,
-        priceController: _priceController,
-        messageController: _messageController,
-        onSubmit: (double price, String message) {
-          context
-              .read<MissionProvider>()
-              .submitProposal(mission, price: price, message: message)
-              .catchError((e) => debugPrint('submitProposal error: $e'));
-          Navigator.pop(context);
-          Navigator.pop(context);
-        },
+    Navigator.push(
+      context,
+      slideUpRoute(
+        page: FreelancerProposalPage(
+          mission: mission,
+          priceController: _priceController,
+          messageController: _messageController,
+          onSubmit: (double price, String message) {
+            context
+                .read<MissionProvider>()
+                .submitProposal(mission, price: price, message: message)
+                .catchError((e) => debugPrint('submitProposal error: $e'));
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+        ),
       ),
     );
   }
