@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../../../../../../core/design/app_design_system.dart';
 import '../../../../../../core/location/nominatim_service.dart';
@@ -27,9 +29,11 @@ class _StepAddressState extends State<StepAddress> {
   final FocusNode _focus = FocusNode();
 
   List<NominatimPlace> _suggestions = [];
+  Timer? _debounce;
   bool _isSearching = false;
   bool _showSuggestions = false;
   bool _hasSelection = false;
+  bool _noResults = false;
 
   @override
   void initState() {
@@ -43,32 +47,43 @@ class _StepAddressState extends State<StepAddress> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _ctrl.dispose();
     _focus.dispose();
     super.dispose();
   }
 
   // ── Géocodage Nominatim ───────────────────────────────────
-  Future<void> _search(String query) async {
+  // Debounce obligatoire : Nominatim limite à ~1 requête/seconde,
+  // une requête par frappe se fait refuser en silence.
+  void _scheduleSearch(String query) {
+    _debounce?.cancel();
     if (query.trim().length < 3) {
       setState(() {
         _suggestions = [];
         _showSuggestions = false;
         _isSearching = false;
+        _noResults = false;
       });
       return;
     }
     setState(() => _isSearching = true);
+    _debounce = Timer(const Duration(milliseconds: 500), () => _search(query));
+  }
 
+  Future<void> _search(String query) async {
     try {
       final results = await NominatimService.search(query, limit: 5);
       if (!mounted) return;
+      // Ignore les réponses obsolètes (l'utilisateur a continué à taper)
+      if (query != _ctrl.text) return;
       setState(() {
         _suggestions = results;
         _showSuggestions = _suggestions.isNotEmpty;
+        _noResults = results.isEmpty;
       });
     } catch (_) {
-      // Erreur réseau silencieuse
+      if (mounted) setState(() => _noResults = true);
     } finally {
       if (mounted) setState(() => _isSearching = false);
     }
@@ -79,20 +94,26 @@ class _StepAddressState extends State<StepAddress> {
     widget.onAddressChanged(place.displayName);
     _focus.unfocus();
 
+    _debounce?.cancel();
     setState(() {
       _hasSelection = true;
       _showSuggestions = false;
       _suggestions = [];
+      _noResults = false;
+      _isSearching = false;
     });
   }
 
   void _clearSelection() {
     _ctrl.clear();
     widget.onAddressChanged('');
+    _debounce?.cancel();
     setState(() {
       _hasSelection = false;
       _showSuggestions = false;
       _suggestions = [];
+      _noResults = false;
+      _isSearching = false;
     });
   }
 
@@ -100,10 +121,13 @@ class _StepAddressState extends State<StepAddress> {
     _ctrl.text = 'Paris, France';
     widget.onAddressChanged(_ctrl.text);
     _focus.unfocus();
+    _debounce?.cancel();
     setState(() {
       _hasSelection = true;
       _showSuggestions = false;
       _suggestions = [];
+      _noResults = false;
+      _isSearching = false;
     });
   }
 
@@ -127,11 +151,8 @@ class _StepAddressState extends State<StepAddress> {
             hasValue: _ctrl.text.isNotEmpty,
             onChanged: (v) {
               widget.onAddressChanged(v);
-              _search(v);
-              setState(() {
-                _hasSelection = false;
-                _showSuggestions = v.isNotEmpty;
-              });
+              setState(() => _hasSelection = false);
+              _scheduleSearch(v);
             },
             onClear: _clearSelection,
           ),
@@ -140,6 +161,24 @@ class _StepAddressState extends State<StepAddress> {
             _SuggestionsList(
               suggestions: _suggestions,
               onSelected: _selectPlace,
+            ),
+          ] else if (_noResults && !_isSearching && !_hasSelection) ...[
+            AppGap.h12,
+            Row(
+              children: [
+                Icon(
+                  Icons.search_off_rounded,
+                  size: 16,
+                  color: context.colors.textTertiary,
+                ),
+                AppGap.w8,
+                Text(
+                  'Aucune adresse trouvée — précisez la ville',
+                  style: context.text.labelMedium?.copyWith(
+                    color: context.colors.textTertiary,
+                  ),
+                ),
+              ],
             ),
           ],
           AppGap.h16,
