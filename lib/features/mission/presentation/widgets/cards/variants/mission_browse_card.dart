@@ -38,14 +38,6 @@ class MissionBrowseCard extends StatelessWidget {
     }
   }
 
-  /// Date d'exécution explicite — à distinguer de la date de
-  /// publication (« Il y a 2 h ») affichée en tête de card.
-  String get _scheduleLabel {
-    final d = mission.formattedDate;
-    if (d == 'Aujourd\'hui' || d == 'Demain') return d;
-    return 'Pour le $d';
-  }
-
   static String _timeAgo(DateTime date) {
     final diff = DateTime.now().difference(date);
     if (diff.inMinutes < 1) return 'À l\'instant';
@@ -164,51 +156,38 @@ class MissionBrowseCard extends StatelessWidget {
                     ],
                   ),
                   AppGap.h8,
-                  // ── Tension + échéance ─────────────────────────────
-                  Row(
-                    children: [
-                      Expanded(
-                        child: isApplied
-                            ? Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.check_rounded,
-                                    size: 13,
-                                    color: context.colors.textTertiary,
-                                  ),
-                                  AppGap.w3,
-                                  Text(
-                                    'Postulé',
-                                    style: context.text.labelSmall?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: context.colors.textTertiary,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Text(
-                                mission.candidatesCount > 0
-                                    ? '${mission.candidatesCount} candidat${mission.candidatesCount > 1 ? 's' : ''}'
-                                    : 'Soyez le premier à postuler',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: context.text.labelSmall?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: context.colors.textSecondary,
-                                ),
-                              ),
-                      ),
-                      AppGap.w12,
-                      Text(
-                        _scheduleLabel,
-                        style: context.text.labelSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: context.colors.textSecondary,
+                  // ── Tension ────────────────────────────────────────
+                  if (isApplied)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.check_rounded,
+                          size: 13,
+                          color: context.colors.textTertiary,
                         ),
+                        AppGap.w3,
+                        Text(
+                          'Postulé',
+                          style: context.text.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.textTertiary,
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Text(
+                      mission.candidatesCount > 0
+                          ? '${mission.candidatesCount} candidat${mission.candidatesCount > 1 ? 's' : ''}'
+                          : 'Soyez le premier à postuler',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.text.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.textSecondary,
                       ),
-                    ],
-                  ),
+                    ),
                 ],
               ),
             ),
