@@ -43,7 +43,6 @@ class StepService extends StatelessWidget {
             _SelectedServiceSummary(
               title: selectedMeta['name'] as String? ?? 'Service',
               icon: selectedMeta['icon'] as IconData? ?? Icons.category_rounded,
-              color: selectedMeta['color'] as Color? ?? AppColors.primary,
               subtitle: selectedSubService ?? 'Sous-service à confirmer',
             ),
           ],
@@ -62,7 +61,6 @@ class StepService extends StatelessWidget {
       builder: (context) => _SubServicesSheet(
         serviceName: service['name'] as String? ?? 'Service',
         serviceIcon: service['icon'] as IconData? ?? Icons.category_rounded,
-        serviceColor: service['color'] as Color? ?? AppColors.primary,
         subServices: _readSubServices(service['subServices']),
         selectedSubService: selectedService == service['id']
             ? selectedSubService
@@ -93,13 +91,11 @@ class StepService extends StatelessWidget {
       itemBuilder: (context, index) {
         final service = items[index];
         final isSelected = selectedService == service['id'];
-        final color = service['color'] as Color? ?? AppColors.primary;
         return GestureDetector(
           onTap: () => _showSubServices(context, service),
           child: _ServiceIconCell(
             title: service['name'] as String? ?? 'Service',
             icon: service['icon'] as IconData? ?? Icons.category_rounded,
-            color: color,
             isSelected: isSelected,
           ),
         );
@@ -121,7 +117,6 @@ class StepService extends StatelessWidget {
 class _SubServicesSheet extends StatefulWidget {
   final String serviceName;
   final IconData serviceIcon;
-  final Color serviceColor;
   final List<String> subServices;
   final String? selectedSubService;
   final ValueChanged<String> onSelected;
@@ -129,7 +124,6 @@ class _SubServicesSheet extends StatefulWidget {
   const _SubServicesSheet({
     required this.serviceName,
     required this.serviceIcon,
-    required this.serviceColor,
     required this.subServices,
     required this.selectedSubService,
     required this.onSelected,
@@ -178,13 +172,13 @@ class _SubServicesSheetState extends State<_SubServicesSheet> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: widget.serviceColor.withValues(alpha: 0.14),
+                    color: context.colors.surfaceAlt,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     widget.serviceIcon,
                     size: 19,
-                    color: widget.serviceColor,
+                    color: AppColors.gray700,
                   ),
                 ),
                 AppGap.w10,
@@ -250,7 +244,7 @@ class _SubServicesSheetState extends State<_SubServicesSheet> {
                           onTap: () => widget.onSelected(subService),
                           backgroundColor: context.colors.surfaceAlt,
                           foregroundColor: AppColors.inkDark,
-                          selectedBackgroundColor: widget.serviceColor,
+                          selectedBackgroundColor: AppColors.inkDark,
                           selectedForegroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -272,13 +266,11 @@ class _SelectedServiceSummary extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData icon;
-  final Color color;
 
   const _SelectedServiceSummary({
     required this.title,
     required this.subtitle,
     required this.icon,
-    required this.color,
   });
 
   @override
@@ -288,7 +280,7 @@ class _SelectedServiceSummary extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 11, 12, 11),
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(AppDesign.radius12),
         border: Border.all(color: context.colors.border),
       ),
       child: Row(
@@ -297,10 +289,10 @@ class _SelectedServiceSummary extends StatelessWidget {
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.16),
+              color: context.colors.surfaceAlt,
               borderRadius: BorderRadius.circular(11),
             ),
-            child: Icon(icon, size: 18, color: color),
+            child: Icon(icon, size: 18, color: AppColors.gray700),
           ),
           AppGap.w10,
           Expanded(
@@ -322,7 +314,11 @@ class _SelectedServiceSummary extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Icons.check_circle_rounded, size: 18, color: color),
+          Icon(
+            Icons.check_rounded,
+            size: 18,
+            color: context.colors.textSecondary,
+          ),
         ],
       ),
     );
@@ -332,13 +328,11 @@ class _SelectedServiceSummary extends StatelessWidget {
 class _ServiceIconCell extends StatelessWidget {
   final String title;
   final IconData icon;
-  final Color color;
   final bool isSelected;
 
   const _ServiceIconCell({
     required this.title,
     required this.icon,
-    required this.color,
     required this.isSelected,
   });
 
@@ -356,13 +350,15 @@ class _ServiceIconCell extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: isSelected ? color : color.withValues(alpha: 0.12),
+                color: isSelected
+                    ? AppColors.inkDark
+                    : context.colors.surfaceAlt,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
                 icon,
                 size: 26,
-                color: isSelected ? Colors.white : color,
+                color: isSelected ? Colors.white : AppColors.gray700,
               ),
             ),
             if (isSelected)

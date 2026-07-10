@@ -223,7 +223,7 @@ class _AmountInput extends StatelessWidget {
           AppInputDecorations.profileField(
             context,
             hintText: '0',
-            radius: 18,
+            radius: AppDesign.radius12,
           ).copyWith(
             labelText: label,
             hintStyle: context.text.displayMedium?.copyWith(

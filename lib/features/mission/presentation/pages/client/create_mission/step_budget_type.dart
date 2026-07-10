@@ -80,7 +80,7 @@ class _BudgetTypeCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
         decoration: BoxDecoration(
           color: context.colors.surface,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppDesign.radius12),
           border: Border.all(
             color: isSelected
                 ? context.colors.textPrimary
@@ -98,18 +98,14 @@ class _BudgetTypeCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: AppFontSize.lgHalf,
-                      fontWeight: FontWeight.w500,
-                      color: context.colors.textPrimary,
+                    style: context.text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   AppGap.h4,
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: AppFontSize.smHalf,
-                      fontWeight: FontWeight.w400,
+                    style: context.text.bodySmall?.copyWith(
                       color: context.colors.textTertiary,
                     ),
                   ),

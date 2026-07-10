@@ -192,11 +192,11 @@ class _StepAddressState extends State<StepAddress> {
                   margin: const EdgeInsets.only(top: 6),
                   decoration: BoxDecoration(
                     color: context.colors.surface,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(AppDesign.radius12),
                     border: Border.all(color: context.colors.border),
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(AppDesign.radius12),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: _suggestions.asMap().entries.map((e) {

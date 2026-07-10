@@ -68,7 +68,7 @@ class StepDate extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: context.colors.surface,
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(AppDesign.radius12),
                       border: Border.all(
                         color: isSelected
                             ? context.colors.textPrimary
@@ -248,7 +248,7 @@ class StepTime extends StatelessWidget {
                     color: isSelected
                         ? context.colors.textPrimary.withValues(alpha: 0.08)
                         : context.colors.surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(AppDesign.radius12),
                     border: Border.all(
                       color: isSelected
                           ? context.colors.textPrimary
