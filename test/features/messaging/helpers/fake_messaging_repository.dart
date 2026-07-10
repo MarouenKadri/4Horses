@@ -1,6 +1,6 @@
-import 'package:flutter_application_1/core/errors/app_exception.dart';
-import 'package:flutter_application_1/features/messaging/data/models/message.dart';
-import 'package:flutter_application_1/features/messaging/data/repositories/messaging_repository.dart';
+import 'package:fourhorses/core/errors/app_exception.dart';
+import 'package:fourhorses/features/messaging/data/models/message.dart';
+import 'package:fourhorses/features/messaging/data/repositories/messaging_repository.dart';
 
 /// In-memory fake for tests — no Supabase required.
 class FakeMessagingRepository implements MessagingRepository {

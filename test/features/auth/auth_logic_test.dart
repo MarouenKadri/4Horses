@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_application_1/features/auth/presentation/utils/auth_formatters.dart';
-import 'package:flutter_application_1/features/auth/data/models/registration_data.dart';
-import 'package:flutter_application_1/features/auth/data/models/user_type.dart';
+import 'package:fourhorses/features/auth/presentation/utils/auth_formatters.dart';
+import 'package:fourhorses/features/auth/data/models/registration_data.dart';
+import 'package:fourhorses/features/auth/data/models/user_type.dart';
 
 void main() {
   // ─── maskEmail ─────────────────────────────────────────────────────────────
@@ -96,10 +96,7 @@ void main() {
     });
 
     test('message vide → message générique', () {
-      expect(
-        friendlyAuthError(''),
-        'Une erreur est survenue',
-      );
+      expect(friendlyAuthError(''), 'Une erreur est survenue');
     });
   });
 
@@ -231,8 +228,8 @@ void main() {
       expect(UserType.client.label, 'Client');
     });
 
-    test('freelancer → label "Freelancer"', () {
-      expect(UserType.freelancer.label, 'Freelancer');
+    test('freelancer → label "Prestataire"', () {
+      expect(UserType.freelancer.label, 'Prestataire');
     });
 
     test('client → description cherche un prestataire', () {

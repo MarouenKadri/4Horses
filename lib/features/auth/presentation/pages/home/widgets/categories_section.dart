@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/app/widgets/app_category_filter_bar.dart';
-import 'package:flutter_application_1/features/mission/data/models/service_category.dart';
+import 'package:fourhorses/app/widgets/app_category_filter_bar.dart';
+import 'package:fourhorses/features/mission/data/models/service_category.dart';
 
 class CategoriesRow extends StatelessWidget {
   const CategoriesRow({super.key});

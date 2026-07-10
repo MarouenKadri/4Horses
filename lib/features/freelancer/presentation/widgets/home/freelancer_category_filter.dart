@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/app/widgets/app_category_filter_bar.dart';
-import 'package:flutter_application_1/app/widgets/service_category_filter_items.dart';
-import 'package:flutter_application_1/core/design/app_design_system.dart';
+import 'package:fourhorses/app/widgets/app_category_filter_bar.dart';
+import 'package:fourhorses/app/widgets/service_category_filter_items.dart';
+import 'package:fourhorses/core/design/app_design_system.dart';
 
 /// Barre de filtres par catégorie (scroll horizontal).
 class FreelancerCategoryFilter extends StatelessWidget {

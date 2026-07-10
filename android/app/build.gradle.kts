@@ -5,10 +5,20 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+import java.io.FileInputStream
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+// Signature de release — android/key.properties (jamais versionné).
+// Sans le fichier (CI, autre poste), on retombe sur la signature debug.
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    namespace = "com.example.flutter_application_1"
+    namespace = "com.fourhorses.app"
     compileSdk = flutter.compileSdkVersion
 
     // ✅ Forcer l'utilisation du NDK 27 pour compatibilité avec tous les plugins
@@ -20,17 +30,35 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.flutter_application_1"
+        applicationId = "com.fourhorses.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = rootProject.file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // Temporary debug signing config (you can replace it later with your real keystore)
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }

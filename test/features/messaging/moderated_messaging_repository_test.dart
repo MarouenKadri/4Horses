@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_application_1/features/messaging/data/repositories/moderated_messaging_repository.dart';
+import 'package:fourhorses/features/messaging/data/repositories/moderated_messaging_repository.dart';
 import 'helpers/fake_messaging_repository.dart';
 
 void main() {

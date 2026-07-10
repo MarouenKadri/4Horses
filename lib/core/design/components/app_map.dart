@@ -32,7 +32,7 @@ enum AppMapTile {
 TileLayer _buildTile(AppMapTile t) => TileLayer(
   urlTemplate: t._url,
   subdomains: t._subdomains,
-  userAgentPackageName: 'com.example.inkern',
+  userAgentPackageName: 'com.fourhorses.app',
 );
 
 // ─── Shared result type (picker) ──────────────────────────────────────────────

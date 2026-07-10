@@ -306,7 +306,7 @@ class _LocationSearchPageState extends State<LocationSearchPage>
                         urlTemplate:
                             'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
                         subdomains: const ['a', 'b', 'c', 'd'],
-                        userAgentPackageName: 'com.example.inkern',
+                        userAgentPackageName: 'com.fourhorses.app',
                       ),
                       if (_pin != null)
                         MarkerLayer(markers: [

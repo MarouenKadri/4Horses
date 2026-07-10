@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_application_1/features/messaging/data/models/message.dart';
-import 'package:flutter_application_1/features/messaging/presentation/providers/chat_provider.dart';
+import 'package:fourhorses/features/messaging/data/models/message.dart';
+import 'package:fourhorses/features/messaging/presentation/providers/chat_provider.dart';
 import 'helpers/fake_messaging_repository.dart';
 
 ChatProvider _makeProvider({

@@ -345,7 +345,7 @@ class _FreelancerProfilePageState
                   urlTemplate:
                       'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
                   subdomains: const ['a', 'b', 'c', 'd'],
-                  userAgentPackageName: 'com.example.homservice',
+                  userAgentPackageName: 'com.fourhorses.app',
                 ),
                 MarkerLayer(
                   markers: [

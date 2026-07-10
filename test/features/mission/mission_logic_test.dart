@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_application_1/features/mission/data/models/mission.dart';
-import 'package:flutter_application_1/features/mission/presentation/widgets/shared/mission_finance_ui.dart';
-import 'package:flutter_application_1/features/mission/presentation/widgets/shared/mission_status_ui.dart';
+import 'package:fourhorses/features/mission/data/models/mission.dart';
+import 'package:fourhorses/features/mission/presentation/widgets/shared/mission_finance_ui.dart';
+import 'package:fourhorses/features/mission/presentation/widgets/shared/mission_status_ui.dart';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
