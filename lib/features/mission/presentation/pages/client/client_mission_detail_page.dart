@@ -54,6 +54,7 @@ class _ClientMissionDetailPageState
   bool get canCancel =>
       mission.status == MissionStatus.waitingCandidates ||
       mission.status == MissionStatus.candidateReceived ||
+      mission.status == MissionStatus.pendingAcceptance ||
       mission.status == MissionStatus.confirmed ||
       mission.status == MissionStatus.draft;
 
@@ -139,6 +140,16 @@ class _ClientMissionDetailPageState
   @override
   StatusBannerConfig? resolveBanner() {
     switch (mission.status) {
+      case MissionStatus.pendingAcceptance:
+        return StatusBannerConfig(
+          color: AppColors.warning,
+          icon: Icons.hourglass_top_rounded,
+          title: mission.assignedPresta != null
+              ? 'En attente de ${mission.assignedPresta!.name}'
+              : 'En attente du prestataire',
+          subtitle:
+              'Votre réservation a été envoyée. La mission sera confirmée dès que le prestataire l\'accepte.',
+        );
       case MissionStatus.onTheWay:
         return StatusBannerConfig(
           color: AppColors.secondary,

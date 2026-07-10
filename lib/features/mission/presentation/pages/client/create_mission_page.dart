@@ -461,7 +461,8 @@ class _PostMissionFlowState extends State<PostMissionFlow> {
       status: (isEdit && !isPublishingDraft)
           ? original!.status
           : hasPreAssignedFreelancer
-          ? MissionStatus.confirmed
+          // Réservation directe : le freelancer doit accepter avant confirmed
+          ? MissionStatus.pendingAcceptance
           : MissionStatus.waitingCandidates,
       images: List<String>.from(_photos),
       createdAt: isEdit ? original!.createdAt : now,

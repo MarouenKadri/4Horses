@@ -163,6 +163,15 @@ class _FreelancerMissionDetailPageState
   @override
   StatusBannerConfig? resolveBanner() {
     switch (mission.status) {
+      case MissionStatus.pendingAcceptance:
+        return StatusBannerConfig(
+          color: AppColors.warning,
+          icon: Icons.event_available_rounded,
+          title: 'Réservation directe',
+          subtitle:
+              'Un client vous a réservé pour cette mission. Acceptez pour la confirmer, ou refusez si vous n\'êtes pas disponible.',
+          style: DetailBannerStyle.card,
+        );
       case MissionStatus.confirmed:
         return StatusBannerConfig(
           color: AppColors.primary,
@@ -373,6 +382,31 @@ class _FreelancerMissionDetailPageState
       );
     }
 
+    // Réservation directe — le freelancer doit accepter ou refuser
+    if (widget.isOwn && mission.status == MissionStatus.pendingAcceptance) {
+      return DetailBottomArea(
+        caption: 'Ce client vous a réservé directement pour cette mission',
+        child: Row(
+          children: [
+            Expanded(
+              child: DetailSecondaryButton(
+                label: 'Refuser',
+                onTap: () => _declineReservation(ctx),
+              ),
+            ),
+            AppGap.w10,
+            Expanded(
+              child: DetailTealButton(
+                label: 'Accepter',
+                icon: Icons.check_rounded,
+                onTap: () => _acceptReservation(ctx),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     // Candidature déjà envoyée (explorer) ou isOwn en attente
     if (alreadyApplied || (widget.isOwn && !_isAccepted)) {
       return DetailBottomArea(
@@ -518,6 +552,71 @@ class _FreelancerMissionDetailPageState
       cancelLabel: 'Annuler',
       onConfirm: () => _sendContactRequest(client),
     );
+  }
+
+  // ─── Réservation directe : accepter / refuser ────────────────────────────
+
+  Future<void> _acceptReservation(BuildContext ctx) async {
+    await ctx.read<MissionProvider>().updateMissionStatus(
+      mission.id,
+      MissionStatus.confirmed,
+    );
+    _notifyReservationClient(
+      title: 'Réservation acceptée',
+      body:
+          '${mission.assignedPresta?.name ?? 'Le prestataire'} a accepté votre réservation pour "${mission.title}".',
+    );
+    if (!mounted) return;
+    showAppSnackBar(
+      context,
+      'Réservation acceptée — mission confirmée',
+      type: SnackBarType.success,
+    );
+  }
+
+  void _declineReservation(BuildContext ctx) {
+    showAppDialog(
+      context: ctx,
+      title: const Text('Refuser la réservation ?'),
+      content: Text(
+        'La mission "${mission.title}" sera annulée et le client en sera informé.',
+      ),
+      cancelLabel: 'Retour',
+      confirmLabel: 'Refuser',
+      confirmVariant: ButtonVariant.destructive,
+      onConfirm: () async {
+        await ctx.read<MissionProvider>().updateMissionStatus(
+          mission.id,
+          MissionStatus.cancelled,
+        );
+        _notifyReservationClient(
+          title: 'Réservation refusée',
+          body:
+              '${mission.assignedPresta?.name ?? 'Le prestataire'} n\'est pas disponible pour "${mission.title}".',
+        );
+        if (!mounted) return;
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  Future<void> _notifyReservationClient({
+    required String title,
+    required String body,
+  }) async {
+    final clientId = mission.client?.id;
+    if (clientId == null) return;
+    try {
+      await Supabase.instance.client.from('notifications').insert({
+        'user_id': clientId,
+        'type': 'mission',
+        'title': title,
+        'body': body,
+        'is_read': false,
+      });
+    } catch (e) {
+      debugPrint('notifyReservationClient failed: $e');
+    }
   }
 
   Future<void> _sendContactRequest(dynamic client) async {

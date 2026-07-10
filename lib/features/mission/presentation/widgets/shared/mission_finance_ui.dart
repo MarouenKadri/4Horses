@@ -41,6 +41,7 @@ class MissionFinanceUi {
       case MissionStatus.draft:
       case MissionStatus.waitingCandidates:
       case MissionStatus.candidateReceived:
+      case MissionStatus.pendingAcceptance:
       case MissionStatus.expired:
         return MissionFinanceState.pending;
       case MissionStatus.confirmed:

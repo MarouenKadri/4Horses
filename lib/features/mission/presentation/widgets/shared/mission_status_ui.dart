@@ -36,7 +36,8 @@ class MissionStatusUi {
         switch (tab) {
           case MissionUiTab.published:
             return status == MissionStatus.waitingCandidates ||
-                status == MissionStatus.candidateReceived;
+                status == MissionStatus.candidateReceived ||
+                status == MissionStatus.pendingAcceptance;
           case MissionUiTab.confirmed:
             return status == MissionStatus.confirmed;
           case MissionUiTab.inProgress:
@@ -57,7 +58,8 @@ class MissionStatusUi {
       case MissionUiRole.freelancer:
         switch (tab) {
           case MissionUiTab.applied:
-            return status == MissionStatus.candidateReceived;
+            return status == MissionStatus.candidateReceived ||
+                status == MissionStatus.pendingAcceptance;
           case MissionUiTab.confirmed:
             return status == MissionStatus.confirmed;
           case MissionUiTab.inProgress:
@@ -96,6 +98,7 @@ class MissionStatusUi {
           MissionStatus.draft => 'Publiee',
           MissionStatus.waitingCandidates => 'Publiee',
           MissionStatus.candidateReceived => 'Publiee',
+          MissionStatus.pendingAcceptance => 'Attente du prestataire',
           MissionStatus.confirmed => 'Confirmee',
           MissionStatus.onTheWay => 'En cours',
           MissionStatus.inProgress => 'En cours',
@@ -113,6 +116,7 @@ class MissionStatusUi {
           MissionStatus.draft => 'Postulée',
           MissionStatus.waitingCandidates => 'Postulée',
           MissionStatus.candidateReceived => 'Postulée',
+          MissionStatus.pendingAcceptance => 'Réservation à accepter',
           MissionStatus.confirmed => 'Confirmée',
           MissionStatus.onTheWay => 'En cours',
           MissionStatus.inProgress => 'En cours',

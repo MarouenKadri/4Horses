@@ -22,6 +22,7 @@ enum MissionStatus {
   draft, // Brouillon (création en cours)
   waitingCandidates, // Publiée, aucune candidature
   candidateReceived, // ≥1 candidature reçue
+  pendingAcceptance, // Réservation directe — attente d'acceptation du freelancer
   confirmed, // Freelancer accepté et payé → prêt à démarrer
   onTheWay, // Freelancer en route
   inProgress, // Mission démarrée (timer actif)
@@ -40,6 +41,7 @@ extension MissionStatusX on MissionStatus {
     MissionStatus.draft => 'Brouillon',
     MissionStatus.waitingCandidates => 'En attente',
     MissionStatus.candidateReceived => 'Candidatures',
+    MissionStatus.pendingAcceptance => 'Attente presta',
     MissionStatus.confirmed => 'Confirmée',
     MissionStatus.onTheWay => 'En route',
     MissionStatus.inProgress => 'En cours',
@@ -57,6 +59,7 @@ extension MissionStatusX on MissionStatus {
     MissionStatus.draft => AppColors.draftAmber,
     MissionStatus.waitingCandidates => AppColors.warning,
     MissionStatus.candidateReceived => AppColors.secondary,
+    MissionStatus.pendingAcceptance => AppColors.warning,
     MissionStatus.confirmed => AppColors.primary,
     MissionStatus.onTheWay => AppColors.secondary,
     MissionStatus.inProgress => AppColors.indigo,
@@ -74,6 +77,7 @@ extension MissionStatusX on MissionStatus {
     MissionStatus.draft => Icons.edit_note_rounded,
     MissionStatus.waitingCandidates => Icons.hourglass_empty_rounded,
     MissionStatus.candidateReceived => Icons.people_rounded,
+    MissionStatus.pendingAcceptance => Icons.hourglass_top_rounded,
     MissionStatus.confirmed => Icons.check_circle_rounded,
     MissionStatus.onTheWay => Icons.directions_car_rounded,
     MissionStatus.inProgress => Icons.play_circle_rounded,
@@ -90,6 +94,7 @@ extension MissionStatusX on MissionStatus {
   bool get isActive =>
       this == MissionStatus.waitingCandidates ||
       this == MissionStatus.candidateReceived ||
+      this == MissionStatus.pendingAcceptance ||
       this == MissionStatus.confirmed ||
       this == MissionStatus.onTheWay ||
       this == MissionStatus.inProgress ||
