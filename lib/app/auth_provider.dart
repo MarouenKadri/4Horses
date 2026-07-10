@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../core/push/push_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'enum/user_role.dart';
@@ -48,10 +50,12 @@ class AuthProvider extends ChangeNotifier {
           data.session != null) {
         // Blocked during login() and register() which call _loadProfile directly.
         if (!_isRegistering) _loadProfile(data.session!.user.id);
+        PushService.registerToken();
       } else if (data.event == AuthChangeEvent.initialSession &&
           data.session != null) {
         // Fires on app restart when a valid session is found in local storage.
         _loadProfile(data.session!.user.id);
+        PushService.registerToken();
       } else if (data.event == AuthChangeEvent.tokenRefreshed &&
           data.session != null) {
         if (!isLogged) _loadProfile(data.session!.user.id);
@@ -533,6 +537,7 @@ class AuthProvider extends ChangeNotifier {
     }
 
     // 3. Déconnexion + nettoyage local
+    await PushService.clearToken();
     try {
       await _supabase.auth.signOut();
     } catch (_) {}
@@ -552,6 +557,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     _switchToken++;
     pendingRole = null;
+    await PushService.clearToken();
     await _supabase.auth.signOut();
     currentRole = UserRole.guest;
     isLogged = false;

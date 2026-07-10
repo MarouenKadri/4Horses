@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app/navigation/root_nav.dart';
 import 'app/auth_provider.dart';
 import 'core/design/app_design_system.dart';
+import 'core/push/push_service.dart';
 import 'features/messaging/messaging_provider.dart';
 import 'features/mission/presentation/mission_provider.dart';
 import 'features/notifications/notifications.dart';
@@ -50,6 +51,7 @@ void main() async {
     ),
   );
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+  await PushService.init();
 
   final stripeKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
   if (stripeKey.isNotEmpty && !stripeKey.contains('your-stripe')) {
