@@ -175,12 +175,7 @@ class AppTextAction extends StatelessWidget {
   final VoidCallback? onTap;
   final Color? color;
 
-  const AppTextAction({
-    super.key,
-    required this.label,
-    this.onTap,
-    this.color,
-  });
+  const AppTextAction({super.key, required this.label, this.onTap, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -231,21 +226,14 @@ class AppBadgeDot extends StatelessWidget {
   final Color color;
   final double size;
 
-  const AppBadgeDot({
-    super.key,
-    this.color = AppColors.primary,
-    this.size = 8,
-  });
+  const AppBadgeDot({super.key, this.color = AppColors.primary, this.size = 8});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }
@@ -273,10 +261,7 @@ class AppPageBody extends StatelessWidget {
     return SafeArea(
       top: useSafeAreaTop,
       bottom: useSafeAreaBottom,
-      child: Padding(
-        padding: padding,
-        child: child,
-      ),
+      child: Padding(padding: padding, child: child),
     );
   }
 }
@@ -301,11 +286,7 @@ class AppSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final section = Container(
-      color: color,
-      padding: padding,
-      child: child,
-    );
+    final section = Container(color: color, padding: padding, child: child);
     if (margin == null) return section;
     return Padding(padding: margin!, child: section);
   }
@@ -396,10 +377,7 @@ class AppEmptyStateBlock extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ],
-          if (action != null) ...[
-            AppGap.h24,
-            action!,
-          ],
+          if (action != null) ...[AppGap.h24, action!],
         ],
       ),
     );
@@ -524,30 +502,27 @@ class AppProgressBar extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(999),
             child: SizedBox(
-                  height: 2,
-                  child: Stack(
-                    children: [
-                      Container(color: context.colors.divider),
-                      TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0, end: progress),
-                        duration: const Duration(milliseconds: 260),
-                        curve: Curves.easeOutCubic,
-                        builder: (_, value, __) => FractionallySizedBox(
-                          widthFactor: value,
-                          child: Container(color: context.colors.primary),
-                        ),
-                      ),
-                    ],
+              height: 2,
+              child: Stack(
+                children: [
+                  Container(color: context.colors.divider),
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0, end: progress),
+                    duration: const Duration(milliseconds: 260),
+                    curve: Curves.easeOutCubic,
+                    builder: (_, value, __) => FractionallySizedBox(
+                      widthFactor: value,
+                      child: Container(color: context.colors.primary),
+                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
           ),
           // ── Label étape ──────────────────────────────────────────────────
           if (stepLabel != null) ...[
             const SizedBox(height: 10),
-            Text(
-              stepLabel!,
-              style: context.progressStepLabelStyle,
-            ),
+            Text(stepLabel!, style: context.progressStepLabelStyle),
           ],
         ],
       ),
@@ -632,10 +607,7 @@ class AppFlowHeader extends StatelessWidget {
             ),
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(
-              minWidth: 32,
-              minHeight: 32,
-            ),
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
           ),
           AppGap.w8,
           Expanded(
@@ -712,11 +684,7 @@ class AppKeyboardActionBar extends StatelessWidget {
   final bool enabled;
   final VoidCallback? onTap;
 
-  const AppKeyboardActionBar({
-    super.key,
-    required this.enabled,
-    this.onTap,
-  });
+  const AppKeyboardActionBar({super.key, required this.enabled, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -859,17 +827,14 @@ class AppPillChip extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius:
-              borderRadius ?? BorderRadius.circular(AppRadius.cardLg),
+          borderRadius: borderRadius ?? BorderRadius.circular(AppRadius.cardLg),
           child: Ink(
             padding: padding,
             decoration: BoxDecoration(
               color: bg,
               borderRadius:
                   borderRadius ?? BorderRadius.circular(AppRadius.cardLg),
-              border: Border.all(
-                color: selected ? bg : context.colors.border,
-              ),
+              border: Border.all(color: selected ? bg : context.colors.border),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -990,7 +955,10 @@ class AppSettingsTile extends StatelessWidget {
                         Text(title, style: context.accountMenuTitleStyle),
                         if (subtitle != null) ...[
                           AppGap.h2,
-                          Text(subtitle!, style: context.accountMenuSubtitleStyle),
+                          Text(
+                            subtitle!,
+                            style: context.accountMenuSubtitleStyle,
+                          ),
                         ],
                       ],
                     ),
@@ -1033,10 +1001,7 @@ class AppSettingsSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
-      child: Text(
-        label.toUpperCase(),
-        style: context.accountSectionStyle,
-      ),
+      child: Text(label.toUpperCase(), style: context.accountSectionStyle),
     );
   }
 }
@@ -1049,11 +1014,7 @@ class AppListSurface extends StatelessWidget {
   final List<Widget> children;
   final BorderRadius? borderRadius;
 
-  const AppListSurface({
-    super.key,
-    required this.children,
-    this.borderRadius,
-  });
+  const AppListSurface({super.key, required this.children, this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -1130,10 +1091,14 @@ class AppHeroSliverBar extends StatelessWidget {
       expandedHeight: expandedHeight,
       pinned: pinned,
       backgroundColor: gradientColors.first,
-      leading: leadingBack ??
+      leading:
+          leadingBack ??
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 20),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
       actions: actions,
@@ -1243,8 +1208,9 @@ class AppTransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final amountColor =
-        isCredit ? context.colors.success : context.colors.textPrimary;
+    final amountColor = isCredit
+        ? context.colors.success
+        : context.colors.textPrimary;
     return Padding(
       padding: AppInsets.h16v12,
       child: Row(
@@ -1332,45 +1298,55 @@ class AppDangerBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Icon(Icons.warning_amber_rounded,
-                color: context.colors.error, size: 16),
-            AppGap.w8,
-            Expanded(
-              child: Text(
-                title,
-                style: context.text.bodyMedium?.copyWith(
-                  color: context.colors.error,
-                  fontWeight: FontWeight.w600,
+          Row(
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                color: context.colors.error,
+                size: 16,
+              ),
+              AppGap.w8,
+              Expanded(
+                child: Text(
+                  title,
+                  style: context.text.bodyMedium?.copyWith(
+                    color: context.colors.error,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (items.isNotEmpty) ...[
+            AppGap.h10,
+            ...items.map(
+              (item) => Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3),
+                      child: Icon(
+                        Icons.remove_circle_outline_rounded,
+                        size: 13,
+                        color: context.colors.error,
+                      ),
+                    ),
+                    AppGap.w8,
+                    Expanded(
+                      child: Text(
+                        item,
+                        style: context.text.bodyMedium?.copyWith(
+                          color: context.colors.textSecondary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ]),
-          if (items.isNotEmpty) ...[
-            AppGap.h10,
-            ...items.map((item) => Padding(
-                  padding: const EdgeInsets.only(top: 6),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 3),
-                        child: Icon(Icons.remove_circle_outline_rounded,
-                            size: 13, color: context.colors.error),
-                      ),
-                      AppGap.w8,
-                      Expanded(
-                        child: Text(
-                          item,
-                          style: context.text.bodyMedium?.copyWith(
-                            color: context.colors.textSecondary,
-                            height: 1.4,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
           ],
         ],
       ),
@@ -1397,14 +1373,18 @@ class AppErrorMessage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline_rounded,
-              size: 15, color: context.colors.error),
+          Icon(
+            Icons.error_outline_rounded,
+            size: 15,
+            color: context.colors.error,
+          ),
           AppGap.w8,
           Expanded(
             child: Text(
               message,
-              style: context.text.bodyMedium
-                  ?.copyWith(color: context.colors.error),
+              style: context.text.bodyMedium?.copyWith(
+                color: context.colors.error,
+              ),
             ),
           ),
         ],

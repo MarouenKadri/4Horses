@@ -45,20 +45,21 @@ class _AppEmailFieldState extends AppBaseFieldState<AppEmailField> {
         fontWeight: FontWeight.w500,
         color: context.colors.textPrimary,
       ),
-      decoration: AppInputDecorations.profileField(
-        context,
-        hintText: widget.hint ?? 'exemple@mail.com',
-        prefixIcon: Icon(
-          Icons.mail_outline_rounded,
-          color: context.colors.textHint,
-          size: 16,
-        ),
-        radius: 18,
-      ).copyWith(
-        labelText: widget.label,
-        contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-        errorStyle: context.profileErrorStyle,
-      ),
+      decoration:
+          AppInputDecorations.profileField(
+            context,
+            hintText: widget.hint ?? 'exemple@mail.com',
+            prefixIcon: Icon(
+              Icons.mail_outline_rounded,
+              color: context.colors.textHint,
+              size: 16,
+            ),
+            radius: 18,
+          ).copyWith(
+            labelText: widget.label,
+            contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+            errorStyle: context.profileErrorStyle,
+          ),
     );
   }
 }

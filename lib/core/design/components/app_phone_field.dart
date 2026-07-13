@@ -71,41 +71,45 @@ class _AppPhoneFieldState extends AppBaseFieldState<AppPhoneField> {
         fontWeight: FontWeight.w500,
         color: context.colors.textPrimary,
       ),
-      decoration: AppInputDecorations.profileField(
-        context,
-        hintText: _country.hint,
-        prefixIcon: GestureDetector(
-          onTap: _showCountryPicker,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            margin: const EdgeInsets.only(right: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(_country.flag, style: context.text.headlineMedium),
-                AppGap.w4,
-                Text(
-                  _country.dialCode,
-                  style: context.text.bodySmall?.copyWith(
-                    color: context.colors.textSecondary,
-                  ),
+      decoration:
+          AppInputDecorations.profileField(
+            context,
+            hintText: _country.hint,
+            prefixIcon: GestureDetector(
+              onTap: _showCountryPicker,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 14,
                 ),
-                AppGap.w2,
-                Icon(
-                  Icons.arrow_drop_down_rounded,
-                  size: 16,
-                  color: context.colors.textTertiary,
+                margin: const EdgeInsets.only(right: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(_country.flag, style: context.text.headlineMedium),
+                    AppGap.w4,
+                    Text(
+                      _country.dialCode,
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.textSecondary,
+                      ),
+                    ),
+                    AppGap.w2,
+                    Icon(
+                      Icons.arrow_drop_down_rounded,
+                      size: 16,
+                      color: context.colors.textTertiary,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
+            radius: 18,
+            contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+          ).copyWith(
+            labelText: widget.label,
+            errorStyle: context.profileErrorStyle,
           ),
-        ),
-        radius: 18,
-        contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      ).copyWith(
-        labelText: widget.label,
-        errorStyle: context.profileErrorStyle,
-      ),
     );
   }
 }

@@ -69,7 +69,9 @@ class AppButton extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.1,
                     color: switch (variant) {
-                      ButtonVariant.primary || ButtonVariant.destructive || ButtonVariant.black => Colors.white,
+                      ButtonVariant.primary ||
+                      ButtonVariant.destructive ||
+                      ButtonVariant.black => Colors.white,
                       ButtonVariant.secondary => context.colors.textPrimary,
                       ButtonVariant.outline => AppColors.primary,
                       ButtonVariant.ghost => context.colors.textSecondary,

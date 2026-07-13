@@ -67,21 +67,22 @@ class _AppDateFieldState extends AppBaseFieldState<AppDateField> {
         fontWeight: FontWeight.w500,
         color: context.colors.textPrimary,
       ),
-      decoration: AppInputDecorations.profileField(
-        context,
-        hintText: 'jj/mm/aaaa',
-        radius: 18,
-        prefixIcon: Icon(
-          Icons.calendar_today_outlined,
-          size: 16,
-          color: context.colors.textHint,
-        ),
-      ).copyWith(
-        labelText: widget.label,
-        errorText: widget.errorText,
-        contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-        errorStyle: context.profileErrorStyle,
-      ),
+      decoration:
+          AppInputDecorations.profileField(
+            context,
+            hintText: 'jj/mm/aaaa',
+            radius: 18,
+            prefixIcon: Icon(
+              Icons.calendar_today_outlined,
+              size: 16,
+              color: context.colors.textHint,
+            ),
+          ).copyWith(
+            labelText: widget.label,
+            errorText: widget.errorText,
+            contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+            errorStyle: context.profileErrorStyle,
+          ),
     );
   }
 }

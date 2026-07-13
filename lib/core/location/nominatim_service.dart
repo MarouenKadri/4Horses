@@ -51,9 +51,9 @@ class NominatimService {
   static const _userAgent = 'InkernApp/1.0';
 
   static Map<String, String> _headers({String language = 'fr'}) => {
-        'Accept-Language': language,
-        'User-Agent': _userAgent,
-      };
+    'Accept-Language': language,
+    'User-Agent': _userAgent,
+  };
 
   static Future<List<NominatimPlace>> search(
     String query, {
@@ -73,7 +73,10 @@ class NominatimService {
 
     final data = jsonDecode(response.body) as List;
     return data
-        .map((entry) => NominatimPlace.fromSearchJson(entry as Map<String, dynamic>))
+        .map(
+          (entry) =>
+              NominatimPlace.fromSearchJson(entry as Map<String, dynamic>),
+        )
         .toList(growable: false);
   }
 

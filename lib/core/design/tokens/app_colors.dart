@@ -46,6 +46,7 @@ abstract class AppColors {
   static const blackAlpha07 = Color(0x12000000);
   static const blackAlpha09 = Color(0x18000000);
   static const blackAlpha15 = Color(0x26000000);
+  static const blackAlpha55 = Color(0x8C000000);
   static const blackAlpha80 = Color(0xCC000000);
 
   // Messaging

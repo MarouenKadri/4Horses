@@ -282,14 +282,16 @@ class AppActionSheetItem extends StatelessWidget {
     final titleColor = destructive
         ? destructiveColor
         : dark
-            ? AppColors.snow
-            : context.colors.textPrimary;
+        ? AppColors.snow
+        : context.colors.textPrimary;
     final iconColor = destructive
         ? destructiveColor
         : dark
-            ? AppColors.snow.withValues(alpha: 0.85)
-            : context.colors.textSecondary;
-    final subtitleColor = dark ? AppColors.gray500 : context.colors.textSecondary;
+        ? AppColors.snow.withValues(alpha: 0.85)
+        : context.colors.textSecondary;
+    final subtitleColor = dark
+        ? AppColors.gray500
+        : context.colors.textSecondary;
 
     return InkWell(
       onTap: onTap,
@@ -470,7 +472,9 @@ class AppBarSheetSurface extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.colors.sheetBg.withValues(alpha: 0.72),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-            border: Border.all(color: context.colors.border.withValues(alpha: 0.55)),
+            border: Border.all(
+              color: context.colors.border.withValues(alpha: 0.55),
+            ),
             boxShadow: const [
               BoxShadow(
                 color: Color.fromRGBO(15, 23, 42, 0.10),

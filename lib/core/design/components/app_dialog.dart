@@ -143,7 +143,11 @@ Future<void> showAppSuccessDialog({
               color: AppColors.primary.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check_circle_rounded, size: 48, color: AppColors.primary),
+            child: const Icon(
+              Icons.check_circle_rounded,
+              size: 48,
+              color: AppColors.primary,
+            ),
           ),
           AppGap.h20,
           Text(

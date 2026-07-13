@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 abstract class AppDesign {
   // ── Spacing scale ─────────────────────────────────────────────────────────
-  static const double space2  = 2;
-  static const double space4  = 4;
-  static const double space6  = 6;
-  static const double space8  = 8;
+  static const double space2 = 2;
+  static const double space4 = 4;
+  static const double space6 = 6;
+  static const double space8 = 8;
   static const double space10 = 10;
   static const double space12 = 12;
   static const double space14 = 14;
@@ -21,39 +21,52 @@ abstract class AppDesign {
   static const double space48 = 48;
 
   // ── Radius scale ─────────────────────────────────────────────────────────
-  static const double radius4   = 4;
-  static const double radius8   = 8;
-  static const double radius10  = 10;
-  static const double radius12  = 12;
-  static const double radius14  = 14;
-  static const double radius16  = 16;
-  static const double radius20  = 20;
-  static const double radius24  = 24;
-  static const double radius28  = 28;
-  static const double radius99  = 99;
+  static const double radius4 = 4;
+  static const double radius8 = 8;
+  static const double radius10 = 10;
+  static const double radius12 = 12;
+  static const double radius14 = 14;
+  static const double radius16 = 16;
+  static const double radius20 = 20;
+  static const double radius24 = 24;
+  static const double radius28 = 28;
+  static const double radius99 = 99;
   static const double radiusFull = 999;
 
   // ── Alias sémantiques ────────────────────────────────────────────────────
-  static const double radiusXS     = radius4;
-  static const double radiusS      = radius8;
-  static const double radiusBadge  = radius10;
-  static const double radiusInput  = radius14;
+  static const double radiusXS = radius4;
+  static const double radiusS = radius8;
+  static const double radiusBadge = radius10;
+  static const double radiusInput = radius14;
   static const double radiusButton = radius14;
-  static const double radiusCard   = radius14;
-  static const double radius14Lg   = radius14;
+  static const double radiusCard = radius14;
+  static const double radius14Lg = radius14;
   static const double radiusCardLg = radius20;
-  static const double radiusSheet  = radius20;
-  static const double radiusChip   = radius20;
+  static const double radiusSheet = radius20;
+  static const double radiusChip = radius20;
 
   // ── Padding prédéfinis ───────────────────────────────────────────────────
-  static const EdgeInsets paddingPage    = EdgeInsets.all(space16);
-  static const EdgeInsets paddingCard    = EdgeInsets.all(space16);
-  static const EdgeInsets paddingCardLg  = EdgeInsets.all(space20);
-  static const EdgeInsets paddingInput   = EdgeInsets.symmetric(horizontal: space16, vertical: 14);
-  static const EdgeInsets paddingButton  = EdgeInsets.symmetric(horizontal: space24, vertical: 14);
-  static const EdgeInsets paddingChip    = EdgeInsets.symmetric(horizontal: space10, vertical: space6);
-  static const EdgeInsets paddingSheet   = EdgeInsets.fromLTRB(space20, space16, space20, space24);
-
+  static const EdgeInsets paddingPage = EdgeInsets.all(space16);
+  static const EdgeInsets paddingCard = EdgeInsets.all(space16);
+  static const EdgeInsets paddingCardLg = EdgeInsets.all(space20);
+  static const EdgeInsets paddingInput = EdgeInsets.symmetric(
+    horizontal: space16,
+    vertical: 14,
+  );
+  static const EdgeInsets paddingButton = EdgeInsets.symmetric(
+    horizontal: space24,
+    vertical: 14,
+  );
+  static const EdgeInsets paddingChip = EdgeInsets.symmetric(
+    horizontal: space10,
+    vertical: space6,
+  );
+  static const EdgeInsets paddingSheet = EdgeInsets.fromLTRB(
+    space20,
+    space16,
+    space20,
+    space24,
+  );
 }
 
 class AppInsets {
@@ -86,35 +99,122 @@ class AppInsets {
   static const EdgeInsets v14 = EdgeInsets.symmetric(vertical: 14);
   static const EdgeInsets v16 = EdgeInsets.symmetric(vertical: 16);
   static const EdgeInsets v17 = EdgeInsets.symmetric(vertical: 17);
-  static const EdgeInsets h16v4 = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
-  static const EdgeInsets h16v6 = EdgeInsets.symmetric(horizontal: 16, vertical: 6);
-  static const EdgeInsets h16v8 = EdgeInsets.symmetric(horizontal: 16, vertical: 8);
-  static const EdgeInsets h16v10 = EdgeInsets.symmetric(horizontal: 16, vertical: 10);
-  static const EdgeInsets h16v12 = EdgeInsets.symmetric(horizontal: 16, vertical: 12);
-  static const EdgeInsets h16v14 = EdgeInsets.symmetric(horizontal: 16, vertical: 14);
-  static const EdgeInsets h16v16 = EdgeInsets.symmetric(horizontal: 16, vertical: 16);
-  static const EdgeInsets h16v18 = EdgeInsets.symmetric(horizontal: 16, vertical: 18);
-  static const EdgeInsets h20v12 = EdgeInsets.symmetric(horizontal: 20, vertical: 12);
-  static const EdgeInsets h20v14 = EdgeInsets.symmetric(horizontal: 20, vertical: 14);
-  static const EdgeInsets h20v16 = EdgeInsets.symmetric(horizontal: 20, vertical: 16);
-  static const EdgeInsets h24v12 = EdgeInsets.symmetric(horizontal: 24, vertical: 12);
-  static const EdgeInsets h24v14 = EdgeInsets.symmetric(horizontal: 24, vertical: 14);
-  static const EdgeInsets h14v6 = EdgeInsets.symmetric(horizontal: 14, vertical: 6);
-  static const EdgeInsets h14v8 = EdgeInsets.symmetric(horizontal: 14, vertical: 8);
-  static const EdgeInsets h14v10 = EdgeInsets.symmetric(horizontal: 14, vertical: 10);
-  static const EdgeInsets h14v12 = EdgeInsets.symmetric(horizontal: 14, vertical: 12);
-  static const EdgeInsets h12v6 = EdgeInsets.symmetric(horizontal: 12, vertical: 6);
-  static const EdgeInsets h12v8 = EdgeInsets.symmetric(horizontal: 12, vertical: 8);
-  static const EdgeInsets h12v10 = EdgeInsets.symmetric(horizontal: 12, vertical: 10);
-  static const EdgeInsets h10v4 = EdgeInsets.symmetric(horizontal: 10, vertical: 4);
-  static const EdgeInsets h10v5 = EdgeInsets.symmetric(horizontal: 10, vertical: 5);
-  static const EdgeInsets h10v6 = EdgeInsets.symmetric(horizontal: 10, vertical: 6);
-  static const EdgeInsets h10v8 = EdgeInsets.symmetric(horizontal: 10, vertical: 8);
-  static const EdgeInsets h8v2 = EdgeInsets.symmetric(horizontal: 8, vertical: 2);
-  static const EdgeInsets h8v4 = EdgeInsets.symmetric(horizontal: 8, vertical: 4);
-  static const EdgeInsets h7v2 = EdgeInsets.symmetric(horizontal: 7, vertical: 2);
-  static const EdgeInsets h6v3 = EdgeInsets.symmetric(horizontal: 6, vertical: 3);
-  static const EdgeInsets h4v1 = EdgeInsets.symmetric(horizontal: 4, vertical: 1);
+  static const EdgeInsets h16v4 = EdgeInsets.symmetric(
+    horizontal: 16,
+    vertical: 4,
+  );
+  static const EdgeInsets h16v6 = EdgeInsets.symmetric(
+    horizontal: 16,
+    vertical: 6,
+  );
+  static const EdgeInsets h16v8 = EdgeInsets.symmetric(
+    horizontal: 16,
+    vertical: 8,
+  );
+  static const EdgeInsets h16v10 = EdgeInsets.symmetric(
+    horizontal: 16,
+    vertical: 10,
+  );
+  static const EdgeInsets h16v12 = EdgeInsets.symmetric(
+    horizontal: 16,
+    vertical: 12,
+  );
+  static const EdgeInsets h16v14 = EdgeInsets.symmetric(
+    horizontal: 16,
+    vertical: 14,
+  );
+  static const EdgeInsets h16v16 = EdgeInsets.symmetric(
+    horizontal: 16,
+    vertical: 16,
+  );
+  static const EdgeInsets h16v18 = EdgeInsets.symmetric(
+    horizontal: 16,
+    vertical: 18,
+  );
+  static const EdgeInsets h20v12 = EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 12,
+  );
+  static const EdgeInsets h20v14 = EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 14,
+  );
+  static const EdgeInsets h20v16 = EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 16,
+  );
+  static const EdgeInsets h24v12 = EdgeInsets.symmetric(
+    horizontal: 24,
+    vertical: 12,
+  );
+  static const EdgeInsets h24v14 = EdgeInsets.symmetric(
+    horizontal: 24,
+    vertical: 14,
+  );
+  static const EdgeInsets h14v6 = EdgeInsets.symmetric(
+    horizontal: 14,
+    vertical: 6,
+  );
+  static const EdgeInsets h14v8 = EdgeInsets.symmetric(
+    horizontal: 14,
+    vertical: 8,
+  );
+  static const EdgeInsets h14v10 = EdgeInsets.symmetric(
+    horizontal: 14,
+    vertical: 10,
+  );
+  static const EdgeInsets h14v12 = EdgeInsets.symmetric(
+    horizontal: 14,
+    vertical: 12,
+  );
+  static const EdgeInsets h12v6 = EdgeInsets.symmetric(
+    horizontal: 12,
+    vertical: 6,
+  );
+  static const EdgeInsets h12v8 = EdgeInsets.symmetric(
+    horizontal: 12,
+    vertical: 8,
+  );
+  static const EdgeInsets h12v10 = EdgeInsets.symmetric(
+    horizontal: 12,
+    vertical: 10,
+  );
+  static const EdgeInsets h10v4 = EdgeInsets.symmetric(
+    horizontal: 10,
+    vertical: 4,
+  );
+  static const EdgeInsets h10v5 = EdgeInsets.symmetric(
+    horizontal: 10,
+    vertical: 5,
+  );
+  static const EdgeInsets h10v6 = EdgeInsets.symmetric(
+    horizontal: 10,
+    vertical: 6,
+  );
+  static const EdgeInsets h10v8 = EdgeInsets.symmetric(
+    horizontal: 10,
+    vertical: 8,
+  );
+  static const EdgeInsets h8v2 = EdgeInsets.symmetric(
+    horizontal: 8,
+    vertical: 2,
+  );
+  static const EdgeInsets h8v4 = EdgeInsets.symmetric(
+    horizontal: 8,
+    vertical: 4,
+  );
+  static const EdgeInsets h7v2 = EdgeInsets.symmetric(
+    horizontal: 7,
+    vertical: 2,
+  );
+  static const EdgeInsets h6v3 = EdgeInsets.symmetric(
+    horizontal: 6,
+    vertical: 3,
+  );
+  static const EdgeInsets h4v1 = EdgeInsets.symmetric(
+    horizontal: 4,
+    vertical: 1,
+  );
 }
 
 class AppGap {
@@ -163,7 +263,10 @@ class AppPadding {
   static const EdgeInsets cardLarge = AppDesign.paddingCardLg;
   static const EdgeInsets page = AppDesign.paddingPage;
   static const EdgeInsets chip = AppDesign.paddingChip;
-  static const EdgeInsets chipCompact = EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+  static const EdgeInsets chipCompact = EdgeInsets.symmetric(
+    horizontal: 8,
+    vertical: 4,
+  );
   static const EdgeInsets button = AppDesign.paddingButton;
 }
 

@@ -83,7 +83,9 @@ class AppThemeData {
         indicatorColor: AppColors.primary.withValues(alpha: 0.15),
         iconTheme: WidgetStateProperty.resolveWith(
           (s) => IconThemeData(
-            color: s.contains(WidgetState.selected) ? AppColors.primary : AppColors.textTertiary,
+            color: s.contains(WidgetState.selected)
+                ? AppColors.primary
+                : AppColors.textTertiary,
           ),
         ),
         labelTextStyle: WidgetStateProperty.resolveWith((s) {
@@ -103,7 +105,10 @@ class AppThemeData {
         indicatorColor: AppColors.primary,
         indicatorSize: TabBarIndicatorSize.tab,
         labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-        unselectedLabelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
         dividerColor: AppColors.divider,
       ),
 
@@ -185,7 +190,11 @@ class AppThemeData {
       ),
 
       // ── Divider ──────────────────────────────────────────────────────────
-      dividerTheme: const DividerThemeData(color: AppColors.divider, thickness: 1, space: 1),
+      dividerTheme: const DividerThemeData(
+        color: AppColors.divider,
+        thickness: 1,
+        space: 1,
+      ),
 
       // ── Chip ─────────────────────────────────────────────────────────────
       chipTheme: ChipThemeData(
@@ -246,10 +255,14 @@ class AppThemeData {
       // ── Switch ───────────────────────────────────────────────────────────
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? Colors.white : AppColors.textTertiary,
+          (s) => s.contains(WidgetState.selected)
+              ? Colors.white
+              : AppColors.textTertiary,
         ),
         trackColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? AppColors.primary : AppColors.border,
+          (s) => s.contains(WidgetState.selected)
+              ? AppColors.primary
+              : AppColors.border,
         ),
       ),
 
@@ -632,9 +645,8 @@ extension AppChatTextStyles on BuildContext {
     height: 1.45,
   );
 
-  TextStyle get chatBubbleTextOnDarkStyle => chatBubbleTextStyle.copyWith(
-    color: AppColors.snow,
-  );
+  TextStyle get chatBubbleTextOnDarkStyle =>
+      chatBubbleTextStyle.copyWith(color: AppColors.snow);
 
   TextStyle get chatTimestampStyle => text.labelSmall!.copyWith(
     fontSize: AppFontSize.tiny,
@@ -662,9 +674,8 @@ extension AppSheetTextStyles on BuildContext {
     color: colors.textPrimary,
   );
 
-  TextStyle get sheetPickerTitleDarkStyle => sheetPickerTitleStyle.copyWith(
-    color: AppColors.snow,
-  );
+  TextStyle get sheetPickerTitleDarkStyle =>
+      sheetPickerTitleStyle.copyWith(color: AppColors.snow);
 
   TextStyle get sheetActionTitleStyle => text.titleSmall!.copyWith(
     fontSize: AppFontSize.body,
@@ -690,7 +701,9 @@ extension AppCommonTextStyles on BuildContext {
 
 extension AppBarTextStyles on BuildContext {
   TextStyle get appBarTitleStyle =>
-      (Theme.of(this).appBarTheme.titleTextStyle ?? text.titleLarge ?? const TextStyle())
+      (Theme.of(this).appBarTheme.titleTextStyle ??
+              text.titleLarge ??
+              const TextStyle())
           .copyWith(color: colors.textPrimary);
 
   TextStyle get appBarSubtitleStyle => text.labelMedium!.copyWith(
@@ -872,6 +885,13 @@ extension AppStoryTextStyles on BuildContext {
     fontSize: AppFontSize.base,
     height: 1.5,
     color: Colors.white,
+  );
+
+  TextStyle get storyComposerActionStyle => text.titleMedium!.copyWith(
+    fontSize: AppFontSize.lg,
+    fontWeight: FontWeight.w500,
+    letterSpacing: -0.1,
+    color: AppColors.snow.withValues(alpha: 0.96),
   );
 
   TextStyle get storyAuthorNameStyle => text.labelLarge!.copyWith(
@@ -1113,5 +1133,59 @@ extension AppProfileTextStyles on BuildContext {
   TextStyle get profileSliderValueStyle => text.labelSmall!.copyWith(
     fontWeight: FontWeight.w700,
     color: Colors.black,
+  );
+
+  // Basé sur titleMedium (sans height) : les TextField ne doivent pas hériter
+  // du height 1.65 de bodyLarge.
+  TextStyle get profileInputStyle => text.titleMedium!.copyWith(
+    fontSize: AppFontSize.body,
+    fontWeight: FontWeight.w400,
+    color: colors.textPrimary,
+  );
+}
+
+// Styles du visuel « carte bancaire » (aperçu live + badge de marque).
+extension AppPaymentCardTextStyles on BuildContext {
+  TextStyle get paymentBrandBadgeStyle => text.labelSmall!.copyWith(
+    fontSize: AppFontSize.tiny,
+    fontWeight: FontWeight.w800,
+    letterSpacing: 0.5,
+    color: Colors.white,
+  );
+
+  TextStyle get paymentCardBrandStyle => text.labelSmall!.copyWith(
+    fontSize: AppFontSize.tiny,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 1.5,
+    color: Colors.white.withValues(alpha: 0.55),
+  );
+
+  TextStyle get paymentCardNumberStyle => text.titleMedium!.copyWith(
+    fontSize: AppFontSize.body,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 3,
+    color: Colors.white,
+    fontFeatures: const [FontFeature.tabularFigures()],
+  );
+
+  TextStyle get paymentCardMicroLabelStyle => text.labelSmall!.copyWith(
+    fontSize: 8,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 1.5,
+    color: Colors.white.withValues(alpha: 0.35),
+  );
+
+  TextStyle get paymentCardExpiryStyle => text.labelLarge!.copyWith(
+    fontSize: AppFontSize.md,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 1.5,
+    color: Colors.white,
+    fontFeatures: const [FontFeature.tabularFigures()],
+  );
+
+  TextStyle get paymentCardNameStyle => text.labelSmall!.copyWith(
+    fontWeight: FontWeight.w500,
+    letterSpacing: 1.2,
+    color: Colors.white.withValues(alpha: 0.75),
   );
 }

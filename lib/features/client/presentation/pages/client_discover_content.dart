@@ -226,11 +226,12 @@ class _ActiveMissionsSection extends StatelessWidget {
             final mDay = DateTime(m.date.year, m.date.month, m.date.day);
             final diff = mDay.difference(todayDate).inDays;
             return diff > 0 && diff <= 7 && m.status == MissionStatus.confirmed;
-          }).toList()
-          ..sort((a, b) => a.date.compareTo(b.date)))
+          }).toList()..sort((a, b) => a.date.compareTo(b.date)))
         : <Mission>[];
 
-    final missions = todayMissions.isNotEmpty ? todayMissions : upcomingMissions;
+    final missions = todayMissions.isNotEmpty
+        ? todayMissions
+        : upcomingMissions;
     final isToday = todayMissions.isNotEmpty;
 
     return Padding(
@@ -382,8 +383,18 @@ class _ActiveMissionCard extends StatelessWidget {
   String _dateLabel(DateTime date) {
     const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
     const months = [
-      'jan', 'fév', 'mar', 'avr', 'mai', 'juin',
-      'juil', 'août', 'sep', 'oct', 'nov', 'déc',
+      'jan',
+      'fév',
+      'mar',
+      'avr',
+      'mai',
+      'juin',
+      'juil',
+      'août',
+      'sep',
+      'oct',
+      'nov',
+      'déc',
     ];
     return '${days[date.weekday - 1]} ${date.day} ${months[date.month - 1]}';
   }
@@ -399,9 +410,7 @@ class _ActiveMissionCard extends StatelessWidget {
     final timeLabel = mission.timeSlot.isNotEmpty
         ? mission.timeSlot.split(' - ').first
         : null;
-    final topLabel = showDate
-        ? _dateLabel(mission.date)
-        : (timeLabel ?? '—');
+    final topLabel = showDate ? _dateLabel(mission.date) : (timeLabel ?? '—');
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(MissionCardFrame.radiusSmall),
@@ -421,64 +430,61 @@ class _ActiveMissionCard extends StatelessWidget {
             border: Border.all(color: context.colors.border),
           ),
           child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Date/heure + flèche ────────────────────────────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  topLabel,
-                  style: context.text.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.textSecondary,
-                    letterSpacing: 0.2,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Date/heure + flèche ────────────────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    topLabel,
+                    style: context.text.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.textSecondary,
+                      letterSpacing: 0.2,
+                    ),
                   ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 12,
-                  color: context.colors.textSecondary,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            // ── Titre ───────────────────────────────────────────
-            Text(
-              mission.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: context.text.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: context.colors.textPrimary,
-                letterSpacing: -0.2,
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 12,
+                    color: context.colors.textSecondary,
+                  ),
+                ],
               ),
-            ),
-            // ── Sous-titre ──────────────────────────────────────
-            if (subtitle.isNotEmpty) ...[
-              const SizedBox(height: 4),
+              const SizedBox(height: 10),
+              // ── Titre ───────────────────────────────────────────
               Text(
-                subtitle,
+                mission.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: MissionCardFrame.metaStyle,
+                style: context.text.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.textPrimary,
+                  letterSpacing: -0.2,
+                ),
               ),
+              // ── Sous-titre ──────────────────────────────────────
+              if (subtitle.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: MissionCardFrame.metaStyle,
+                ),
+              ],
+              // ── Heure (when showing date in topLabel) ──────────
+              if (showDate && timeLabel != null) ...[
+                const SizedBox(height: 4),
+                Text(timeLabel, style: MissionCardFrame.metaStyle),
+              ],
             ],
-            // ── Heure (when showing date in topLabel) ──────────
-            if (showDate && timeLabel != null) ...[
-              const SizedBox(height: 4),
-              Text(
-                timeLabel,
-                style: MissionCardFrame.metaStyle,
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
   }
 }
-
 
 // ─────────────────────────────────────────────────────────────
 // Page découverte freelancers (standalone via "Voir plus")

@@ -78,70 +78,70 @@ class AppSegmentedTabBar extends StatelessWidget implements PreferredSizeWidget 
     required int Function(int) getSelected,
     required void Function(int) onTap,
   }) {
-    return SizedBox(
+    return Container(
       height: 48,
       width: double.infinity,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: List<Widget>.generate(tabs.length, (index) {
-            final selected = getSelected(index) == index;
-            final isLast = index == tabs.length - 1;
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: context.colors.divider)),
+      ),
+      child: Row(
+        children: List<Widget>.generate(tabs.length, (index) {
+          final selected = getSelected(index) == index;
 
-            return Padding(
-              padding: EdgeInsets.only(right: isLast ? 0 : 8),
-              child: GestureDetector(
-                onTap: () => onTap(index),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 9,
-                  ),
-                  decoration: BoxDecoration(
-                    color: selected ? AppColors.inkDark : Colors.white,
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(
-                      color: selected ? AppColors.inkDark : AppColors.gray50,
-                    ),
-                    boxShadow: selected
-                        ? const [
-                            BoxShadow(
-                              color: AppColors.blackAlpha09,
-                              blurRadius: 8,
-                              offset: Offset(0, 3),
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onTap(index),
+              behavior: HitTestBehavior.opaque,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (tabs[index].icon != null) ...[
+                            Icon(
+                              tabs[index].icon,
+                              size: 16,
+                              color: selected
+                                  ? context.colors.textPrimary
+                                  : context.colors.textHint,
                             ),
-                          ]
-                        : null,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (tabs[index].icon != null) ...[
-                        Icon(
-                          tabs[index].icon,
-                          size: 13,
-                          color: selected ? Colors.white : AppColors.gray600,
-                        ),
-                        const SizedBox(width: 6),
-                      ],
-                      Text(
-                        tabs[index].label,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: selected ? Colors.white : AppColors.inkDark,
-                        ),
+                            const SizedBox(width: 6),
+                          ],
+                          Flexible(
+                            child: Text(
+                              tabs[index].label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.text.labelLarge?.copyWith(
+                                fontWeight: selected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                                color: selected
+                                    ? context.colors.textPrimary
+                                    : context.colors.textHint,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    height: 2,
+                    width: 28,
+                    color: selected
+                        ? context.colors.textPrimary
+                        : Colors.transparent,
+                  ),
+                ],
               ),
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }

@@ -12,29 +12,28 @@ import '../../location/nominatim_service.dart';
 enum AppMapTile {
   /// CartoDB sans labels — épuré, pour pickers et previews.
   cartoLight,
+
   /// CartoDB avec labels de rues — pour le tracking (navigation).
   cartoLightAll,
   osm;
 
   String get _url => switch (this) {
-        AppMapTile.cartoLight =>
-          'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
-        AppMapTile.cartoLightAll =>
-          'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-        AppMapTile.osm =>
-          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-      };
+    AppMapTile.cartoLight =>
+      'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+    AppMapTile.cartoLightAll =>
+      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    AppMapTile.osm => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  };
 
-  List<String> get _subdomains => this == AppMapTile.osm
-      ? const []
-      : const ['a', 'b', 'c', 'd'];
+  List<String> get _subdomains =>
+      this == AppMapTile.osm ? const [] : const ['a', 'b', 'c', 'd'];
 }
 
 TileLayer _buildTile(AppMapTile t) => TileLayer(
-      urlTemplate: t._url,
-      subdomains: t._subdomains,
-      userAgentPackageName: 'com.example.inkern',
-    );
+  urlTemplate: t._url,
+  subdomains: t._subdomains,
+  userAgentPackageName: 'com.example.inkern',
+);
 
 // ─── Shared result type (picker) ──────────────────────────────────────────────
 
@@ -50,11 +49,7 @@ class AppMapPin extends StatelessWidget {
   final Color color;
   final double size;
 
-  const AppMapPin({
-    super.key,
-    this.color = AppColors.mapPin,
-    this.size = 40,
-  });
+  const AppMapPin({super.key, this.color = AppColors.mapPin, this.size = 40});
 
   @override
   Widget build(BuildContext context) {
@@ -76,12 +71,13 @@ class AppMapPin extends StatelessWidget {
               ),
             ],
           ),
-          child: const Icon(Icons.location_on_outlined, color: Colors.white, size: 18),
+          child: const Icon(
+            Icons.location_on_outlined,
+            color: Colors.white,
+            size: 18,
+          ),
         ),
-        CustomPaint(
-          size: const Size(12, 10),
-          painter: _PinTailPainter(color),
-        ),
+        CustomPaint(size: const Size(12, 10), painter: _PinTailPainter(color)),
       ],
     );
   }
@@ -122,17 +118,16 @@ abstract final class AppMap {
     String searchHint = 'Rechercher une adresse…',
     String emptyLabel = 'Aucune localisation définie',
     String tapHint = 'Appuyez pour poser le pin',
-  }) =>
-      _AppMapPicker(
-        key: key,
-        initialLatLng: initialLatLng,
-        initialAddress: initialAddress,
-        onChanged: onChanged,
-        height: height,
-        searchHint: searchHint,
-        emptyLabel: emptyLabel,
-        tapHint: tapHint,
-      );
+  }) => _AppMapPicker(
+    key: key,
+    initialLatLng: initialLatLng,
+    initialAddress: initialAddress,
+    onChanged: onChanged,
+    height: height,
+    searchHint: searchHint,
+    emptyLabel: emptyLabel,
+    tapHint: tapHint,
+  );
 
   /// [latLng] takes priority over [address].
   /// If [interactive] is true, pinch-zoom and drag are enabled.
@@ -146,17 +141,16 @@ abstract final class AppMap {
     AppMapTile tile = AppMapTile.cartoLight,
     VoidCallback? onTap,
     MapController? controller,
-  }) =>
-      _AppMapPreview(
-        key: key,
-        latLng: latLng,
-        address: address,
-        height: height,
-        interactive: interactive,
-        tile: tile,
-        onTap: onTap,
-        controller: controller,
-      );
+  }) => _AppMapPreview(
+    key: key,
+    latLng: latLng,
+    address: address,
+    height: height,
+    interactive: interactive,
+    tile: tile,
+    onTap: onTap,
+    controller: controller,
+  );
 
   /// Dual-marker tracking map. The parent manages position streams and
   /// calls setState; [didUpdateWidget] moves the camera automatically.
@@ -169,19 +163,23 @@ abstract final class AppMap {
     AppMapTile tile = AppMapTile.cartoLightAll,
     bool showWaiting = true,
     String waitingText = 'En attente de la position…',
-  }) =>
-      _AppMapTracking(
-        key: key,
-        freelancerPosition: freelancerPosition,
-        destination: destination,
-        freelancerMarker: freelancerMarker ??
-            const AppMapPin(color: AppColors.primary),
-        destinationMarker: destinationMarker ??
-            const AppMapPin(color: AppColors.inkDark),
-        tile: tile,
-        showWaiting: showWaiting,
-        waitingText: waitingText,
-      );
+  }) => _AppMapTracking(
+    key: key,
+    freelancerPosition: freelancerPosition,
+    destination: destination,
+    freelancerMarker:
+        freelancerMarker ??
+        const Icon(
+          Icons.directions_run_rounded,
+          color: AppColors.secondary,
+          size: 32,
+        ),
+    destinationMarker:
+        destinationMarker ?? const AppMapPin(color: AppColors.success),
+    tile: tile,
+    showWaiting: showWaiting,
+    waitingText: waitingText,
+  );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -283,7 +281,9 @@ class _AppMapPickerState extends State<_AppMapPicker> {
     });
     _mapCtrl.move(place.latLng, 14);
     _searchFocus.unfocus();
-    widget.onChanged(AppMapSelection(latLng: place.latLng, address: place.shortAddress));
+    widget.onChanged(
+      AppMapSelection(latLng: place.latLng, address: place.shortAddress),
+    );
   }
 
   Future<void> _reverseGeocode(LatLng latLng) async {
@@ -295,7 +295,9 @@ class _AppMapPickerState extends State<_AppMapPicker> {
         _displayAddress = place.shortAddress;
         _searchCtrl.text = place.shortAddress;
       });
-      widget.onChanged(AppMapSelection(latLng: latLng, address: place.shortAddress));
+      widget.onChanged(
+        AppMapSelection(latLng: latLng, address: place.shortAddress),
+      );
     } catch (_) {
     } finally {
       if (mounted) setState(() => _isReversing = false);
@@ -349,7 +351,12 @@ class _AppMapPickerState extends State<_AppMapPicker> {
                     if (_pin != null)
                       MarkerLayer(
                         markers: [
-                          Marker(point: _pin!, width: 44, height: 52, child: const AppMapPin()),
+                          Marker(
+                            point: _pin!,
+                            width: 44,
+                            height: 52,
+                            child: const AppMapPin(),
+                          ),
                         ],
                       ),
                   ],
@@ -367,7 +374,11 @@ class _AppMapPickerState extends State<_AppMapPicker> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.touch_app_rounded, size: 16, color: Colors.white),
+                              const Icon(
+                                Icons.touch_app_rounded,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                               AppGap.w6,
                               Text(
                                 widget.tapHint,
@@ -396,7 +407,10 @@ class _AppMapPickerState extends State<_AppMapPicker> {
                       child: const SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
                   ),
@@ -584,7 +598,8 @@ class _AppMapTrackingState extends State<_AppMapTracking> {
     final pos = widget.freelancerPosition;
     final oldPos = old.freelancerPosition;
     if (pos != null && _following) {
-      final changed = oldPos == null ||
+      final changed =
+          oldPos == null ||
           pos.latitude != oldPos.latitude ||
           pos.longitude != oldPos.longitude;
       if (changed) _mapCtrl.move(pos, 15);
@@ -607,9 +622,8 @@ class _AppMapTrackingState extends State<_AppMapTracking> {
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
     final screenHeight = MediaQuery.of(context).size.height;
-    final center = widget.freelancerPosition ??
-        widget.destination ??
-        _defaultCenter;
+    final center =
+        widget.freelancerPosition ?? widget.destination ?? _defaultCenter;
 
     return Stack(
       children: [
@@ -630,7 +644,8 @@ class _AppMapTrackingState extends State<_AppMapTracking> {
             ),
             children: [
               _buildTile(widget.tile),
-              if (widget.freelancerPosition != null && widget.destination != null)
+              if (widget.freelancerPosition != null &&
+                  widget.destination != null)
                 PolylineLayer(
                   polylines: [
                     Polyline(
@@ -684,7 +699,10 @@ class _AppMapTrackingState extends State<_AppMapTracking> {
             right: 0,
             child: Center(
               child: AppSurfaceCard(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(99),
                 boxShadow: AppShadows.card,
@@ -746,7 +764,9 @@ class _SearchBar extends StatelessWidget {
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(AppRadius.input),
             border: Border.all(
-              color: focusNode.hasFocus ? AppColors.primary : context.colors.border,
+              color: focusNode.hasFocus
+                  ? AppColors.primary
+                  : context.colors.border,
               width: focusNode.hasFocus ? 1.8 : 1,
             ),
           ),
@@ -754,17 +774,25 @@ class _SearchBar extends StatelessWidget {
             children: [
               Padding(
                 padding: AppInsets.h12,
-                child: Icon(Icons.search_rounded, size: 20, color: context.colors.textTertiary),
+                child: Icon(
+                  Icons.search_rounded,
+                  size: 20,
+                  color: context.colors.textTertiary,
+                ),
               ),
               Expanded(
                 child: TextField(
                   controller: controller,
                   focusNode: focusNode,
-                  style: context.text.bodyMedium?.copyWith(color: context.colors.textPrimary),
+                  style: context.text.bodyMedium?.copyWith(
+                    color: context.colors.textPrimary,
+                  ),
                   decoration: AppInputDecorations.formField(
                     context,
                     hintText: hintText,
-                    hintStyle: context.text.bodySmall?.copyWith(color: context.colors.textHint),
+                    hintStyle: context.text.bodySmall?.copyWith(
+                      color: context.colors.textHint,
+                    ),
                     contentPadding: AppInsets.v13,
                     noBorder: true,
                     fillColor: Colors.transparent,
@@ -778,7 +806,10 @@ class _SearchBar extends StatelessWidget {
                   child: SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
+                    ),
                   ),
                 )
               else if (controller.text.isNotEmpty)
@@ -786,7 +817,11 @@ class _SearchBar extends StatelessWidget {
                   onTap: onClear,
                   child: Padding(
                     padding: AppInsets.h12,
-                    child: Icon(Icons.close_rounded, size: 18, color: context.colors.textHint),
+                    child: Icon(
+                      Icons.close_rounded,
+                      size: 18,
+                      color: context.colors.textHint,
+                    ),
                   ),
                 ),
             ],
@@ -801,47 +836,64 @@ class _SearchBar extends StatelessWidget {
               border: Border.all(color: context.colors.border),
             ),
             child: Column(
-              children: suggestions.asMap().entries.map((entry) {
-                final i = entry.key;
-                final place = entry.value;
-                final short = place.shortAddress.split(',').first.trim();
-                final rest = place.shortAddress.split(',').skip(1).join(',').trim();
-                return Column(
-                  children: [
-                    InkWell(
-                      onTap: () => onSelectSuggestion(place),
-                      child: Padding(
-                        padding: AppInsets.h12v10,
-                        child: Row(
-                          children: [
-                            Icon(Icons.location_on_rounded, size: 18, color: AppColors.primary),
-                            AppGap.w10,
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    short,
-                                    style: context.text.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: context.colors.textPrimary,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+              children: suggestions
+                  .asMap()
+                  .entries
+                  .map((entry) {
+                    final i = entry.key;
+                    final place = entry.value;
+                    final short = place.shortAddress.split(',').first.trim();
+                    final rest = place.shortAddress
+                        .split(',')
+                        .skip(1)
+                        .join(',')
+                        .trim();
+                    return Column(
+                      children: [
+                        InkWell(
+                          onTap: () => onSelectSuggestion(place),
+                          child: Padding(
+                            padding: AppInsets.h12v10,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on_rounded,
+                                  size: 18,
+                                  color: AppColors.primary,
+                                ),
+                                AppGap.w10,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        short,
+                                        style: context.text.bodySmall?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: context.colors.textPrimary,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      if (rest.isNotEmpty)
+                                        Text(
+                                          rest,
+                                          style: context.text.labelSmall,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                    ],
                                   ),
-                                  if (rest.isNotEmpty)
-                                    Text(rest, style: context.text.labelSmall, overflow: TextOverflow.ellipsis),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    if (i < suggestions.length - 1)
-                      Divider(height: 1, color: context.colors.divider),
-                  ],
-                );
-              }).toList(growable: false),
+                        if (i < suggestions.length - 1)
+                          Divider(height: 1, color: context.colors.divider),
+                      ],
+                    );
+                  })
+                  .toList(growable: false),
             ),
           ),
         ],
@@ -873,7 +925,9 @@ class _AddressBadge extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            hasAddress ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+            hasAddress
+                ? Icons.check_circle_rounded
+                : Icons.info_outline_rounded,
             size: 16,
             color: hasAddress ? AppColors.primary : context.colors.textHint,
           ),
@@ -883,7 +937,9 @@ class _AddressBadge extends StatelessWidget {
               hasAddress ? address : emptyLabel,
               style: context.text.bodySmall?.copyWith(
                 fontWeight: hasAddress ? FontWeight.w600 : FontWeight.w400,
-                color: hasAddress ? AppColors.primary : context.colors.textSecondary,
+                color: hasAddress
+                    ? AppColors.primary
+                    : context.colors.textSecondary,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

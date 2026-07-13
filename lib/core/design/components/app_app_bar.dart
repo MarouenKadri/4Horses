@@ -62,9 +62,8 @@ class AppPageAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(
-        toolbarHeight + (bottom?.preferredSize.height ?? 0),
-      );
+  Size get preferredSize =>
+      Size.fromHeight(toolbarHeight + (bottom?.preferredSize.height ?? 0));
 
   @override
   Widget build(BuildContext context) {
@@ -92,9 +91,7 @@ class AppPageAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: centerTitle,
       toolbarHeight: toolbarHeight,
       shape: showBorder
-          ? Border(
-              bottom: BorderSide(color: context.colors.border, width: 0.8),
-            )
+          ? Border(bottom: BorderSide(color: context.colors.border, width: 0.8))
           : null,
       leading: leading,
       title: resolvedTitle,
@@ -127,10 +124,7 @@ class AppBarPillTitle extends StatelessWidget {
         children: [
           Icon(icon, color: AppColors.primary, size: 20),
           AppGap.w6,
-          Text(
-            label,
-            style: context.appBarPillStyle,
-          ),
+          Text(label, style: context.appBarPillStyle),
         ],
       ),
     );
@@ -140,10 +134,7 @@ class AppBarPillTitle extends StatelessWidget {
 class AppBarAccentTitle extends StatelessWidget {
   final String title;
 
-  const AppBarAccentTitle({
-    super.key,
-    required this.title,
-  });
+  const AppBarAccentTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -151,10 +142,7 @@ class AppBarAccentTitle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          title,
-          style: context.appBarAccentTitleStyle,
-        ),
+        Text(title, style: context.appBarAccentTitleStyle),
         AppGap.h3,
         Container(
           width: 24,
@@ -294,4 +282,3 @@ class AppBarSectionLabel extends StatelessWidget {
     );
   }
 }
-
