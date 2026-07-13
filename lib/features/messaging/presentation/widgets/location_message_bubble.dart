@@ -4,8 +4,6 @@ import '../../../../core/design/app_design_system.dart';
 import '../../data/models/message.dart';
 import 'message_time_status.dart';
 
-const _kInk = AppColors.ink;
-const _kWhite = AppColors.surface;
 
 class LocationMessageBubble extends StatelessWidget {
   final ChatMessage message;
@@ -35,7 +33,7 @@ class LocationMessageBubble extends StatelessWidget {
       child: Container(
         width: 230,
         decoration: BoxDecoration(
-          color: isMe ? _kInk : _kWhite,
+          color: isMe ? context.colors.textPrimary : context.colors.surface,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(18),
             topRight: const Radius.circular(18),
@@ -115,7 +113,7 @@ class LocationMessageBubble extends StatelessWidget {
                     Icons.location_on_rounded,
                     size: 14,
                     color: isMe
-                        ? _kWhite.withValues(alpha: 0.8)
+                        ? context.colors.surface.withValues(alpha: 0.8)
                         : AppColors.primary,
                   ),
                   AppGap.w4,
@@ -123,7 +121,7 @@ class LocationMessageBubble extends StatelessWidget {
                     child: Text(
                       'Position partagée',
                       style: context.chatLocationLabelStyle.copyWith(
-                        color: isMe ? _kWhite : _kInk,
+                        color: isMe ? context.colors.surface : context.colors.textPrimary,
                       ),
                     ),
                   ),

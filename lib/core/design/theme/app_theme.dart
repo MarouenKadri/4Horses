@@ -31,7 +31,11 @@ class AppThemeData {
       outlineVariant: AppColorsDark.divider,
       surfaceContainerHighest: AppColorsDark.surfaceAlt,
     ),
-    textTheme: theme.textTheme,
+    textTheme: AppType.buildTextTheme(
+      primary: AppColorsDark.textPrimary,
+      secondary: AppColorsDark.textSecondary,
+      tertiary: AppColorsDark.textTertiary,
+    ),
   );
 
   static ThemeData _build() {

@@ -674,10 +674,10 @@ class ProfileTabPill extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: active ? AppColors.inkDark : Colors.white,
+          color: active ? context.colors.textPrimary : context.colors.surface,
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-            color: active ? AppColors.inkDark : AppColors.gray50,
+            color: active ? context.colors.textPrimary : context.colors.border,
           ),
           boxShadow: active
               ? const [
@@ -695,7 +695,9 @@ class ProfileTabPill extends StatelessWidget {
             Icon(
               icon,
               size: 13,
-              color: active ? Colors.white : AppColors.gray600,
+              color: active
+                  ? context.colors.background
+                  : context.colors.textSecondary,
             ),
             const SizedBox(width: 6),
             Text(
@@ -703,7 +705,9 @@ class ProfileTabPill extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: active ? Colors.white : AppColors.inkDark,
+                color: active
+                    ? context.colors.background
+                    : context.colors.textPrimary,
               ),
             ),
           ],

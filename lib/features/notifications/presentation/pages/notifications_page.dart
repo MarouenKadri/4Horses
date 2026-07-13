@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../app/widgets/app_segmented_tab_bar.dart';
 import '../../../../core/design/app_design_system.dart';
 import '../../../messaging/messaging_provider.dart';
 import '../../../messaging/presentation/pages/chat_page.dart';
@@ -60,68 +61,44 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
     return Scaffold(
       backgroundColor: context.colors.background,
+      appBar: AppPageAppBar(
+        title: 'Notifications',
+        leading: const AppBackButtonLeading(),
+        actions: [
+          if (unreadCount > 0)
+            AppButton(
+              label: 'Tout lire',
+              onPressed: () =>
+                  context.read<NotificationProvider>().markAllRead(),
+              variant: ButtonVariant.ghost,
+              width: null,
+              height: 36,
+            ),
+        ],
+      ),
       body: SafeArea(
         bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 12, 0),
-              child: Row(
-                children: [
-                  AppBackButtonLeading(
-                    size: 18,
-                    color: context.colors.textSecondary,
-                    onPressed: () => Navigator.maybePop(context),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Notifications',
-                      style: context.text.displayMedium?.copyWith(
-                        fontSize: AppFontSize.h1Lg,
-                        fontWeight: FontWeight.w700,
-                        color: context.colors.textPrimary,
-                        letterSpacing: -0.6,
-                      ),
-                    ),
-                  ),
-                  if (unreadCount > 0)
-                    AppButton(
-                      label: 'Tout lire',
-                      onPressed: () =>
-                          context.read<NotificationProvider>().markAllRead(),
-                      variant: ButtonVariant.ghost,
-                      width: null,
-                      height: 36,
-                    ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
-              child: Row(
-                children: [
-                  _FilterPill(
-                    label: 'Toutes',
-                    selected: !_showUnreadOnly,
-                    onTap: () => setState(() => _showUnreadOnly = false),
-                  ),
-                  const SizedBox(width: 10),
-                  _FilterPill(
-                    label: unreadCount > 0
-                        ? 'Non lues ($unreadCount)'
-                        : 'Non lues',
-                    selected: _showUnreadOnly,
-                    onTap: () => setState(() => _showUnreadOnly = true),
-                  ),
-                ],
-              ),
+            AppSegmentedTabBar(
+              selectedIndex: _showUnreadOnly ? 1 : 0,
+              onChanged: (index) =>
+                  setState(() => _showUnreadOnly = index == 1),
+              tabs: [
+                const AppSegmentedTab(label: 'Toutes'),
+                AppSegmentedTab(
+                  label: unreadCount > 0
+                      ? 'Non lues ($unreadCount)'
+                      : 'Non lues',
+                ),
+              ],
             ),
             Expanded(
               child: filtered.isEmpty
                   ? _EmptyNotifications(showUnreadOnly: _showUnreadOnly)
                   : ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
                       itemCount: filtered.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 10),
                       itemBuilder: (context, index) {
@@ -327,43 +304,6 @@ class _AvatarFallback extends StatelessWidget {
       color: context.colors.surfaceAlt,
       child: Center(
         child: Icon(icon, size: 20, color: context.colors.textSecondary),
-      ),
-    );
-  }
-}
-
-class _FilterPill extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _FilterPill({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: AppInsets.h16v10,
-        decoration: BoxDecoration(
-          color: selected
-              ? context.colors.textPrimary
-              : context.colors.surfaceAlt,
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: Text(
-          label,
-          style: context.text.labelLarge?.copyWith(
-            fontSize: AppFontSize.md,
-            fontWeight: FontWeight.w600,
-            color: selected ? Colors.white : context.colors.textPrimary,
-          ),
-        ),
       ),
     );
   }

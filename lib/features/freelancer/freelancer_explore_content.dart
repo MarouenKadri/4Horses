@@ -12,8 +12,8 @@ import '../story/presentation/widgets/posts_feed.dart';
 import '../story/story.dart';
 
 /// Accueil prestataire façon TikTok : le contenu d'abord.
-/// Stories en haut, puis le feed de missions directement sous les tabs
-/// Particulier | Agence — plus d'écran intermédiaire de navigation.
+/// Deux tabs : Jobs (missions, filtre Tous | Particulier | Agence)
+/// puis Posts — plus d'écran intermédiaire de navigation.
 class FreelancerExploreContent extends StatefulWidget {
   final VoidCallback? onGoToAccount;
 
@@ -31,34 +31,13 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }
-
-  bool _isAgency(Mission m) {
-    final name = m.client?.name.trim().toLowerCase() ?? '';
-    const tokens = [
-      'agence',
-      'agency',
-      'sarl',
-      'sas',
-      'sasu',
-      'eurl',
-      'entreprise',
-      'societe',
-      'société',
-      'groupe',
-      'holding',
-      'studio',
-      'cabinet',
-      'immobilier',
-    ];
-    return tokens.any(name.contains);
   }
 
   @override
@@ -73,8 +52,7 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
         )
         .toList();
 
-    final particulierCount = openMissions.where((m) => !_isAgency(m)).length;
-    final agenceCount = openMissions.where(_isAgency).length;
+    final totalCount = openMissions.length;
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -85,19 +63,13 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
             AppSegmentedTabBar(
               controller: _tabController,
               tabs: [
+                AppSegmentedTab(
+                  icon: Icons.work_outline_rounded,
+                  label: totalCount > 0 ? 'Jobs · $totalCount' : 'Jobs',
+                ),
                 const AppSegmentedTab(
                   icon: Icons.grid_view_rounded,
                   label: 'Posts',
-                ),
-                AppSegmentedTab(
-                  icon: Icons.person_outline_rounded,
-                  label: particulierCount > 0
-                      ? 'Particulier · $particulierCount'
-                      : 'Particulier',
-                ),
-                AppSegmentedTab(
-                  icon: Icons.business_outlined,
-                  label: agenceCount > 0 ? 'Agence · $agenceCount' : 'Agence',
                 ),
               ],
             ),
@@ -105,6 +77,7 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
               child: TabBarView(
                 controller: _tabController,
                 children: [
+                  const MissionBrowsePage(embedded: true),
                   PostsFeed(
                     onCreateTap: () => pickAndOpenComposer(context),
                     onProfileTap: (group) => Navigator.push(
@@ -118,14 +91,6 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
                       ),
                     ),
                   ),
-                  const MissionBrowsePage(
-                    publisherType: PublisherType.particulier,
-                    embedded: true,
-                  ),
-                  const MissionBrowsePage(
-                    publisherType: PublisherType.agence,
-                    embedded: true,
-                  ),
                 ],
               ),
             ),
@@ -135,3 +100,4 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
     );
   }
 }
+

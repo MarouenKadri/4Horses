@@ -6,10 +6,6 @@ import '../providers/chat_provider.dart';
 import 'location_message_bubble.dart';
 import 'message_time_status.dart';
 
-const _kInk = AppColors.ink;
-const _kWhite = AppColors.surface;
-const _kGrayMid = AppColors.textTertiary;
-const _kBorder = AppColors.divider;
 
 class ChatMessageBubble extends StatelessWidget {
   final ChatMessage message;
@@ -61,7 +57,7 @@ class ChatMessageBubble extends StatelessWidget {
                         onBackgroundImageError: contactAvatar.isNotEmpty
                             ? (_, __) {}
                             : null,
-                        backgroundColor: _kBorder,
+                        backgroundColor: context.colors.divider,
                       )
                     : const SizedBox(width: 30),
                 AppGap.w8,
@@ -83,8 +79,8 @@ class _TextBubble extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: isMe ? _kInk : _kWhite,
-        border: isMe ? null : Border.all(color: _kBorder, width: 0.8),
+        color: isMe ? context.colors.textPrimary : context.colors.surface,
+        border: isMe ? null : Border.all(color: context.colors.divider, width: 0.8),
         borderRadius: BorderRadius.only(
           topLeft: const Radius.circular(18),
           topRight: const Radius.circular(18),
@@ -110,7 +106,7 @@ class _TextBubble extends StatelessWidget {
                 (isMe
                         ? context.chatBubbleTextOnDarkStyle
                         : context.chatBubbleTextStyle)
-                    .copyWith(color: isMe ? _kWhite : _kInk),
+                    .copyWith(color: isMe ? context.colors.surface : context.colors.textPrimary),
           ),
           AppGap.h4,
           MessageTimeStatus(message: message, isMe: isMe),
@@ -161,12 +157,12 @@ class _SystemBubble extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: _kBorder,
+        color: context.colors.divider,
         borderRadius: BorderRadius.circular(AppRadius.full),
       ),
       child: Text(
         text,
-        style: context.chatSystemStyle.copyWith(color: _kGrayMid),
+        style: context.chatSystemStyle.copyWith(color: context.colors.textTertiary),
         textAlign: TextAlign.center,
       ),
     );

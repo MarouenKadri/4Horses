@@ -6,9 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/design/app_design_system.dart';
-import '../../../mission/data/models/service_category.dart';
+import '../../../mission/presentation/pages/client/create_mission/step_details.dart'
+    show PhotoViewerPage;
 import '../../story_provider.dart';
-import '../widgets/stories_bar.dart' show StoryMediaPickerSheet;
 
 /// Composer de post façon Quora : une seule page claire — légende,
 /// photos (multi), catégorie et publication au même endroit.
@@ -20,12 +20,13 @@ class PostComposerPage extends StatefulWidget {
 }
 
 class _PostComposerPageState extends State<PostComposerPage> {
+  static const _maxPhotos = 10;
+
   final _captionController = TextEditingController();
   final List<File> _files = [];
-  String? _categoryId;
   bool _isPosting = false;
 
-  bool get _canPublish => _files.isNotEmpty && _categoryId != null && !_isPosting;
+  bool get _canPublish => _files.isNotEmpty && !_isPosting;
 
   @override
   void dispose() {
@@ -33,40 +34,137 @@ class _PostComposerPageState extends State<PostComposerPage> {
     super.dispose();
   }
 
-  Future<void> _pickImages() async {
-    final source = await showAppBottomSheet<ImageSource>(
+  /// Même logique que l'import photos de la création de mission :
+  /// feuille caméra / galerie (multi), plafonnée à [_maxPhotos].
+  void _pickImages() {
+    showAppBottomSheet(
       context: context,
       wrapWithSurface: false,
-      child: const StoryMediaPickerSheet(),
+      builder: (sheetCtx) => AppActionSheet(
+        title: 'Ajouter des photos',
+        children: [
+          AppActionSheetItem(
+            icon: Icons.photo_camera_outlined,
+            title: 'Prendre une photo',
+            subtitle: 'Utiliser la caméra',
+            onTap: () {
+              Navigator.pop(sheetCtx);
+              _takePhoto();
+            },
+          ),
+          Divider(
+            height: 1,
+            indent: 20,
+            endIndent: 20,
+            color: context.colors.divider,
+          ),
+          AppActionSheetItem(
+            icon: Icons.photo_library_outlined,
+            title: 'Choisir depuis la galerie',
+            subtitle: 'Sélectionner une ou plusieurs photos',
+            onTap: () {
+              Navigator.pop(sheetCtx);
+              _pickFromGallery();
+            },
+          ),
+        ],
+      ),
     );
-    if (source == null || !mounted) return;
+  }
 
-    if (source == ImageSource.camera) {
-      final picked = await ImagePicker().pickImage(
-        source: source,
-        imageQuality: 85,
-      );
-      if (picked == null || !mounted) return;
-      setState(() => _files.add(File(picked.path)));
-    } else {
-      final picked = await ImagePicker().pickMultiImage(imageQuality: 85);
-      if (picked.isEmpty || !mounted) return;
-      setState(() => _files.addAll(picked.map((f) => File(f.path))));
-    }
+  Future<void> _takePhoto() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      maxWidth: 1200,
+      maxHeight: 1200,
+      imageQuality: 85,
+    );
+    if (picked == null || !mounted) return;
+    setState(() => _files.add(File(picked.path)));
+  }
+
+  Future<void> _pickFromGallery() async {
+    final picked = await ImagePicker().pickMultiImage(
+      maxWidth: 1200,
+      maxHeight: 1200,
+      imageQuality: 85,
+    );
+    if (picked.isEmpty || !mounted) return;
+    final remaining = _maxPhotos - _files.length;
+    setState(
+      () => _files.addAll(picked.take(remaining).map((f) => File(f.path))),
+    );
   }
 
   void _removeImage(int index) {
     setState(() => _files.removeAt(index));
   }
 
-  Future<void> _openCategorySheet() async {
-    final selected = await showAppBottomSheet<String>(
-      context: context,
-      child: _CategorySheet(selected: _categoryId),
+  void _viewPhoto(int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PhotoViewerPage(
+          photos: _files.map((f) => f.path).toList(),
+          initialIndex: index,
+          onDelete: (i) => setState(() => _files.removeAt(i)),
+        ),
+      ),
     );
-    if (selected != null && mounted) {
-      setState(() => _categoryId = selected);
-    }
+  }
+
+  void _confirmDeleteAll() {
+    showAppBottomSheet(
+      context: context,
+      wrapWithSurface: false,
+      builder: (ctx) => AppFormSheet(
+        title: 'Supprimer toutes les photos ?',
+        color: ctx.colors.surface,
+        footer: Row(
+          children: [
+            Expanded(
+              child: AppButton(
+                label: 'Annuler',
+                variant: ButtonVariant.outline,
+                onPressed: () => Navigator.pop(ctx),
+              ),
+            ),
+            AppGap.w12,
+            Expanded(
+              child: AppButton(
+                label: 'Supprimer',
+                variant: ButtonVariant.destructive,
+                onPressed: () {
+                  setState(() => _files.clear());
+                  Navigator.pop(ctx);
+                },
+              ),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppSurfaceCard(
+              padding: AppInsets.a16,
+              color: AppColors.error.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AppRadius.full),
+              child: const Icon(
+                Icons.delete_outline_rounded,
+                color: AppColors.error,
+                size: 32,
+              ),
+            ),
+            AppGap.h16,
+            Text(
+              '${_files.length} photo${_files.length > 1 ? 's' : ''} seront supprimées.',
+              style: ctx.text.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _publish() async {
@@ -78,7 +176,6 @@ class _PostComposerPageState extends State<PostComposerPage> {
     final story = await context.read<StoryProvider>().createStory(
           imageFiles: List.of(_files),
           caption: _captionController.text.trim(),
-          serviceCategory: _categoryId ?? '',
         );
 
     if (!mounted) return;
@@ -93,9 +190,6 @@ class _PostComposerPageState extends State<PostComposerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final category =
-        _categoryId != null ? ServiceCategory.findById(_categoryId!) : null;
-
     return Scaffold(
       backgroundColor: context.colors.background,
       body: SafeArea(
@@ -172,60 +266,41 @@ class _PostComposerPageState extends State<PostComposerPage> {
                       ),
                     ),
                     AppGap.h8,
+                    Row(
+                      children: [
+                        Text(
+                          'PHOTOS · ${_files.length}/$_maxPhotos',
+                          style: context.text.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                            color: context.colors.textTertiary,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (_files.isNotEmpty && !_isPosting)
+                          GestureDetector(
+                            onTap: _confirmDeleteAll,
+                            child: Text(
+                              'Tout supprimer',
+                              style: context.text.labelMedium?.copyWith(
+                                color: context.colors.error,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    AppGap.h12,
                     if (_files.isEmpty)
                       _EmptyPhotoZone(onTap: _isPosting ? null : _pickImages)
                     else
                       _PhotoStrip(
                         files: _files,
                         enabled: !_isPosting,
+                        canAdd: _files.length < _maxPhotos,
                         onAdd: _pickImages,
                         onRemove: _removeImage,
+                        onView: _viewPhoto,
                       ),
-                    AppGap.h20,
-                    // ── Catégorie ──────────────────────────────────────
-                    GestureDetector(
-                      onTap: _isPosting ? null : _openCategorySheet,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: context.colors.border),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              category?.icon ?? Icons.sell_outlined,
-                              size: 18,
-                              color: category != null
-                                  ? context.colors.textPrimary
-                                  : context.colors.textSecondary,
-                            ),
-                            AppGap.w10,
-                            Expanded(
-                              child: Text(
-                                category?.name ?? 'Choisir une catégorie',
-                                style: context.text.bodyMedium?.copyWith(
-                                  fontWeight: category != null
-                                      ? FontWeight.w600
-                                      : FontWeight.w400,
-                                  color: category != null
-                                      ? context.colors.textPrimary
-                                      : context.colors.textSecondary,
-                                ),
-                              ),
-                            ),
-                            Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              size: 20,
-                              color: context.colors.textSecondary,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -250,30 +325,36 @@ class _EmptyPhotoZone extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
+        height: 120,
         decoration: BoxDecoration(
           color: context.colors.surfaceAlt,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: context.colors.border),
         ),
-        child: AspectRatio(
-          aspectRatio: 4 / 3,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.add_photo_alternate_outlined,
-                size: 34,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.add_photo_alternate_outlined,
+              size: 24,
+              color: context.colors.textSecondary,
+            ),
+            AppGap.h8,
+            Text(
+              'Ajouter des photos',
+              style: context.text.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: context.colors.textPrimary,
+              ),
+            ),
+            AppGap.h4,
+            Text(
+              "Caméra ou galerie, jusqu'à 10 images",
+              style: context.text.bodySmall?.copyWith(
                 color: context.colors.textSecondary,
               ),
-              AppGap.h10,
-              Text(
-                'Ajouter des photos',
-                style: context.text.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: context.colors.textSecondary,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -285,14 +366,18 @@ class _EmptyPhotoZone extends StatelessWidget {
 class _PhotoStrip extends StatelessWidget {
   final List<File> files;
   final bool enabled;
+  final bool canAdd;
   final VoidCallback onAdd;
   final void Function(int index) onRemove;
+  final void Function(int index) onView;
 
   const _PhotoStrip({
     required this.files,
     required this.enabled,
+    required this.canAdd,
     required this.onAdd,
     required this.onRemove,
+    required this.onView,
   });
 
   @override
@@ -301,70 +386,63 @@ class _PhotoStrip extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Aperçu principal — même cadrage 4:3 que le fil
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: AspectRatio(
-            aspectRatio: 4 / 3,
-            child: Image.file(files.first, fit: BoxFit.cover),
+        GestureDetector(
+          onTap: () => onView(0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: AspectRatio(
+              aspectRatio: 4 / 3,
+              child: Image.file(files.first, fit: BoxFit.cover),
+            ),
           ),
         ),
         AppGap.h10,
         SizedBox(
-          height: 64,
-          child: ListView.separated(
+          height: 96,
+          child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: files.length + 1,
-            separatorBuilder: (_, __) => AppGap.w8,
-            itemBuilder: (context, i) {
-              if (i == files.length) {
+            itemCount: files.length + (canAdd ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index == 0 && canAdd) {
                 return GestureDetector(
                   onTap: enabled ? onAdd : null,
-                  child: Container(
-                    width: 64,
-                    decoration: BoxDecoration(
+                  child: SizedBox(
+                    width: 88,
+                    height: 96,
+                    child: AppSurfaceCard(
+                      margin: const EdgeInsets.only(right: 10),
                       color: context.colors.surfaceAlt,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.add_rounded,
-                      color: context.colors.textSecondary,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: context.colors.border),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add_photo_alternate_outlined,
+                            size: 22,
+                            color: context.colors.textSecondary,
+                          ),
+                          AppGap.h6,
+                          Text(
+                            'Ajouter',
+                            style: context.text.labelSmall?.copyWith(
+                              color: context.colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
               }
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.file(
-                      files[i],
-                      width: 64,
-                      height: 64,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  if (enabled && files.length > 1)
-                    Positioned(
-                      top: -6,
-                      right: -6,
-                      child: GestureDetector(
-                        onTap: () => onRemove(i),
-                        child: Container(
-                          padding: const EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                            color: context.colors.textPrimary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.close_rounded,
-                            size: 12,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
+
+              final photoIndex = canAdd ? index - 1 : index;
+              return _PhotoThumbnail(
+                file: files[photoIndex],
+                index: photoIndex,
+                enabled: enabled,
+                onTap: () => onView(photoIndex),
+                onRemove: () => onRemove(photoIndex),
               );
             },
           ),
@@ -374,79 +452,103 @@ class _PhotoStrip extends StatelessWidget {
   }
 }
 
-// ─── Sheet catégorie (clair) ──────────────────────────────────────────────────
+class _PhotoThumbnail extends StatelessWidget {
+  final File file;
+  final int index;
+  final bool enabled;
+  final VoidCallback onTap;
+  final VoidCallback onRemove;
 
-class _CategorySheet extends StatelessWidget {
-  final String? selected;
-
-  const _CategorySheet({this.selected});
+  const _PhotoThumbnail({
+    required this.file,
+    required this.index,
+    required this.enabled,
+    required this.onTap,
+    required this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = MediaQuery.of(context).size.height * 0.6;
-
-    return SizedBox(
-      height: maxHeight,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-            child: Text(
-              'Catégorie',
-              style: context.text.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              itemCount: ServiceCategory.all.length,
-              separatorBuilder: (_, __) =>
-                  Divider(height: 1, color: context.colors.divider),
-              itemBuilder: (context, i) {
-                final cat = ServiceCategory.all[i];
-                final isSelected = cat.id == selected;
-                return InkWell(
-                  onTap: () => Navigator.pop(context, cat.id),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      children: [
-                        Icon(
-                          cat.icon,
-                          size: 20,
-                          color: isSelected
-                              ? context.colors.textPrimary
-                              : context.colors.textSecondary,
-                        ),
-                        AppGap.w12,
-                        Expanded(
-                          child: Text(
-                            cat.name,
-                            style: context.text.bodyMedium?.copyWith(
-                              fontWeight: isSelected
-                                  ? FontWeight.w700
-                                  : FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                        if (isSelected)
-                          Icon(
-                            Icons.check_rounded,
-                            size: 18,
-                            color: context.colors.textPrimary,
-                          ),
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: Container(
+        width: 88,
+        height: 96,
+        margin: const EdgeInsets.only(right: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: context.colors.border),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.file(file, fit: BoxFit.cover),
+              // Dégradé bas pour la lisibilité du badge d'index
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.5),
                       ],
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+              // Badge d'index
+              Positioned(
+                bottom: 8,
+                left: 8,
+                child: Container(
+                  padding: AppInsets.h8v4,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.6),
+                    borderRadius: BorderRadius.circular(AppRadius.input),
+                  ),
+                  child: Text(
+                    '${index + 1}',
+                    style: context.text.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              // Bouton suppression directe
+              if (enabled)
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: GestureDetector(
+                    onTap: onRemove,
+                    child: Container(
+                      padding: AppInsets.a6,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        size: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
+

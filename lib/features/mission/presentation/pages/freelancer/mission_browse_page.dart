@@ -51,6 +51,7 @@ class MissionBrowsePage extends StatefulWidget {
 
 class _MissionBrowsePageState extends State<MissionBrowsePage> {
   late String? _selectedCategoryId;
+  late PublisherType? _publisherFilter;
   bool _showAppliedOnly = false;
   _MissionDateFilter _selectedDateFilter = _MissionDateFilter.all;
   _MissionBudgetFilter _selectedBudgetFilter = _MissionBudgetFilter.all;
@@ -59,6 +60,7 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
   void initState() {
     super.initState();
     _selectedCategoryId = widget.initialCategoryId;
+    _publisherFilter = widget.publisherType;
   }
 
   List<Mission> _filtered(List<Mission> all, Set<String> appliedIds) {
@@ -78,12 +80,10 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
       list = list.where((m) => appliedIds.contains(m.id)).toList();
     }
 
-    if (widget.publisherType != null) {
+    if (_publisherFilter != null) {
       list = list.where((m) {
         final isAgency = _isAgencyMission(m);
-        return widget.publisherType == PublisherType.agence
-            ? isAgency
-            : !isAgency;
+        return _publisherFilter == PublisherType.agence ? isAgency : !isAgency;
       }).toList();
     }
 
@@ -176,6 +176,7 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
 
   void _resetFilters() {
     _selectedCategoryId = widget.initialCategoryId;
+    _publisherFilter = widget.publisherType;
     _showAppliedOnly = false;
     _selectedDateFilter = _MissionDateFilter.all;
     _selectedBudgetFilter = _MissionBudgetFilter.all;
@@ -183,9 +184,17 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
 
   bool get _hasActiveFilters =>
       _selectedCategoryId != null ||
+      _publisherFilter != widget.publisherType ||
       _showAppliedOnly ||
       _selectedDateFilter != _MissionDateFilter.all ||
       _selectedBudgetFilter != _MissionBudgetFilter.all;
+
+  int get _activeFilterCount =>
+      (_selectedCategoryId != null ? 1 : 0) +
+      (_publisherFilter != widget.publisherType ? 1 : 0) +
+      (_showAppliedOnly ? 1 : 0) +
+      (_selectedDateFilter != _MissionDateFilter.all ? 1 : 0) +
+      (_selectedBudgetFilter != _MissionBudgetFilter.all ? 1 : 0);
 
   String get _headerTitle {
     if (widget.initialCategoryId != null) {
@@ -383,28 +392,42 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
   }
 
   Widget _buildFilterButton({double size = 44, double iconSize = 20}) {
+    final active = _hasActiveFilters;
     return GestureDetector(
       onTap: _showFilterSheet,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: _hasActiveFilters ? AppColors.inkDark : Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: _hasActiveFilters
-                ? AppColors.inkDark
-                : context.colors.border,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: active
+                  ? context.colors.textPrimary
+                  : context.colors.surfaceAlt,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.tune_rounded,
+              size: iconSize,
+              color: active
+                  ? context.colors.background
+                  : context.colors.textPrimary,
+            ),
           ),
-        ),
-        child: Icon(
-          Icons.tune_rounded,
-          size: iconSize,
-          color: _hasActiveFilters
-              ? Colors.white
-              : context.colors.textSecondary,
-        ),
+          if (active)
+            Positioned(
+              top: -2,
+              right: -2,
+              child: AppCountBadge(
+                label: '$_activeFilterCount',
+                backgroundColor: AppColors.error,
+                foregroundColor: Colors.white,
+                padding: AppInsets.h4v1,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -412,7 +435,7 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
   void _showFilterSheet() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -481,6 +504,43 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                       selected: _showAppliedOnly,
                       onTap: () {
                         setState(() => _showAppliedOnly = true);
+                        setSheet(() {});
+                      },
+                    ),
+                  ],
+                ),
+                AppGap.h24,
+                _buildFilterSectionTitle(context, 'Type de client'),
+                AppGap.h16,
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _FilterPill(
+                      label: 'Tous',
+                      selected: _publisherFilter == null,
+                      onTap: () {
+                        setState(() => _publisherFilter = null);
+                        setSheet(() {});
+                      },
+                    ),
+                    _FilterPill(
+                      label: 'Particulier',
+                      icon: Icons.person_outline_rounded,
+                      selected: _publisherFilter == PublisherType.particulier,
+                      onTap: () {
+                        setState(
+                          () => _publisherFilter = PublisherType.particulier,
+                        );
+                        setSheet(() {});
+                      },
+                    ),
+                    _FilterPill(
+                      label: 'Agence',
+                      icon: Icons.business_outlined,
+                      selected: _publisherFilter == PublisherType.agence,
+                      onTap: () {
+                        setState(() => _publisherFilter = PublisherType.agence);
                         setSheet(() {});
                       },
                     ),
@@ -693,7 +753,7 @@ class _FilterPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = color ?? AppColors.primary;
+    final accent = color ?? context.colors.textSecondary;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -701,26 +761,20 @@ class _FilterPill extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: selected ? AppColors.inkDark : Colors.white,
+          color: selected
+              ? context.colors.textPrimary
+              : context.colors.surfaceAlt,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(
-            color: selected ? AppColors.inkDark : AppColors.gray50,
-          ),
-          boxShadow: selected
-              ? const [
-                  BoxShadow(
-                    color: AppColors.blackAlpha09,
-                    blurRadius: 8,
-                    offset: Offset(0, 3),
-                  ),
-                ]
-              : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 13, color: selected ? Colors.white : accent),
+              Icon(
+                icon,
+                size: 13,
+                color: selected ? context.colors.background : accent,
+              ),
               AppGap.w6,
             ],
             Text(
@@ -728,7 +782,9 @@ class _FilterPill extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : AppColors.inkDark,
+                color: selected
+                    ? context.colors.background
+                    : context.colors.textPrimary,
               ),
             ),
           ],

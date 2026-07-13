@@ -178,7 +178,7 @@ class _SubServicesSheetState extends State<_SubServicesSheet> {
                   child: Icon(
                     widget.serviceIcon,
                     size: 19,
-                    color: AppColors.gray700,
+                    color: context.colors.textSecondary,
                   ),
                 ),
                 AppGap.w10,
@@ -243,9 +243,9 @@ class _SubServicesSheetState extends State<_SubServicesSheet> {
                           selected: isSelected,
                           onTap: () => widget.onSelected(subService),
                           backgroundColor: context.colors.surfaceAlt,
-                          foregroundColor: AppColors.inkDark,
-                          selectedBackgroundColor: AppColors.inkDark,
-                          selectedForegroundColor: Colors.white,
+                          foregroundColor: context.colors.textPrimary,
+                          selectedBackgroundColor: context.colors.textPrimary,
+                          selectedForegroundColor: context.colors.background,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 10,
@@ -292,7 +292,11 @@ class _SelectedServiceSummary extends StatelessWidget {
               color: context.colors.surfaceAlt,
               borderRadius: BorderRadius.circular(11),
             ),
-            child: Icon(icon, size: 18, color: AppColors.gray700),
+            child: Icon(
+              icon,
+              size: 18,
+              color: context.colors.textSecondary,
+            ),
           ),
           AppGap.w10,
           Expanded(
@@ -351,14 +355,16 @@ class _ServiceIconCell extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.inkDark
+                    ? context.colors.textPrimary
                     : context.colors.surfaceAlt,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
                 icon,
                 size: 22,
-                color: isSelected ? Colors.white : AppColors.gray700,
+                color: isSelected
+                    ? context.colors.background
+                    : context.colors.textSecondary,
               ),
             ),
             if (isSelected)
@@ -369,13 +375,16 @@ class _ServiceIconCell extends StatelessWidget {
                   width: 18,
                   height: 18,
                   decoration: BoxDecoration(
-                    color: AppColors.inkDark,
+                    color: context.colors.textPrimary,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 1.5),
+                    border: Border.all(
+                      color: context.colors.surface,
+                      width: 1.5,
+                    ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.check_rounded,
-                    color: Colors.white,
+                    color: context.colors.background,
                     size: 11,
                   ),
                 ),
@@ -391,9 +400,7 @@ class _ServiceIconCell extends StatelessWidget {
           style: context.missionSubtleCaptionStyle.copyWith(
             fontSize: AppFontSize.xs,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            color: isSelected
-                ? context.colors.textPrimary
-                : context.colors.textSecondary,
+            color: context.colors.textPrimary,
             height: 1.3,
           ),
         ),

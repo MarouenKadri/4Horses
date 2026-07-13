@@ -28,14 +28,14 @@ class AppNavBarSurface extends StatelessWidget {
             filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.72),
+                color: context.colors.surface.withValues(alpha: 0.85),
                 borderRadius: BorderRadius.circular(28),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.55)),
-                boxShadow: const [
+                border: Border.all(color: context.colors.border),
+                boxShadow: [
                   BoxShadow(
-                    color: Color.fromRGBO(15, 23, 42, 0.10),
+                    color: context.colors.primaryDark.withValues(alpha: 0.10),
                     blurRadius: 24,
-                    offset: Offset(0, 12),
+                    offset: const Offset(0, 12),
                   ),
                 ],
               ),
@@ -68,7 +68,7 @@ class AppNavItemPill extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: selected
-            ? Colors.white.withValues(alpha: 0.34)
+            ? context.colors.primary.withValues(alpha: 0.14)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(22),
       ),

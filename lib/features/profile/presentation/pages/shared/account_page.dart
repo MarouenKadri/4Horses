@@ -338,8 +338,8 @@ class _ProfileHeader extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  width: 68,
-                  height: 68,
+                  width: 96,
+                  height: 96,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: context.colors.surfaceAlt,
@@ -349,7 +349,7 @@ class _ProfileHeader extends StatelessWidget {
                     ),
                   ),
                   child: CircleAvatar(
-                    radius: 32,
+                    radius: 46,
                     backgroundColor: Colors.transparent,
                     backgroundImage: avatarUrl != null
                         ? NetworkImage(avatarUrl)
@@ -391,20 +391,20 @@ class _ProfileHeader extends StatelessWidget {
                     right: 0,
                     bottom: 0,
                     child: Container(
-                      width: 24,
-                      height: 24,
+                      width: 28,
+                      height: 28,
                       decoration: BoxDecoration(
-                        color: AppColors.ink,
+                        color: context.colors.textPrimary,
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: context.colors.background,
                           width: 2,
                         ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.camera_alt_rounded,
-                        size: 12,
-                        color: Colors.white,
+                        size: 14,
+                        color: context.colors.background,
                       ),
                     ),
                   ),

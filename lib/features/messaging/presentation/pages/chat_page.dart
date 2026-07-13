@@ -11,12 +11,6 @@ import '../../../mission/presentation/pages/client/create_mission_page.dart';
 import '../../../mission/presentation/pages/client/client_mission_detail_page.dart';
 import '../../../mission/presentation/widgets/shared/mission_shared_widgets.dart';
 
-const _kBg = AppColors.snow;
-const _kWhite = AppColors.surface;
-const _kInk = AppColors.ink;
-const _kCharcoal = AppColors.surfaceAlt;
-const _kGrayLight = AppColors.textHint;
-const _kBorder = AppColors.divider;
 
 class ChatPage extends StatefulWidget {
   final String? conversationId;
@@ -186,13 +180,13 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           RichText(
             text: TextSpan(
-              style: context.text.bodyMedium?.copyWith(color: _kCharcoal),
+              style: context.text.bodyMedium?.copyWith(color: context.colors.textSecondary),
               children: [
                 const TextSpan(text: 'Vous allez accepter '),
                 TextSpan(
                   text: widget.contactName,
                   style: context.chatBannerStyle.copyWith(
-                    color: _kCharcoal,
+                    color: context.colors.textSecondary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -201,7 +195,7 @@ class _ChatPageState extends State<ChatPage> {
                   TextSpan(
                     text: widget.candidatePrice,
                     style: context.chatBannerStyle.copyWith(
-                      color: _kCharcoal,
+                      color: context.colors.textSecondary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -298,7 +292,7 @@ class _ChatPageState extends State<ChatPage> {
       value: _chatProvider,
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        backgroundColor: _kBg,
+        backgroundColor: context.colors.background,
         appBar: _buildAppBar(),
         body: Column(
           children: [
@@ -349,17 +343,17 @@ class _ChatPageState extends State<ChatPage> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: _kWhite,
+      backgroundColor: context.colors.surface,
       elevation: 0,
       scrolledUnderElevation: 0,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
-        child: Container(height: 0.5, color: _kBorder),
+        child: Container(height: 0.5, color: context.colors.divider),
       ),
       leading: IconButton(
-        icon: const Icon(
+        icon: Icon(
           Icons.arrow_back_rounded,
-          color: _kInk,
+          color: context.colors.textPrimary,
           size: 18,
         ),
         onPressed: () => Navigator.pop(context, _candidateAccepted),
@@ -372,7 +366,7 @@ class _ChatPageState extends State<ChatPage> {
             child: CircleAvatar(
               radius: 19,
               backgroundImage: NetworkImage(widget.contactAvatar),
-              backgroundColor: _kBorder,
+              backgroundColor: context.colors.divider,
             ),
           ),
           AppGap.w12,
@@ -385,16 +379,16 @@ class _ChatPageState extends State<ChatPage> {
                     Flexible(
                       child: Text(
                         widget.contactName,
-                        style: context.chatTitleStyle.copyWith(color: _kInk),
+                        style: context.chatTitleStyle.copyWith(color: context.colors.textPrimary),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (widget.isVerified) ...[
                       AppGap.w4,
-                      const Icon(
+                      Icon(
                         Icons.verified_rounded,
                         size: 14,
-                        color: _kInk,
+                        color: context.colors.textPrimary,
                       ),
                     ],
                   ],
@@ -402,7 +396,7 @@ class _ChatPageState extends State<ChatPage> {
                 const SizedBox(height: 1),
                 Text(
                   widget.isOnline ? 'En ligne' : 'Vu récemment',
-                  style: context.chatMetaStyle.copyWith(color: _kGrayLight),
+                  style: context.chatMetaStyle.copyWith(color: context.colors.textHint),
                 ),
               ],
             ),
@@ -411,7 +405,11 @@ class _ChatPageState extends State<ChatPage> {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.more_horiz_rounded, color: _kInk, size: 22),
+          icon: Icon(
+            Icons.more_horiz_rounded,
+            color: context.colors.textPrimary,
+            size: 22,
+          ),
           onPressed: _showChatOptions,
         ),
       ],
@@ -567,7 +565,7 @@ class _ConfirmedMissionBadge extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-      color: _kInk,
+      color: context.colors.textPrimary,
       child: Row(
         children: [
           const Icon(Icons.task_alt_rounded, size: 13, color: Colors.white70),
@@ -622,7 +620,7 @@ class _MissionBanner extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: _kWhite,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(999),
         boxShadow: [
           BoxShadow(
@@ -638,7 +636,7 @@ class _MissionBanner extends StatelessWidget {
           Flexible(
             child: Text(
               parts.join(' • '),
-              style: context.chatBannerStyle.copyWith(color: _kCharcoal),
+              style: context.chatBannerStyle.copyWith(color: context.colors.textSecondary),
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -654,14 +652,14 @@ class _MissionBanner extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: _kInk,
+                  color: context.colors.textPrimary,
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   'Accepter',
                   style: context.chatPrimaryActionStyle.copyWith(
                     fontSize: AppFontSize.sm,
-                    color: _kWhite,
+                    color: context.colors.surface,
                   ),
                 ),
               ),

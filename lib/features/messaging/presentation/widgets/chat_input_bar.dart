@@ -3,12 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import '../../../../core/design/app_design_system.dart';
 import '../../data/services/message_moderation_service.dart';
 
-const _kInk = AppColors.ink;
-const _kWhite = AppColors.surface;
-const _kCharcoal = AppColors.surfaceAlt;
-const _kGrayMid = AppColors.textTertiary;
-const _kGrayLight = AppColors.textHint;
-const _kBorder = AppColors.divider;
 
 class ChatInputBar extends StatefulWidget {
   final Future<String?> Function(String text) onSendMessage;
@@ -113,9 +107,11 @@ class _ChatInputBarState extends State<ChatInputBar> {
         MessageModerationService.instance.check(_controller.text).blocked;
 
     return Container(
-      decoration: const BoxDecoration(
-        color: _kWhite,
-        border: Border(top: BorderSide(color: _kBorder, width: 0.5)),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        border: Border(
+          top: BorderSide(color: context.colors.divider, width: 0.5),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -147,9 +143,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
                       child: Container(
                         constraints: const BoxConstraints(minHeight: 44),
                         decoration: BoxDecoration(
-                          color: _kWhite,
+                          color: context.colors.surface,
                           borderRadius: BorderRadius.circular(AppRadius.full),
-                          border: Border.all(color: _kBorder, width: 1),
+                          border: Border.all(color: context.colors.divider, width: 1),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -164,17 +160,17 @@ class _ChatInputBarState extends State<ChatInputBar> {
                                     ? null
                                     : _handleSendLocation,
                                 child: _isSendingLocation
-                                    ? const SizedBox(
+                                    ? SizedBox(
                                         width: 22,
                                         height: 22,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          color: _kGrayMid,
+                                          color: context.colors.textPrimary,
                                         ),
                                       )
-                                    : const Icon(
+                                    : Icon(
                                         Icons.location_on_outlined,
-                                        color: _kGrayMid,
+                                        color: context.colors.textPrimary,
                                         size: 22,
                                       ),
                               ),
@@ -188,13 +184,16 @@ class _ChatInputBarState extends State<ChatInputBar> {
                                 textCapitalization:
                                     TextCapitalization.sentences,
                                 style: context.chatInputStyle.copyWith(
-                                  color: _kInk,
+                                  color: context.colors.textPrimary,
                                 ),
                                 decoration: AppInputDecorations.formField(
                                   context,
                                   hintText: 'Votre message...',
                                   hintStyle: context.chatInputHintStyle
-                                      .copyWith(color: _kGrayLight),
+                                      .copyWith(
+                                        color: context.colors.textPrimary
+                                            .withValues(alpha: 0.7),
+                                      ),
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 8,
                                     vertical: 11,
@@ -233,14 +232,14 @@ class _ChatInputBarState extends State<ChatInputBar> {
                                   decoration: BoxDecoration(
                                     color: isForbidden
                                         ? AppColors.error
-                                        : _kInk,
+                                        : context.colors.textPrimary,
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
                                     isForbidden
                                         ? Icons.block_rounded
                                         : Icons.arrow_upward_rounded,
-                                    color: _kWhite,
+                                    color: context.colors.surface,
                                     size: 18,
                                   ),
                                 ),
@@ -275,9 +274,11 @@ class _MissionContextStrip extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: const BoxDecoration(
-        color: _kCharcoal,
-        border: Border(bottom: BorderSide(color: _kBorder, width: 0.5)),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceAlt,
+        border: Border(
+          bottom: BorderSide(color: context.colors.divider, width: 0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -289,7 +290,7 @@ class _MissionContextStrip extends StatelessWidget {
             onBackgroundImageError: contactAvatar.isNotEmpty
                 ? (_, __) {}
                 : null,
-            backgroundColor: _kBorder,
+            backgroundColor: context.colors.divider,
           ),
           AppGap.w6,
           Expanded(
@@ -297,10 +298,10 @@ class _MissionContextStrip extends StatelessWidget {
               '$contactName  ·  $missionTitle',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: _kGrayMid,
+                color: context.colors.textTertiary,
               ),
             ),
           ),
@@ -316,33 +317,11 @@ class _ReserveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 13),
-        decoration: BoxDecoration(
-          color: _kInk,
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '⚡',
-              style: context.chatPrimaryActionStyle.copyWith(fontSize: 14),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              'Réserver ce service',
-              style: context.chatPrimaryActionStyle.copyWith(
-                fontSize: AppFontSize.base,
-                color: _kWhite,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return AppButton(
+      label: 'Réserver ce service',
+      variant: ButtonVariant.black,
+      icon: Icons.event_available_rounded,
+      onPressed: onTap,
     );
   }
 }

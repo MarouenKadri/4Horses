@@ -30,7 +30,11 @@ class ModeratedMessagingRepository implements MessagingRepository {
     String content,
   ) {
     if (!isMissionConfirmed) {
-      final result = _moderation.check(content);
+      final result = _moderation.check(
+        content,
+        conversationId: conversationId,
+        recordFragment: true,
+      );
       if (result.blocked) throw ModerationException(result.reason!);
     }
     return _delegate.sendMessage(conversationId, senderId, content);

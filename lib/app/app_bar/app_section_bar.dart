@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import '../../core/design/app_design_system.dart';
 import '../../features/notifications/notifications.dart';
 import '../../features/profile/profile_provider.dart';
-import '../auth_provider.dart';
-import '../enum/user_role.dart';
 import 'role_switch_sheet.dart';
 
 /// App bar standard des pages de section.
@@ -73,10 +71,6 @@ class _AppSectionBarState extends State<AppSectionBar>
     _triggerBellAnimation(unreadCount);
     final profile = context.watch<ProfileProvider>().profile;
     final firstName = profile?.firstName ?? '';
-    final isClient = widget.showRolePill
-        ? context.watch<AuthProvider>().currentRole == UserRole.client
-        : true;
-    final avatarLabel = firstName.isNotEmpty ? firstName[0].toUpperCase() : '';
 
     return AppPageAppBar(
       titleWidget: GestureDetector(
@@ -92,67 +86,19 @@ class _AppSectionBarState extends State<AppSectionBar>
       actions: [
         _buildBellButton(context, unreadCount),
         if (widget.showRolePill) ...[
-          GestureDetector(
+          const SizedBox(width: 8),
+          AppBarActionCircleButton(
+            icon: Icons.swap_horiz_rounded,
+            backgroundColor: context.colors.textPrimary,
+            iconColor: context.colors.background,
+            iconSize: 20,
+            size: 34,
             onTap: () => showAppBottomSheet(
               context: context,
               wrapWithSurface: false,
               child: RoleSwitchSheet(
                 firstName: firstName,
                 onGoToAccount: widget.onGoToAccount,
-              ),
-            ),
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(6, 5, 10, 5),
-              decoration: BoxDecoration(
-                color: context.colors.textPrimary.withValues(alpha: 0.07),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: context.colors.textPrimary,
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: avatarLabel.isNotEmpty
-                        ? Text(
-                            avatarLabel,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: context.colors.background,
-                              height: 1,
-                            ),
-                          )
-                        : Icon(
-                            isClient
-                                ? Icons.person_outline_rounded
-                                : Icons.handyman_rounded,
-                            size: 14,
-                            color: context.colors.background,
-                          ),
-                  ),
-                  const SizedBox(width: 7),
-                  Text(
-                    isClient ? 'Client' : 'Prestataire',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.textPrimary,
-                      height: 1,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    size: 16,
-                    color: context.colors.textSecondary,
-                  ),
-                ],
               ),
             ),
           ),
@@ -166,8 +112,8 @@ class _AppSectionBarState extends State<AppSectionBar>
   Widget _buildBellButton(BuildContext context, int unreadCount) {
     return AppBarActionCircleButton(
       icon: Icons.notifications_none_rounded,
-      backgroundColor: Colors.transparent,
-      iconColor: context.colors.textSecondary,
+      backgroundColor: context.colors.surfaceAlt,
+      iconColor: context.colors.textPrimary,
       iconSize: 20,
       size: 34,
       scale: _bellScale,

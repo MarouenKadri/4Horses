@@ -67,21 +67,22 @@ class _StepDetailsState extends State<StepDetails> {
     }
   }
 
-  /// Choisir une photo depuis la galerie
+  /// Choisir des photos depuis la galerie (sélection multiple,
+  /// dans la limite des 10 photos au total).
   Future<void> _pickFromGallery() async {
     try {
       setState(() => _isLoading = true);
 
-      final XFile? image = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
+      final List<XFile> images = await _imagePicker.pickMultiImage(
         maxWidth: 1200,
         maxHeight: 1200,
         imageQuality: 85,
       );
 
-      if (image != null) {
-        final newPhotos = List<String>.from(widget.photos);
-        newPhotos.add(image.path);
+      if (images.isNotEmpty) {
+        final remaining = 10 - widget.photos.length;
+        final newPhotos = List<String>.from(widget.photos)
+          ..addAll(images.take(remaining).map((image) => image.path));
         widget.onPhotosChanged(newPhotos);
       }
     } catch (e) {
@@ -92,20 +93,8 @@ class _StepDetailsState extends State<StepDetails> {
   }
 
   void _removePhoto(int index) {
-    showAppDialog(
-      context: context,
-      title: const Text('Supprimer la photo ?'),
-      content: const Text('Cette action est irréversible.'),
-      cancelLabel: 'Annuler',
-      confirmLabel: 'Supprimer',
-      confirmVariant: ButtonVariant.destructive,
-      onConfirm: () {
-        final newPhotos = List<String>.from(widget.photos);
-        newPhotos.removeAt(index);
-        widget.onPhotosChanged(newPhotos);
-        Navigator.pop(context);
-      },
-    );
+    final newPhotos = List<String>.from(widget.photos)..removeAt(index);
+    widget.onPhotosChanged(newPhotos);
   }
 
   void _viewPhoto(String photoPath, int index) {
@@ -145,12 +134,12 @@ class _StepDetailsState extends State<StepDetails> {
             height: 1,
             indent: 20,
             endIndent: 20,
-            color: Colors.white.withValues(alpha: 0.12),
+            color: context.colors.divider,
           ),
           AppActionSheetItem(
             icon: Icons.photo_library_outlined,
             title: 'Choisir depuis la galerie',
-            subtitle: 'Sélectionner une photo',
+            subtitle: 'Sélectionner une ou plusieurs photos',
             onTap: () {
               Navigator.pop(sheetCtx);
               _pickFromGallery();
@@ -303,10 +292,10 @@ class _StepDetailsState extends State<StepDetails> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.star_border_rounded,
                     size: 14,
-                    color: AppColors.gray600,
+                    color: context.colors.textSecondary,
                   ),
                   AppGap.w4,
                   Text(
@@ -346,7 +335,7 @@ class _StepDetailsState extends State<StepDetails> {
     return Container(
       height: 120,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surfaceAlt,
         borderRadius: BorderRadius.circular(AppDesign.radius12),
         border: Border.all(color: context.colors.border),
       ),
@@ -360,7 +349,7 @@ class _StepDetailsState extends State<StepDetails> {
       child: Container(
         height: 120,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surfaceAlt,
           borderRadius: BorderRadius.circular(AppDesign.radius12),
           border: Border.all(color: context.colors.border),
         ),
@@ -368,10 +357,10 @@ class _StepDetailsState extends State<StepDetails> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.photo_camera_outlined,
+              Icon(
+                Icons.add_photo_alternate_outlined,
                 size: 24,
-                color: AppColors.gray600,
+                color: context.colors.textSecondary,
               ),
               AppGap.h8,
               Text(
@@ -424,16 +413,16 @@ class _StepDetailsState extends State<StepDetails> {
         height: 96,
         child: AppSurfaceCard(
           margin: const EdgeInsets.only(right: 10),
-          color: Colors.white,
+          color: context.colors.surfaceAlt,
           borderRadius: BorderRadius.circular(AppDesign.radius12),
           border: Border.all(color: context.colors.border),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.photo_camera_outlined,
+              Icon(
+                Icons.add_photo_alternate_outlined,
                 size: 22,
-                color: AppColors.gray600,
+                color: context.colors.textSecondary,
               ),
               AppGap.h6,
               Text(

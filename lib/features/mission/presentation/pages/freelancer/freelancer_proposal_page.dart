@@ -219,7 +219,7 @@ class _FreelancerProposalPageState extends State<FreelancerProposalPage> {
                         Text(
                           '$_messageLength/400',
                           style: context.missionSubtleCaptionStyle.copyWith(
-                            color: context.colors.textHint,
+                            color: context.colors.textSecondary,
                           ),
                         ),
                       ],
@@ -236,16 +236,21 @@ class _FreelancerProposalPageState extends State<FreelancerProposalPage> {
                             required isFocused,
                             maxLength,
                           }) => null,
-                      style: context.missionBodyStyle.copyWith(height: 1.5),
+                      style: context.missionBodyStyle.copyWith(
+                        height: 1.5,
+                        color: context.colors.textPrimary,
+                      ),
                       decoration: AppInputDecorations.formField(
                         context,
                         hintText:
                             'Présentez-vous, vos atouts, votre expérience...',
                         hintStyle: context.missionBodyStyle.copyWith(
                           height: 1.5,
-                          color: context.colors.textHint,
+                          color: context.colors.textPrimary.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
-                        fillColor: Colors.white,
+                        fillColor: context.colors.inputFill,
                         contentPadding: const EdgeInsets.all(16),
                         radius: AppDesign.radius12,
                       ),

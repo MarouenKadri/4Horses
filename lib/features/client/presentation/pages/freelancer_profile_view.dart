@@ -8,7 +8,6 @@ import '../../../../core/design/app_design_system.dart';
 import '../../../messaging/messaging_provider.dart';
 import '../../../messaging/presentation/pages/chat_page.dart';
 import '../../../mission/data/models/service_category.dart';
-import '../../../mission/presentation/pages/client/create_mission_page.dart';
 import '../../../profile/presentation/pages/shared/base_profile_view.dart';
 import '../../../story/story.dart';
 import '../providers/freelancer_public_profile_provider.dart';
@@ -405,25 +404,6 @@ class _FreelancerProfilePageState
     return widget.contactMode == FreelancerContactMode.pendingCandidate
         ? 'Contacter & Accepter'
         : 'Contacter';
-  }
-
-  @override
-  VoidCallback? buildReserveAction(BuildContext context) {
-    // Réservation directe uniquement en démarchage spontané —
-    // dans les autres modes, le contexte mission existe déjà.
-    if (widget.contactMode != FreelancerContactMode.spontaneous) return null;
-    final freelancerId = widget.freelancerId;
-    if (freelancerId == null) return null;
-    return () => Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => PostMissionFlow(
-          preAssignedFreelancerId: freelancerId,
-          preAssignedFreelancerName: profileName,
-          preAssignedFreelancerAvatar: profileAvatar,
-        ),
-      ),
-    );
   }
 
   @override

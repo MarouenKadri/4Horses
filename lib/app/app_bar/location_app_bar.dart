@@ -60,8 +60,8 @@ class HomeActionBar extends StatelessWidget implements PreferredSizeWidget {
           onTap: onNotificationsTap,
           size: 34,
           iconSize: 20,
-          backgroundColor: Colors.transparent,
-          iconColor: context.colors.textSecondary,
+          backgroundColor: context.colors.surfaceAlt,
+          iconColor: context.colors.textPrimary,
           badgeLabel: unreadCount > 0
               ? (unreadCount > 99 ? '99+' : '$unreadCount')
               : null,

@@ -10,8 +10,10 @@ class MainBottomNav extends StatelessWidget {
   final ValueChanged<int> onItemSelected;
   final List<NavItem> items;
   final Map<int, int> badgeCounts;
-  final bool hasCenterGap;
-  final double centerGapWidth;
+
+  /// Action centrale (ex. bouton Publier) insérée dans la rangée
+  /// comme une colonne à part entière — même largeur que les onglets.
+  final Widget? centerAction;
 
   const MainBottomNav({
     super.key,
@@ -19,8 +21,7 @@ class MainBottomNav extends StatelessWidget {
     required this.onItemSelected,
     required this.items,
     this.badgeCounts = const {},
-    this.hasCenterGap = false,
-    this.centerGapWidth = 66,
+    this.centerAction,
   });
 
   @override
@@ -38,11 +39,10 @@ class MainBottomNav extends StatelessWidget {
         ),
       ),
     );
-    final useCenterGap = hasCenterGap && items.length >= 4;
-    final rowChildren = useCenterGap
+    final rowChildren = centerAction != null
         ? <Widget>[
             ...navTiles.take(items.length ~/ 2),
-            SizedBox(width: centerGapWidth),
+            Expanded(child: Center(child: centerAction)),
             ...navTiles.skip(items.length ~/ 2),
           ]
         : navTiles;
@@ -114,7 +114,8 @@ class _NavTileState extends State<_NavTile>
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = context.colors.textPrimary;
+    final activeColor = context.colors.primary;
+    final labelActiveColor = context.colors.textPrimary;
     final inactiveColor = context.colors.textTertiary;
 
     return GestureDetector(
@@ -146,7 +147,9 @@ class _NavTileState extends State<_NavTile>
                             : context.navLabelStyle)
                         .copyWith(
                           fontSize: AppFontSize.tinyHalf,
-                          color: widget.selected ? activeColor : inactiveColor,
+                          color: widget.selected
+                              ? labelActiveColor
+                              : inactiveColor,
                           height: 1,
                         ),
                   ),

@@ -259,7 +259,7 @@ class _CandidatesPageState extends State<CandidatesPage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.snow,
+      backgroundColor: context.colors.background,
       appBar: AppPageAppBar(
         title: 'Offres reçues',
         leading: AppBackButtonLeading(onPressed: () => Navigator.pop(context)),
@@ -272,15 +272,9 @@ class _CandidatesPageState extends State<CandidatesPage> {
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surface,
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.02),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
+                border: Border.all(color: context.colors.border),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -461,18 +455,11 @@ class _CandidateCard extends StatelessWidget {
       opacity: isRejected ? 0.52 : 1.0,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(AppRadius.xl),
           border: isAccepted
-              ? Border.all(color: AppColors.ink, width: 1.0)
-              : Border.all(color: AppColors.gray50),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.016),
-              blurRadius: 18,
-              offset: const Offset(0, 10),
-            ),
-          ],
+              ? Border.all(color: context.colors.textPrimary, width: 1.0)
+              : Border.all(color: context.colors.border),
         ),
         child: Material(
           color: Colors.transparent,
@@ -490,18 +477,14 @@ class _CandidateCard extends StatelessWidget {
                       Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 1.5),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: AppColors.blackAlpha07,
-                              blurRadius: 12,
-                              offset: Offset(0, 6),
-                            ),
-                          ],
+                          border: Border.all(
+                            color: context.colors.border,
+                            width: 1.5,
+                          ),
                         ),
                         child: CircleAvatar(
                           radius: 29,
-                          backgroundColor: AppColors.gray50,
+                          backgroundColor: context.colors.surfaceAlt,
                           backgroundImage: candidate.avatar.isNotEmpty
                               ? NetworkImage(candidate.avatar)
                               : null,
@@ -509,9 +492,9 @@ class _CandidateCard extends StatelessWidget {
                               ? (_, __) {}
                               : null,
                           child: candidate.avatar.isEmpty
-                              ? const Icon(
+                              ? Icon(
                                   Icons.person_outline_rounded,
-                                  color: AppColors.gray400,
+                                  color: context.colors.textTertiary,
                                 )
                               : null,
                         ),
@@ -625,18 +608,18 @@ class _OfferStatusChip extends StatelessWidget {
     final (label, bg, fg) = switch (status) {
       CandidateStatus.enAttente => (
         'EN ATTENTE',
-        AppColors.gray50,
-        AppColors.gray600,
+        context.colors.surfaceAlt,
+        context.colors.textSecondary,
       ),
       CandidateStatus.accepte => (
         'CHOISIE',
-        AppColors.successLight,
+        context.colors.successLight,
         AppColors.successDark,
       ),
       CandidateStatus.refuse => (
         'REFUSÉE',
-        AppColors.gray50,
-        AppColors.gray400,
+        context.colors.surfaceAlt,
+        context.colors.textTertiary,
       ),
     };
 
@@ -835,7 +818,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
                       '${_amount.round()} €',
                       style: context.text.titleMedium?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: AppColors.ink,
+                        color: context.colors.textPrimary,
                       ),
                     ),
                     Text(
@@ -867,7 +850,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
                   icon: Icons.handyman_outlined,
                   label: 'Prestataire (90 %)',
                   amount: '${_presta.round()} €',
-                  amountColor: AppColors.ink,
+                  amountColor: context.colors.textPrimary,
                   context: context,
                 ),
                 Divider(height: 1, indent: 68, color: context.colors.divider),
@@ -917,10 +900,10 @@ class _PaymentSheetState extends State<_PaymentSheet> {
                                   color: context.colors.border,
                                 ),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.credit_card_rounded,
                                 size: 18,
-                                color: AppColors.textSecondary,
+                                color: context.colors.textSecondary,
                               ),
                             ),
                             AppGap.w12,
@@ -946,10 +929,10 @@ class _PaymentSheetState extends State<_PaymentSheet> {
                               ),
                             ),
                             if (selectedIdx == entry.key)
-                              const Icon(
+                              Icon(
                                 Icons.check_circle_rounded,
                                 size: 18,
-                                color: AppColors.ink,
+                                color: context.colors.textPrimary,
                               )
                             else
                               Icon(
