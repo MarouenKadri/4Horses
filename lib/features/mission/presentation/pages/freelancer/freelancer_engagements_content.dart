@@ -22,6 +22,17 @@ class FreelancerEngagementsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasInProgress = context
+        .watch<MissionProvider>()
+        .freelancerMissions
+        .any(
+          (m) => MissionStatusUi.missionBelongsToTab(
+            mission: m,
+            role: MissionUiRole.freelancer,
+            tab: MissionUiTab.inProgress,
+          ),
+        );
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -30,22 +41,26 @@ class FreelancerEngagementsContent extends StatelessWidget {
           pageTitle: 'Mes missions',
           onGoToAccount: onGoToAccount,
         ),
-        body: const Column(
+        body: Column(
           children: [
             AppSegmentedTabBar(
               tabs: [
-                AppSegmentedTab(icon: Icons.send_rounded, label: 'Postulées'),
-                AppSegmentedTab(
+                const AppSegmentedTab(
+                  icon: Icons.send_rounded,
+                  label: 'Postulées',
+                ),
+                const AppSegmentedTab(
                   icon: Icons.check_circle_outline_rounded,
                   label: 'Confirmées',
                 ),
                 AppSegmentedTab(
                   icon: Icons.play_circle_outline_rounded,
                   label: 'En cours',
+                  alert: hasInProgress,
                 ),
               ],
             ),
-            Expanded(
+            const Expanded(
               child: TabBarView(
                 children: [
                   _MissionTab(filter: _TabFilter.applied),

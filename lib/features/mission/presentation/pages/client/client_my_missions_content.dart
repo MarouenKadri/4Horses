@@ -27,6 +27,14 @@ class ClientMyMissionsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasInProgress = context.watch<MissionProvider>().clientMissions.any(
+      (m) => MissionStatusUi.missionBelongsToTab(
+        mission: m,
+        role: MissionUiRole.client,
+        tab: MissionUiTab.inProgress,
+      ),
+    );
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -34,16 +42,20 @@ class ClientMyMissionsContent extends StatelessWidget {
         appBar: AppSectionBar(
           pageTitle: 'Mes missions',
           onGoToAccount: onGoToAccount,
-          bottom: const AppSegmentedTabBar(
+          bottom: AppSegmentedTabBar(
             tabs: [
-              AppSegmentedTab(icon: Icons.campaign_rounded, label: 'Publiées'),
-              AppSegmentedTab(
+              const AppSegmentedTab(
+                icon: Icons.campaign_rounded,
+                label: 'Publiées',
+              ),
+              const AppSegmentedTab(
                 icon: Icons.check_circle_outline_rounded,
                 label: 'Confirmées',
               ),
               AppSegmentedTab(
                 icon: Icons.play_circle_outline_rounded,
                 label: 'En cours',
+                alert: hasInProgress,
               ),
             ],
           ),

@@ -135,7 +135,7 @@ class _NavTileState extends State<_NavTile>
                     selected: widget.selected,
                     child: Icon(
                       widget.selected ? widget.item.activeIcon : widget.item.icon,
-                      size: 22,
+                      size: widget.selected ? 26 : 24,
                       color: widget.selected ? activeColor : inactiveColor,
                     ),
                   ),

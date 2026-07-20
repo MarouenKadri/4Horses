@@ -7,7 +7,12 @@ import '../../core/design/app_design_system.dart';
 class AppSegmentedTab {
   final IconData? icon;
   final String label;
-  const AppSegmentedTab({this.icon, required this.label});
+
+  /// Met l'onglet en alerte visuelle (icône + texte rouges, clignotant) —
+  /// prioritaire sur l'état sélectionné/inactif habituel.
+  final bool alert;
+
+  const AppSegmentedTab({this.icon, required this.label, this.alert = false});
 }
 
 /// Pill-style segmented tab bar — source de vérité UI pour tous les onglets.
@@ -17,7 +22,8 @@ class AppSegmentedTab {
 ///   • Avec [selectedIndex] → mode standalone (setState), pas besoin de TabController
 ///
 /// Design : actif = fond noir + texte blanc, inactif = fond blanc + bordure grise.
-class AppSegmentedTabBar extends StatelessWidget implements PreferredSizeWidget {
+class AppSegmentedTabBar extends StatefulWidget
+    implements PreferredSizeWidget {
   final List<AppSegmentedTab> tabs;
 
   // Mode TabController
@@ -39,19 +45,63 @@ class AppSegmentedTabBar extends StatelessWidget implements PreferredSizeWidget 
   Size get preferredSize => const Size.fromHeight(48);
 
   @override
+  State<AppSegmentedTabBar> createState() => _AppSegmentedTabBarState();
+}
+
+class _AppSegmentedTabBarState extends State<AppSegmentedTabBar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _blinkController;
+  late final Animation<double> _blinkOpacity;
+
+  bool get _hasAlert => widget.tabs.any((t) => t.alert);
+
+  @override
+  void initState() {
+    super.initState();
+    _blinkController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+    _blinkOpacity = Tween<double>(begin: 1.0, end: 0.35).animate(
+      CurvedAnimation(parent: _blinkController, curve: Curves.easeInOut),
+    );
+    if (_hasAlert) _blinkController.repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(covariant AppSegmentedTabBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final hadAlert = oldWidget.tabs.any((t) => t.alert);
+    if (_hasAlert && !hadAlert) {
+      _blinkController.repeat(reverse: true);
+    } else if (!_hasAlert && hadAlert) {
+      _blinkController
+        ..stop()
+        ..value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _blinkController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final tabController = controller ?? DefaultTabController.maybeOf(context);
+    final tabController =
+        widget.controller ?? DefaultTabController.maybeOf(context);
     final isStandalone = tabController == null;
 
-    if (tabs.isEmpty) return const SizedBox.shrink();
+    if (widget.tabs.isEmpty) return const SizedBox.shrink();
 
     if (isStandalone) {
       return _buildPills(
         context,
-        getSelected: (_) => selectedIndex ?? 0,
+        getSelected: (_) => widget.selectedIndex ?? 0,
         onTap: (i) {
           HapticFeedback.selectionClick();
-          onChanged?.call(i);
+          widget.onChanged?.call(i);
         },
       );
     }
@@ -85,8 +135,15 @@ class AppSegmentedTabBar extends StatelessWidget implements PreferredSizeWidget 
         border: Border(bottom: BorderSide(color: context.colors.divider)),
       ),
       child: Row(
-        children: List<Widget>.generate(tabs.length, (index) {
+        children: List<Widget>.generate(widget.tabs.length, (index) {
+          final tab = widget.tabs[index];
           final selected = getSelected(index) == index;
+          final alertColor = context.colors.error;
+          final color = tab.alert
+              ? alertColor
+              : (selected
+                    ? context.colors.textPrimary
+                    : context.colors.textTertiary);
 
           return Expanded(
             child: GestureDetector(
@@ -97,35 +154,34 @@ class AppSegmentedTabBar extends StatelessWidget implements PreferredSizeWidget 
                 children: [
                   Expanded(
                     child: Center(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (tabs[index].icon != null) ...[
-                            Icon(
-                              tabs[index].icon,
-                              size: 16,
-                              color: selected
-                                  ? context.colors.textPrimary
-                                  : context.colors.textTertiary,
-                            ),
-                            const SizedBox(width: 6),
-                          ],
-                          Flexible(
-                            child: Text(
-                              tabs[index].label,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: context.text.labelLarge?.copyWith(
-                                fontWeight: selected
-                                    ? FontWeight.w700
-                                    : FontWeight.w500,
-                                color: selected
-                                    ? context.colors.textPrimary
-                                    : context.colors.textTertiary,
+                      child: AnimatedBuilder(
+                        animation: _blinkOpacity,
+                        builder: (context, child) => Opacity(
+                          opacity: tab.alert ? _blinkOpacity.value : 1.0,
+                          child: child,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (tab.icon != null) ...[
+                              Icon(tab.icon, size: 16, color: color),
+                              const SizedBox(width: 6),
+                            ],
+                            Flexible(
+                              child: Text(
+                                tab.label,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.text.labelLarge?.copyWith(
+                                  fontWeight: selected || tab.alert
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  color: color,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
