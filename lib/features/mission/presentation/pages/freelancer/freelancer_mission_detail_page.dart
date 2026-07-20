@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/design/app_design_system.dart';
@@ -185,7 +184,7 @@ class _FreelancerMissionDetailPageState
         );
       case MissionStatus.onTheWay:
         return StatusBannerConfig(
-          color: AppColors.secondary,
+          color: AppColors.primary,
           icon: Icons.directions_car_rounded,
           title: 'Vous êtes en route',
           subtitle: 'Le client suit votre arrivée depuis son détail mission.',
@@ -208,7 +207,7 @@ class _FreelancerMissionDetailPageState
           icon: Icons.hourglass_top_rounded,
           title: 'Fin signalée au client',
           subtitle:
-              'Le client doit maintenant confirmer la mission ou signaler un problème.',
+              'Le client a 8h pour confirmer ou signaler un problème. Sans réponse de sa part, le paiement vous sera versé automatiquement.',
           style: DetailBannerStyle.card,
         );
       case MissionStatus.paymentHeld:
@@ -276,14 +275,7 @@ class _FreelancerMissionDetailPageState
       ),
     ];
 
-    final today = DateTime.now();
-    final isToday =
-        mission.date.year == today.year &&
-        mission.date.month == today.month &&
-        mission.date.day == today.day;
-
     if (widget.isOwn &&
-        isToday &&
         (mission.status == MissionStatus.confirmed ||
             mission.status == MissionStatus.onTheWay ||
             mission.status == MissionStatus.inProgress)) {
@@ -293,7 +285,11 @@ class _FreelancerMissionDetailPageState
           onOpenMissionPilot: () => Navigator.push(
             ctx,
             MaterialPageRoute(
-              builder: (_) => FreelancerTrackingPage(mission: mission),
+              builder: (_) => FreelancerTrackingPage(
+                mission: mission,
+                onCall: contactable ? _openPhoneClient : null,
+                onChat: contactable ? _openChat : null,
+              ),
             ),
           ),
         ),
@@ -505,7 +501,7 @@ class _FreelancerMissionDetailPageState
 
     final conversationId = await context
         .read<MessagingProvider>()
-        .findConversation(
+        .getOrCreateConversation(
           otherUserId: client.id,
           iAmClient: false,
           missionId: mission.id,
@@ -513,7 +509,11 @@ class _FreelancerMissionDetailPageState
     if (!mounted) return;
 
     if (conversationId == null) {
-      _promptContactRequest(client);
+      showAppSnackBar(
+        context,
+        'Impossible d\'ouvrir la conversation. Réessayez.',
+        icon: Icons.error_outline_rounded,
+      );
       return;
     }
 
@@ -527,6 +527,7 @@ class _FreelancerMissionDetailPageState
           contactAvatar: client.avatarUrl,
           isVerified: client.isVerified,
           missionTitle: mission.title,
+          missionId: mission.id,
           confirmedMissionTitle: mission.title,
           isMissionConfirmed: const {
             MissionStatus.confirmed,
@@ -540,19 +541,6 @@ class _FreelancerMissionDetailPageState
           }.contains(mission.status),
         ),
       ),
-    );
-  }
-
-  void _promptContactRequest(dynamic client) {
-    showAppDialog(
-      context: context,
-      title: const Text('Demander à être contacté'),
-      content: Text(
-        'Le client n\'a pas encore ouvert de conversation. Voulez-vous lui envoyer une demande de contact pour la mission "${mission.title}" ?',
-      ),
-      confirmLabel: 'Envoyer la demande',
-      cancelLabel: 'Annuler',
-      onConfirm: () => _sendContactRequest(client),
     );
   }
 
@@ -618,59 +606,6 @@ class _FreelancerMissionDetailPageState
       });
     } catch (e) {
       debugPrint('notifyReservationClient failed: $e');
-    }
-  }
-
-  String get _contactRequestPrefKey => 'contact_request_sent_${mission.id}';
-
-  Future<void> _sendContactRequest(dynamic client) async {
-    final currentUser = Supabase.instance.client.auth.currentUser;
-    if (currentUser == null) return;
-    final freelancerDisplayName =
-        currentUser.userMetadata?['first_name'] as String? ?? 'Le prestataire';
-
-    // Une seule demande par mission — pas de spam côté client
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool(_contactRequestPrefKey) ?? false) {
-      if (!mounted) return;
-      showAppSnackBar(
-        context,
-        'Demande déjà envoyée pour cette mission.',
-        icon: Icons.check_rounded,
-      );
-      return;
-    }
-
-    try {
-      await Supabase.instance.client.from('notifications').insert({
-        'user_id': client.id,
-        'type': 'mission',
-        'title': 'Demande de contact',
-        'body':
-            '$freelancerDisplayName souhaite vous contacter pour la mission "${mission.title}".',
-        'is_read': false,
-        // Payload actionnable : le client ouvre le chat en tapant la notif
-        'data': {
-          'kind': 'contact_request',
-          'freelancer_id': currentUser.id,
-          'freelancer_name': freelancerDisplayName,
-          'mission_id': mission.id,
-        },
-      });
-      await prefs.setBool(_contactRequestPrefKey, true);
-      if (!mounted) return;
-      showAppSnackBar(
-        context,
-        'Demande envoyée au client.',
-        type: SnackBarType.success,
-      );
-    } catch (e) {
-      if (!mounted) return;
-      showAppSnackBar(
-        context,
-        'Impossible d\'envoyer la demande. Réessayez.',
-        type: SnackBarType.error,
-      );
     }
   }
 

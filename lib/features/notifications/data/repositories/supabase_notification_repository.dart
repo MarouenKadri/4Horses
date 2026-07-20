@@ -7,7 +7,8 @@ import 'notification_repository.dart';
 /// 📦 Inkern - SupabaseNotificationRepository
 ///
 /// Table SQL requise :
-///   notifications : id, user_id, type, title, body, avatar_url,
+///   notifications : id, user_id, type, target_role ('client'|'freelancer'),
+///                   title, body, avatar_url,
 ///                   is_read (bool default false), created_at
 /// ═══════════════════════════════════════════════════════════════════════════
 
@@ -43,12 +44,13 @@ class SupabaseNotificationRepository implements NotificationRepository {
   }
 
   @override
-  Future<void> markAllRead(String userId) async {
+  Future<void> markAllRead(String userId, {required String targetRole}) async {
     try {
       await _supabase
           .from('notifications')
           .update({'is_read': true})
           .eq('user_id', userId)
+          .eq('target_role', targetRole)
           .eq('is_read', false);
     } catch (e) {
       debugPrint('markAllRead error: $e');
@@ -68,6 +70,7 @@ class SupabaseNotificationRepository implements NotificationRepository {
   Future<void> sendNotification(
     String targetUserId, {
     required String type,
+    required String targetRole,
     required String title,
     required String body,
     String? avatarUrl,
@@ -77,6 +80,7 @@ class SupabaseNotificationRepository implements NotificationRepository {
       await _supabase.from('notifications').insert({
         'user_id': targetUserId,
         'type': type,
+        'target_role': targetRole,
         'title': title,
         'body': body,
         if (avatarUrl != null) 'avatar_url': avatarUrl,

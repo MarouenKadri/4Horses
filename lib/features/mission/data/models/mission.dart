@@ -61,7 +61,7 @@ extension MissionStatusX on MissionStatus {
     MissionStatus.candidateReceived => AppColors.secondary,
     MissionStatus.pendingAcceptance => AppColors.warning,
     MissionStatus.confirmed => AppColors.primary,
-    MissionStatus.onTheWay => AppColors.secondary,
+    MissionStatus.onTheWay => AppColors.primary,
     MissionStatus.inProgress => AppColors.indigo,
     MissionStatus.completionRequested => AppColors.warning,
     MissionStatus.completed => AppColors.primary,
@@ -118,11 +118,11 @@ class Mission {
   final MissionStatus status;
   final List<String> images;
   final DateTime createdAt;
+  final DateTime? updatedAt;
   final ClientInfo? client;
   final PrestaInfo? assignedPresta;
   final int candidatesCount;
   final int? rating;
-  final String? startCode;
 
   const Mission({
     required this.id,
@@ -136,11 +136,11 @@ class Mission {
     this.status = MissionStatus.waitingCandidates,
     this.images = const [],
     required this.createdAt,
+    this.updatedAt,
     this.client,
     this.assignedPresta,
     this.candidatesCount = 0,
     this.rating,
-    this.startCode,
   });
 
   ServiceCategory? get category => ServiceCategory.findById(categoryId);
@@ -208,12 +208,6 @@ class Mission {
     return '${date.day} ${mois[date.month - 1]}';
   }
 
-  bool matchesStartCode(String rawCode) {
-    if (startCode == null) return false;
-    final normalized = rawCode.replaceAll(RegExp(r'[^0-9]'), '');
-    return normalized == startCode;
-  }
-
   Mission copyWith({
     String? id,
     String? title,
@@ -226,11 +220,11 @@ class Mission {
     MissionStatus? status,
     List<String>? images,
     DateTime? createdAt,
+    DateTime? updatedAt,
     ClientInfo? client,
     PrestaInfo? assignedPresta,
     int? candidatesCount,
     int? rating,
-    String? startCode,
   }) {
     return Mission(
       id: id ?? this.id,
@@ -244,11 +238,14 @@ class Mission {
       status: status ?? this.status,
       images: images ?? this.images,
       createdAt: createdAt ?? this.createdAt,
+      // Le statut change → l'horodatage de mise à jour doit suivre, sinon un
+      // compte à rebours basé dessus (ex. clôture auto 24h) resterait figé
+      // sur une ancienne valeur après une transition de statut locale.
+      updatedAt: updatedAt ?? (status != null ? DateTime.now() : this.updatedAt),
       client: client ?? this.client,
       assignedPresta: assignedPresta ?? this.assignedPresta,
       candidatesCount: candidatesCount ?? this.candidatesCount,
       rating: rating ?? this.rating,
-      startCode: startCode ?? this.startCode,
     );
   }
 }

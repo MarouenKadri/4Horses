@@ -366,25 +366,15 @@ class MissionProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> unlockMissionStart(String missionId, String code) async {
+  /// Démarre la mission — le freelancer confirme être arrivé chez le client
+  /// et l'intervention commence. Pas de code à échanger.
+  Future<bool> startMission(String missionId) async {
     final mission = _findMissionById(missionId);
     if (mission == null) return false;
     if (mission.status != MissionStatus.confirmed &&
         mission.status != MissionStatus.onTheWay) {
       return false;
     }
-    // Verify the code server-side via RPC — avoids trusting the locally cached value.
-    // Falls back to local comparison if the RPC is not yet deployed.
-    bool verified = false;
-    try {
-      verified = await _supabase.rpc<bool>(
-        'verify_mission_start_code',
-        params: {'p_mission_id': missionId, 'p_code': code},
-      );
-    } catch (_) {
-      verified = mission.matchesStartCode(code);
-    }
-    if (!verified) return false;
     await updateMissionStatus(missionId, MissionStatus.inProgress);
     return true;
   }

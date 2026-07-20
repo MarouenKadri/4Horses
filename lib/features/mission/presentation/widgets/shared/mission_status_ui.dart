@@ -7,21 +7,14 @@ enum MissionUiTab { published, applied, confirmed, inProgress, archived }
 class MissionStatusUi {
   /// Vérifie si une mission (avec sa date) appartient à un tab donné.
   ///
-  /// Règle de promotion automatique :
-  ///   Une mission `confirmed` dont la date est aujourd'hui
-  ///   ou passée est promue dans "En cours" et retirée de "Confirmées".
+  /// Une mission `confirmed` reste dans "Confirmées" quelle que soit sa date
+  /// planifiée — elle ne passe dans "En cours" que lorsque le prestataire
+  /// démarre réellement la mission (statut `onTheWay`/`inProgress`).
   static bool missionBelongsToTab({
     required Mission mission,
     required MissionUiRole role,
     required MissionUiTab tab,
   }) {
-    final isConfirmedStatus = mission.status == MissionStatus.confirmed;
-
-    if (isConfirmedStatus && _isScheduledNowOrPast(mission.date)) {
-      // Promue → "En cours", disparaît de "Confirmées"
-      return tab == MissionUiTab.inProgress;
-    }
-
     return belongsToTab(status: mission.status, role: role, tab: tab);
   }
 
@@ -78,14 +71,6 @@ class MissionStatusUi {
             return false;
         }
     }
-  }
-
-  /// Vrai si la date planifiée est aujourd'hui ou dans le passé.
-  static bool _isScheduledNowOrPast(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final missionDay = DateTime(date.year, date.month, date.day);
-    return !missionDay.isAfter(today);
   }
 
   static String badgeLabel({

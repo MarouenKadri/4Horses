@@ -169,35 +169,39 @@ class FreelancerLocationShareCard extends StatelessWidget {
     final config = switch (status) {
       MissionStatus.confirmed => (
         icon: Icons.navigation_rounded,
-        title: 'Code client requis',
+        title: 'Prêt pour le départ',
         subtitle:
-            'Quand vous arrivez, demandez le code de demarrage au client pour lancer officiellement la mission.',
+            'Partez vers l\'adresse du client — une fois sur place, démarrez la mission depuis le suivi.',
         cta: 'Lancer le suivi',
-        accent: AppColors.secondary,
+        accent: AppColors.primary,
+        info: 'Activez le suivi dès que vous partez vers l\'adresse du client.',
       ),
       MissionStatus.onTheWay => (
         icon: Icons.location_searching_rounded,
         title: 'En route vers la mission',
         subtitle:
-            'Une fois arrive, entrez le code donne par le client pour demarrer la mission.',
-        cta: 'Gerer le suivi',
+            'Une fois arrivé chez le client, démarrez la mission depuis le suivi.',
+        cta: 'Gérer le suivi',
         accent: AppColors.primary,
+        info: 'Votre position est partagée en direct avec le client.',
       ),
       MissionStatus.inProgress => (
         icon: Icons.my_location_rounded,
         title: 'Position active sur mission',
         subtitle:
-            'Le client peut verifier que vous etes bien sur place pendant l intervention.',
+            'Le client peut vérifier que vous êtes bien sur place pendant l\'intervention.',
         cta: 'Voir le pilotage',
         accent: AppColors.primary,
+        info: 'Signalez la fin de la mission une fois l\'intervention terminée.',
       ),
       _ => (
         icon: Icons.location_disabled_rounded,
         title: 'Partage de position indisponible',
         subtitle:
-            'Le suivi live apparait uniquement pour une mission confirmee ou en cours.',
+            'Le suivi live apparaît uniquement pour une mission confirmée ou en cours.',
         cta: 'Voir le pilotage',
         accent: context.colors.textTertiary,
+        info: 'Le suivi live n\'est pas disponible pour le moment.',
       ),
     };
 
@@ -228,7 +232,7 @@ class FreelancerLocationShareCard extends StatelessWidget {
                 AppGap.w8,
                 Expanded(
                   child: Text(
-                    'Le partage live doit etre active depuis le pilotage de mission.',
+                    config.info,
                     style: context.missionEmphasisBodyStyle.copyWith(
                       fontSize: AppFontSize.smHalf,
                       height: 1.35,

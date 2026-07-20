@@ -272,6 +272,7 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
       AppNotification(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         type: NotifType.payment,
+        targetRole: NotifTargetRole.client,
         title: 'Paiement reçu',
         body:
             'Vous avez reçu ${_prestaAmount.round()} € pour la mission "${widget.mission.title}".',
@@ -306,6 +307,7 @@ class _MissionValidationPageState extends State<MissionValidationPage> {
           AppNotification(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             type: NotifType.mission,
+            targetRole: NotifTargetRole.client,
             title: 'Litige ouvert',
             body:
                 'Un litige a été ouvert pour la mission "${widget.mission.title}".',

@@ -106,7 +106,7 @@ class AppSegmentedTabBar extends StatelessWidget implements PreferredSizeWidget 
                               size: 16,
                               color: selected
                                   ? context.colors.textPrimary
-                                  : context.colors.textHint,
+                                  : context.colors.textTertiary,
                             ),
                             const SizedBox(width: 6),
                           ],
@@ -121,7 +121,7 @@ class AppSegmentedTabBar extends StatelessWidget implements PreferredSizeWidget 
                                     : FontWeight.w500,
                                 color: selected
                                     ? context.colors.textPrimary
-                                    : context.colors.textHint,
+                                    : context.colors.textTertiary,
                               ),
                             ),
                           ),

@@ -5,6 +5,8 @@ import '../../core/design/app_design_system.dart';
 import '../auth_provider.dart';
 import '../enum/user_role.dart';
 import '../../features/messaging/messaging_provider.dart';
+import '../../features/notifications/data/models/app_notification.dart';
+import '../../features/notifications/notification_provider.dart';
 import '../../features/messaging/presentation/pages/messages_page.dart';
 import '../../features/mission/presentation/pages/client/create_mission_page.dart';
 import '../../features/profile/presentation/pages/shared/account_page.dart';
@@ -24,6 +26,13 @@ class AppNav extends StatelessWidget {
     final role = context.watch<AuthProvider>().currentRole;
     final isClient = role == UserRole.client;
     const accountIndex = 3;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+      context.read<NotificationProvider>().setActiveRole(
+        isClient ? NotifTargetRole.client : NotifTargetRole.freelancer,
+      );
+    });
 
     return Consumer<MessagingProvider>(
       builder: (_, messaging, __) => AppNavShell(
@@ -53,10 +62,7 @@ class AppNav extends StatelessWidget {
             ),
           ],
           pagesBuilder: (goToIndex) => [
-            DiscoverShell(
-              onGoToAccount: () => goToIndex(accountIndex),
-              onGoToMissions: () => goToIndex(1),
-            ),
+            DiscoverShell(onGoToAccount: () => goToIndex(accountIndex)),
             MissionsShell(onGoToAccount: () => goToIndex(accountIndex)),
             MessagesPage(onGoToAccount: () => goToIndex(accountIndex)),
             const AccountPage(),

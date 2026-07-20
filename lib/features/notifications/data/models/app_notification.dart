@@ -1,8 +1,22 @@
 enum NotifType { message, mission, candidature, payment, review }
 
+/// Rôle de l'utilisateur concerné par la notification (côté client ou
+/// côté freelancer de l'interaction) — sert à filtrer le flux selon le
+/// mode actif de l'app, un même compte pouvant tenir les deux rôles.
+enum NotifTargetRole {
+  client,
+  freelancer;
+
+  static NotifTargetRole fromDb(String? value) => switch (value) {
+    'freelancer' => NotifTargetRole.freelancer,
+    _ => NotifTargetRole.client,
+  };
+}
+
 class AppNotification {
   final String id;
   final NotifType type;
+  final NotifTargetRole targetRole;
   final String title;
   final String body;
   final String timeAgo;
@@ -17,6 +31,7 @@ class AppNotification {
   const AppNotification({
     required this.id,
     required this.type,
+    this.targetRole = NotifTargetRole.client,
     required this.title,
     required this.body,
     required this.timeAgo,
@@ -35,6 +50,7 @@ class AppNotification {
     return AppNotification(
       id: json['id'] as String,
       type: type,
+      targetRole: NotifTargetRole.fromDb(json['target_role'] as String?),
       title: json['title'] as String,
       body: json['body'] as String,
       avatarUrl: json['avatar_url'] as String?,
@@ -57,6 +73,7 @@ class AppNotification {
   AppNotification copyWith({bool? isRead}) => AppNotification(
     id: id,
     type: type,
+    targetRole: targetRole,
     title: title,
     body: body,
     timeAgo: timeAgo,

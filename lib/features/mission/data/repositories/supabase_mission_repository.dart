@@ -315,11 +315,13 @@ class SupabaseMissionRepository implements MissionRepository {
       status: _statusFromDb(j['status'] as String?),
       images: const [],
       createdAt: DateTime.parse(j['created_at'] as String),
+      updatedAt: j['updated_at'] != null
+          ? DateTime.parse(j['updated_at'] as String)
+          : null,
       candidatesCount: (j['candidates_count'] as num?)?.toInt() ?? 0,
       rating: null,
       client: clientMap != null ? _clientFromJson(clientMap) : null,
       assignedPresta: prestaMap != null ? _prestaFromJson(prestaMap) : null,
-      startCode: j['start_code'] as String?,
     );
   }
 

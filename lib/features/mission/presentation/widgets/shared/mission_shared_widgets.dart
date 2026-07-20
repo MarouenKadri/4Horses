@@ -887,6 +887,7 @@ class MissionLocationRow extends StatelessWidget {
   }
 }
 
+
 // ─── Card Container ───────────────────────────────────────────────────────────
 
 class CardContainer extends StatelessWidget {
@@ -922,3 +923,35 @@ class CardContainer extends StatelessWidget {
     );
   }
 }
+
+// ─── Bouton contact rond (suivi live) ──────────────────────────────────────────
+
+/// Icône ronde d'action rapide (appel/message) utilisée dans les panneaux de
+/// suivi live — partagée entre les vues client et freelancer.
+class TrackingContactIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const TrackingContactIconButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.surfaceAlt,
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Icon(icon, size: 20, color: AppColors.primary),
+        ),
+      ),
+    );
+  }
+}
+

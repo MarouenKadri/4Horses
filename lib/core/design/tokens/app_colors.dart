@@ -22,7 +22,7 @@ abstract class AppColors {
   // Text
   static const textPrimary = Color(0xFF1A1A1E);
   static const textSecondary = Color(0xFF505258);
-  static const textTertiary = Color(0xFF94A3B8);
+  static const textTertiary = Color(0xFF64748B);
   static const textHint = Color(0xFFCBD5E1);
 
   // Status
@@ -148,7 +148,7 @@ abstract class AppColorsDark {
 
   static const textPrimary = Color(0xFFE6EDF3);
   static const textSecondary = Color(0xFF8B949E);
-  static const textTertiary = Color(0xFF484F58);
+  static const textTertiary = Color(0xFF768390);
   static const textHint = Color(0xFF30363D);
 }
 

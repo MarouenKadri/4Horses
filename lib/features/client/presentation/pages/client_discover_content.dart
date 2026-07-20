@@ -3,14 +3,9 @@ import 'package:provider/provider.dart';
 import '../../../../core/design/app_design_system.dart';
 import '../../../../app/app_bar/location_app_bar.dart';
 import '../../../../app/widgets/app_segmented_tab_bar.dart';
-import '../../../story/story.dart';
 import '../../../story/presentation/widgets/posts_feed.dart';
 import '../../../profile/profile_provider.dart';
-import '../../../mission/data/models/mission.dart';
-import '../../../mission/presentation/mission_provider.dart';
-import '../../../mission/presentation/widgets/shared/mission_shared_widgets.dart';
-import '../../../mission/presentation/pages/client/client_mission_detail_page.dart';
-import '../../../mission/presentation/pages/client/create_mission_page.dart';
+import '../../../mission/data/models/service_category.dart';
 import '../../../auth/data/models/freelancer.dart';
 import '../../../auth/presentation/widgets/freelancer_list_tile.dart';
 import 'freelancer_profile_view.dart';
@@ -59,17 +54,11 @@ Map<String, dynamic> _normalizeFreelancerRow(Map<String, dynamic> row) {
 
 /// ─────────────────────────────────────────────────────────────
 /// 🏠 Inkern - Page d'accueil Client
-/// Haut : CTA mission + catégories + accès prestataires + stories
-/// Bas  : fil d'actualité
+/// Home : fil d'actualité (posts) · Freelancer : découverte prestataires
 /// ─────────────────────────────────────────────────────────────
 class ClientDiscoverContent extends StatefulWidget {
   final VoidCallback? onGoToAccount;
-  final VoidCallback? onGoToMissions;
-  const ClientDiscoverContent({
-    super.key,
-    this.onGoToAccount,
-    this.onGoToMissions,
-  });
+  const ClientDiscoverContent({super.key, this.onGoToAccount});
 
   @override
   State<ClientDiscoverContent> createState() => _ClientDiscoverContentState();
@@ -82,7 +71,7 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
   @override
   void initState() {
     super.initState();
-    _discoverTabController = TabController(length: 3, vsync: this);
+    _discoverTabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProfileProvider>().loadFreelancers();
     });
@@ -92,13 +81,6 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
   void dispose() {
     _discoverTabController.dispose();
     super.dispose();
-  }
-
-  Future<void> _refresh() async {
-    await Future.wait([
-      context.read<ProfileProvider>().loadFreelancers(),
-      context.read<StoryProvider>().refresh(),
-    ]);
   }
 
   @override
@@ -112,7 +94,6 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
           controller: _discoverTabController,
           tabs: const [
             AppSegmentedTab(icon: Icons.home_rounded, label: 'Home'),
-            AppSegmentedTab(icon: Icons.grid_view_rounded, label: 'Posts'),
             AppSegmentedTab(icon: Icons.search_rounded, label: 'Freelancer'),
           ],
         ),
@@ -120,21 +101,6 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
       body: TabBarView(
         controller: _discoverTabController,
         children: [
-          RefreshIndicator(
-            onRefresh: _refresh,
-            color: context.colors.primary,
-            child: CustomScrollView(
-              slivers: [
-                // ── Missions en cours — remplit l'espace restant ─────
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: _ActiveMissionsSection(
-                    onGoToMissions: widget.onGoToMissions,
-                  ),
-                ),
-              ],
-            ),
-          ),
           PostsFeed(
             onProfileTap: (group) => Navigator.push(
               context,
@@ -148,384 +114,6 @@ class _ClientDiscoverContentState extends State<ClientDiscoverContent>
             ),
           ),
           const _FreelancerDiscoveryView(),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// Section missions du jour — masquée si vide, remplit l'espace
-// ─────────────────────────────────────────────────────────────
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Section missions du jour
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _ActiveMissionsSection extends StatelessWidget {
-  final VoidCallback? onGoToMissions;
-  const _ActiveMissionsSection({this.onGoToMissions});
-
-  String _todayLabel() {
-    final now = DateTime.now();
-    const days = [
-      'Lundi',
-      'Mardi',
-      'Mercredi',
-      'Jeudi',
-      'Vendredi',
-      'Samedi',
-      'Dimanche',
-    ];
-    const months = [
-      'janvier',
-      'février',
-      'mars',
-      'avril',
-      'mai',
-      'juin',
-      'juillet',
-      'août',
-      'septembre',
-      'octobre',
-      'novembre',
-      'décembre',
-    ];
-    return '${days[now.weekday - 1]} ${now.day} ${months[now.month - 1]}';
-  }
-
-  static bool _isArchived(MissionStatus s) =>
-      s == MissionStatus.closed ||
-      s == MissionStatus.cancelled ||
-      s == MissionStatus.expired ||
-      s == MissionStatus.inDispute;
-
-  @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final todayDate = DateTime(now.year, now.month, now.day);
-    final all = context.watch<MissionProvider>().clientMissions;
-
-    // Today: any non-archived mission dated today
-    final todayMissions = all.where((m) {
-      final mDay = DateTime(m.date.year, m.date.month, m.date.day);
-      return mDay == todayDate && !_isArchived(m.status);
-    }).toList();
-
-    // Upcoming: confirmed missions within the next 7 days (excl. today)
-    final upcomingMissions = todayMissions.isEmpty
-        ? (all.where((m) {
-            final mDay = DateTime(m.date.year, m.date.month, m.date.day);
-            final diff = mDay.difference(todayDate).inDays;
-            return diff > 0 && diff <= 7 && m.status == MissionStatus.confirmed;
-          }).toList()..sort((a, b) => a.date.compareTo(b.date)))
-        : <Mission>[];
-
-    final missions = todayMissions.isNotEmpty
-        ? todayMissions
-        : upcomingMissions;
-    final isToday = todayMissions.isNotEmpty;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── En-tête ────────────────────────────────────────────
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isToday ? "Aujourd'hui" : "À venir",
-                    style: context.text.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
-                      color: context.colors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _todayLabel(),
-                    style: context.text.bodySmall?.copyWith(
-                      color: context.colors.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              if (missions.isNotEmpty)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '${missions.length} mission${missions.length > 1 ? 's' : ''}',
-                    style: context.text.labelMedium!.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // ── Contenu ───────────────────────────────────────────
-          if (missions.isEmpty)
-            _EmptyTodayCard(onGoToMissions: onGoToMissions)
-          else
-            ...missions.map(
-              (m) => _ActiveMissionCard(mission: m, showDate: !isToday),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── Empty state ──────────────────────────────────────────────────────────────
-
-class _EmptyTodayCard extends StatelessWidget {
-  final VoidCallback? onGoToMissions;
-  const _EmptyTodayCard({this.onGoToMissions});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.04),
-            blurRadius: 24,
-            offset: Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.08),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.calendar_today_rounded,
-              size: 24,
-              color: AppColors.primary,
-            ),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            "Pas de mission aujourd'hui",
-            style: context.text.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Publiez une mission pour trouver un prestataire rapidement.',
-            textAlign: TextAlign.center,
-            style: context.text.bodyMedium?.copyWith(
-              color: context.colors.textSecondary,
-              height: 1.45,
-            ),
-          ),
-          const SizedBox(height: 20),
-          GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const PostMissionFlow()),
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.inkDark,
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.add_rounded, size: 16, color: Colors.white),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Créer une mission',
-                    style: context.text.labelLarge!.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── Carte mission active ─────────────────────────────────────────────────────
-
-class _ActiveMissionCard extends StatelessWidget {
-  final Mission mission;
-  final bool showDate;
-  const _ActiveMissionCard({required this.mission, this.showDate = false});
-
-  String _dateLabel(DateTime date) {
-    const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-    const months = [
-      'jan',
-      'fév',
-      'mar',
-      'avr',
-      'mai',
-      'juin',
-      'juil',
-      'août',
-      'sep',
-      'oct',
-      'nov',
-      'déc',
-    ];
-    return '${days[date.weekday - 1]} ${date.day} ${months[date.month - 1]}';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final presta = mission.assignedPresta;
-    final location = mission.address.shortAddress;
-    final subtitle = [
-      if (location.isNotEmpty) location,
-      if (presta != null) presta.name,
-    ].join(' · ');
-    final timeLabel = mission.timeSlot.isNotEmpty
-        ? mission.timeSlot.split(' - ').first
-        : null;
-    final topLabel = showDate ? _dateLabel(mission.date) : (timeLabel ?? '—');
-
-    // Rangée plate, même anatomie que le feed freelancer :
-    // vignette · catégorie/titre/lieu · heure en gras à droite, filet fin.
-    return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        slideUpRoute(page: ClientMissionDetailPage(mission: mission)),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: SizedBox(
-                    width: 56,
-                    height: 56,
-                    child: mission.images.isNotEmpty
-                        ? Image.network(
-                            mission.images.first,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => ColoredBox(
-                              color: context.colors.surfaceAlt,
-                              child: Icon(
-                                mission.categoryIcon,
-                                size: 22,
-                                color: context.colors.textTertiary,
-                              ),
-                            ),
-                          )
-                        : ColoredBox(
-                            color: context.colors.surfaceAlt,
-                            child: Icon(
-                              mission.categoryIcon,
-                              size: 22,
-                              color: context.colors.textTertiary,
-                            ),
-                          ),
-                  ),
-                ),
-                AppGap.w12,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        mission.categoryName.toUpperCase(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.text.labelSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.6,
-                          color: context.colors.textTertiary,
-                        ),
-                      ),
-                      AppGap.h2,
-                      Text(
-                        mission.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.text.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: context.colors.textPrimary,
-                          height: 1.25,
-                        ),
-                      ),
-                      if (subtitle.isNotEmpty) ...[
-                        AppGap.h2,
-                        Text(
-                          subtitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.text.bodySmall?.copyWith(
-                            color: context.colors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                AppGap.w12,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      topLabel,
-                      style: context.text.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: context.colors.textPrimary,
-                      ),
-                    ),
-                    if (showDate && timeLabel != null) ...[
-                      AppGap.h2,
-                      Text(
-                        timeLabel,
-                        style: context.text.labelSmall?.copyWith(
-                          color: context.colors.textTertiary,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Divider(height: 1, indent: 68, color: context.colors.divider),
         ],
       ),
     );

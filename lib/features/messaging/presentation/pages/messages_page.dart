@@ -176,6 +176,7 @@ class _ConversationTile extends StatelessWidget {
               contactAvatar: avatar,
               isVerified: conversation.isOtherVerified,
               missionTitle: conversation.missionTitle,
+              missionId: conversation.missionId,
               showReserveButton: conversation.missionId == null && isClientMode,
               freelancerId: conversation.missionId == null && isClientMode
                   ? conversation.otherUserId

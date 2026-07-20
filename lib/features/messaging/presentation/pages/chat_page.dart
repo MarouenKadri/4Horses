@@ -6,6 +6,8 @@ import '../../messaging_provider.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/chat_message_bubble.dart';
 import '../widgets/chat_input_bar.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../mission/data/models/mission.dart';
 import '../../../mission/presentation/mission_provider.dart';
 import '../../../mission/presentation/pages/client/create_mission_page.dart';
 import '../../../mission/presentation/pages/client/client_mission_detail_page.dart';
@@ -20,6 +22,11 @@ class ChatPage extends StatefulWidget {
   final bool isOnline;
   final bool isVerified;
   final String? missionTitle;
+
+  /// Id de la mission liée à cette conversation, si applicable — permet
+  /// d'afficher la carte d'action de suivi (statut + bouton contextuel)
+  /// directement dans le chat.
+  final String? missionId;
 
   final bool candidateMode;
   final String? candidatePrice;
@@ -45,6 +52,7 @@ class ChatPage extends StatefulWidget {
     this.isOnline = false,
     this.isVerified = false,
     this.missionTitle,
+    this.missionId,
     this.candidateMode = false,
     this.candidatePrice,
     this.onAcceptCandidate,
@@ -298,6 +306,8 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             if (activeMissionTitle != null)
               _ConfirmedMissionBadge(title: activeMissionTitle),
+            if (widget.missionId != null)
+              _MissionActionCard(missionId: widget.missionId!),
             if (widget.missionTitle != null)
               _MissionBanner(
                 missionTitle: widget.missionTitle!,
@@ -586,6 +596,145 @@ class _ConfirmedMissionBadge extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Carte de suivi mission directement dans le chat — évite d'avoir à
+/// naviguer vers l'écran de suivi pour démarrer/terminer la mission.
+/// Le bouton d'action dépend du rôle courant (client/freelancer) et du
+/// statut réel de la mission, lu en direct depuis MissionProvider.
+class _MissionActionCard extends StatelessWidget {
+  final String missionId;
+  const _MissionActionCard({required this.missionId});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<MissionProvider>();
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+
+    Mission? mission;
+    bool isFreelancer = false;
+    for (final m in provider.clientMissions) {
+      if (m.id == missionId) {
+        mission = m;
+        isFreelancer = false;
+        break;
+      }
+    }
+    if (mission == null) {
+      for (final m in provider.freelancerMissions) {
+        if (m.id == missionId) {
+          mission = m;
+          isFreelancer = true;
+          break;
+        }
+      }
+    }
+    if (mission == null || userId == null) return const SizedBox.shrink();
+
+    final status = mission.status;
+    if (!_visibleStatuses.contains(status)) return const SizedBox.shrink();
+
+    final headline = switch (status) {
+      MissionStatus.confirmed => 'Mission confirmée',
+      MissionStatus.onTheWay => isFreelancer
+          ? 'En route vers le client'
+          : '${mission.assignedPresta?.name ?? 'Le prestataire'} est en route',
+      MissionStatus.inProgress => 'Mission en cours',
+      MissionStatus.completionRequested => 'Fin de mission signalée',
+      _ => mission.status.label,
+    };
+
+    final (actionLabel, onAction) = switch ((status, isFreelancer)) {
+      (MissionStatus.confirmed, true) ||
+      (MissionStatus.onTheWay, true) => (
+        'Commencer la mission',
+        () => _startMission(context, mission!),
+      ),
+      (MissionStatus.inProgress, true) => (
+        'J\'ai terminé',
+        () => _requestCompletion(context, mission!),
+      ),
+      _ => (null, null),
+    };
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
+      color: context.colors.surfaceAlt,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              headline,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.text.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: context.colors.textSecondary,
+              ),
+            ),
+          ),
+          if (actionLabel != null && onAction != null) ...[
+            AppGap.w8,
+            TextButton(
+              onPressed: onAction,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                minimumSize: const Size(0, 32),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                actionLabel,
+                style: context.text.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  static const _visibleStatuses = {
+    MissionStatus.confirmed,
+    MissionStatus.onTheWay,
+    MissionStatus.inProgress,
+    MissionStatus.completionRequested,
+  };
+
+  Future<void> _startMission(BuildContext context, Mission mission) async {
+    final ok = await context.read<MissionProvider>().startMission(mission.id);
+    if (!context.mounted) return;
+    showAppSnackBar(
+      context,
+      ok ? 'Mission démarrée.' : 'Impossible de démarrer la mission.',
+      icon: ok ? Icons.check_circle_rounded : Icons.error_outline_rounded,
+    );
+  }
+
+  Future<void> _requestCompletion(BuildContext context, Mission mission) async {
+    try {
+      await context.read<MissionProvider>().updateMissionStatus(
+        mission.id,
+        MissionStatus.completionRequested,
+      );
+      if (!context.mounted) return;
+      showAppSnackBar(
+        context,
+        'Fin de mission signalée.',
+        icon: Icons.check_circle_rounded,
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      showAppSnackBar(
+        context,
+        'Impossible de signaler la fin. Réessayez.',
+        icon: Icons.error_outline_rounded,
+      );
+    }
   }
 }
 

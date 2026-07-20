@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/design/app_design_system.dart';
 import '../../../../../app/app_bar/app_section_bar.dart';
@@ -10,6 +11,9 @@ import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/shared/mission_status_ui.dart';
 import '../../widgets/cards/variants/mission_summary_card.dart';
 import 'freelancer_mission_detail_page.dart';
+import 'freelancer_tracking_page.dart';
+import '../../../../messaging/messaging_provider.dart';
+import '../../../../messaging/presentation/pages/chat_page.dart';
 
 class FreelancerEngagementsContent extends StatelessWidget {
   final VoidCallback? onGoToAccount;
@@ -148,6 +152,68 @@ class _MissionTabState extends State<_MissionTab> {
     }
   }
 
+  void _openTracking(Mission mission) {
+    final client = mission.client;
+    final contactable =
+        client != null &&
+        mission.status != MissionStatus.awaitingRelease &&
+        mission.status != MissionStatus.closed;
+    Navigator.push(
+      context,
+      slideUpRoute(
+        page: FreelancerTrackingPage(
+          mission: mission,
+          onCall: contactable ? () => _openPhoneClient(client) : null,
+          onChat: contactable ? () => _openChat(mission, client) : null,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openPhoneClient(ClientInfo client) async {
+    final phone = client.phone;
+    if (phone == null || phone.isEmpty) return;
+    final uri = Uri(scheme: 'tel', path: phone);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Future<void> _openChat(Mission mission, ClientInfo client) async {
+    final conversationId = await context
+        .read<MessagingProvider>()
+        .getOrCreateConversation(
+          otherUserId: client.id,
+          iAmClient: false,
+          missionId: mission.id,
+        );
+    if (!mounted) return;
+    if (conversationId == null) {
+      showAppSnackBar(
+        context,
+        'Impossible d\'ouvrir la conversation. Réessayez.',
+        icon: Icons.error_outline_rounded,
+      );
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChatPage(
+          conversationId: conversationId,
+          contactUserId: client.id,
+          contactName: client.name,
+          contactAvatar: client.avatarUrl,
+          isVerified: client.isVerified,
+          missionTitle: mission.title,
+          missionId: mission.id,
+          confirmedMissionTitle: mission.title,
+          isMissionConfirmed: true,
+        ),
+      ),
+    );
+  }
+
   List<Mission> _filter(List<Mission> all) {
     return all
         .where(
@@ -194,19 +260,26 @@ class _MissionTabState extends State<_MissionTab> {
                     widget.filter == _TabFilter.applied &&
                     (mission.status == MissionStatus.waitingCandidates ||
                         mission.status == MissionStatus.candidateReceived);
+                final isConfirmedTab = widget.filter == _TabFilter.confirmed;
+                final isInProgressTab = widget.filter == _TabFilter.inProgress;
+
                 return MissionSummaryCard(
                   mission: mission,
                   role: MissionUiRole.freelancer,
                   showDescription: false,
-                  onTap: () => Navigator.push(
-                    context,
-                    slideUpRoute(
-                      page: FreelancerMissionDetailPage(
-                        mission: mission,
-                        isOwn: true,
-                      ),
-                    ),
-                  ),
+                  live: isInProgressTab,
+                  showDateHighlight: isConfirmedTab,
+                  onTap: () => isInProgressTab
+                      ? _openTracking(mission)
+                      : Navigator.push(
+                          context,
+                          slideUpRoute(
+                            page: FreelancerMissionDetailPage(
+                              mission: mission,
+                              isOwn: true,
+                            ),
+                          ),
+                        ),
                   statusTrailing: canWithdraw
                       ? InkWell(
                           onTap: () => _confirmWithdraw(context, mission),

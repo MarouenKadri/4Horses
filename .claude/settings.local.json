@@ -108,7 +108,17 @@
       "Bash(GIT_TRACE=1 git -c core.editor=true rebase --continue)",
       "Bash(echo \"---rc=$?\")",
       "Bash(sed -i -e 's/\\\\b_kInk\\\\b/context.colors.textPrimary/g' -e 's/\\\\b_kWhite\\\\b/context.colors.surface/g' -e 's/\\\\b_kCharcoal\\\\b/context.colors.surfaceAlt/g' -e 's/\\\\b_kGrayMid\\\\b/context.colors.textTertiary/g' -e 's/\\\\b_kGrayLight\\\\b/context.colors.textHint/g' -e 's/\\\\b_kBorder\\\\b/context.colors.divider/g' lib/features/messaging/presentation/widgets/chat_input_bar.dart)",
-      "Bash(sed -i '/^const context.colors/d' lib/features/messaging/presentation/widgets/chat_input_bar.dart)"
+      "Bash(sed -i '/^const context.colors/d' lib/features/messaging/presentation/widgets/chat_input_bar.dart)",
+      "Bash(adb devices *)",
+      "Bash(adb install *)",
+      "Bash(adb shell *)",
+      "Bash(adb logcat *)",
+      "Bash(adb kill-server *)",
+      "Bash(adb start-server *)",
+      "Bash(/bin/ls *)",
+      "Bash(echo \"---exit $?\")",
+      "Bash(supabase --version)",
+      "Skill(run)"
     ]
   }
 }

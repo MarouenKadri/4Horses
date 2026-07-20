@@ -7,11 +7,12 @@ import '../models/app_notification.dart';
 abstract class NotificationRepository {
   Future<List<AppNotification>> fetchAll(String userId);
   Future<void> markRead(String notifId);
-  Future<void> markAllRead(String userId);
+  Future<void> markAllRead(String userId, {required String targetRole});
   Future<void> delete(String notifId);
   Future<void> sendNotification(
     String targetUserId, {
     required String type,
+    required String targetRole,
     required String title,
     required String body,
     String? avatarUrl,
@@ -32,7 +33,7 @@ class InMemoryNotificationRepository implements NotificationRepository {
   Future<void> markRead(String notifId) async {}
 
   @override
-  Future<void> markAllRead(String userId) async {}
+  Future<void> markAllRead(String userId, {required String targetRole}) async {}
 
   @override
   Future<void> delete(String notifId) async {}
@@ -41,6 +42,7 @@ class InMemoryNotificationRepository implements NotificationRepository {
   Future<void> sendNotification(
     String targetUserId, {
     required String type,
+    required String targetRole,
     required String title,
     required String body,
     String? avatarUrl,
@@ -57,6 +59,7 @@ class NotificationDemoData {
     const AppNotification(
       id: '1',
       type: NotifType.message,
+      targetRole: NotifTargetRole.freelancer,
       title: 'Nouveau message de Thomas',
       body:
           'Bonjour, je suis disponible pour votre mission de ménage ce samedi.',
@@ -66,6 +69,7 @@ class NotificationDemoData {
     const AppNotification(
       id: '2',
       type: NotifType.candidature,
+      targetRole: NotifTargetRole.freelancer,
       title: 'Candidature acceptée',
       body:
           'Marie a accepté votre candidature pour la mission "Jardinage - Paris 11e".',
@@ -75,6 +79,7 @@ class NotificationDemoData {
     const AppNotification(
       id: '3',
       type: NotifType.mission,
+      targetRole: NotifTargetRole.freelancer,
       title: 'Nouvelle mission près de vous',
       body: 'Repassage 2h — Paris 10e · 2,3 km · 35 €',
       timeAgo: 'Il y a 2h',
@@ -82,6 +87,7 @@ class NotificationDemoData {
     const AppNotification(
       id: '4',
       type: NotifType.payment,
+      targetRole: NotifTargetRole.freelancer,
       title: 'Paiement reçu',
       body: 'Vous avez reçu 80 € pour la mission "Ménage appartement".',
       timeAgo: 'Hier, 18h30',
@@ -90,6 +96,7 @@ class NotificationDemoData {
     const AppNotification(
       id: '5',
       type: NotifType.review,
+      targetRole: NotifTargetRole.freelancer,
       title: 'Nouvel avis reçu',
       body:
           'Julie M. vous a laissé un avis 5 étoiles : "Excellent travail, très ponctuelle !"',
@@ -100,6 +107,7 @@ class NotificationDemoData {
     const AppNotification(
       id: '6',
       type: NotifType.message,
+      targetRole: NotifTargetRole.client,
       title: 'Nouveau message de Marc',
       body: 'Est-ce que vous pouvez venir le mardi plutôt que le mercredi ?',
       timeAgo: 'Il y a 2 jours',
@@ -109,6 +117,7 @@ class NotificationDemoData {
     const AppNotification(
       id: '7',
       type: NotifType.mission,
+      targetRole: NotifTargetRole.client,
       title: 'Mission terminée',
       body: 'La mission "Bricolage - Paris 12e" a été marquée comme terminée.',
       timeAgo: 'Il y a 3 jours',
@@ -117,6 +126,7 @@ class NotificationDemoData {
     const AppNotification(
       id: '8',
       type: NotifType.candidature,
+      targetRole: NotifTargetRole.client,
       title: 'Nouvelle candidature',
       body: 'Antoine B. a postulé à votre mission "Jardinage - Paris 11e".',
       timeAgo: 'Il y a 4 jours',

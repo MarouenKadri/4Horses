@@ -160,6 +160,7 @@ class _CandidatesPageState extends State<CandidatesPage> {
     context.read<NotificationProvider>().sendNotification(
       acceptedCandidate.id,
       type: NotifType.candidature,
+      targetRole: NotifTargetRole.freelancer,
       title: 'Candidature acceptée !',
       body: 'Votre candidature pour "${widget.missionTitle}" a été acceptée.',
       avatarUrl: acceptedCandidate.avatar,
@@ -320,7 +321,7 @@ class _CandidatesPageState extends State<CandidatesPage> {
             AppSurfaceCard(
               margin: AppInsets.a16,
               padding: AppInsets.a12,
-              color: context.colors.successLight,
+              color: AppColors.primary.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(AppRadius.input),
               border: Border.all(
                 color: AppColors.primary.withValues(alpha: 0.3),
@@ -613,8 +614,8 @@ class _OfferStatusChip extends StatelessWidget {
       ),
       CandidateStatus.accepte => (
         'CHOISIE',
-        context.colors.successLight,
-        AppColors.successDark,
+        AppColors.primary.withValues(alpha: 0.12),
+        AppColors.primary,
       ),
       CandidateStatus.refuse => (
         'REFUSÉE',

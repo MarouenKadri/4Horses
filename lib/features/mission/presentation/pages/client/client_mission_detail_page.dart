@@ -18,7 +18,6 @@ import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/shared/mission_status_ui.dart';
 import 'create_mission_page.dart';
 import 'mission_validation_page.dart';
-import 'tracking_page.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// ClientMissionDetailPage — rôle client
@@ -62,13 +61,6 @@ class _ClientMissionDetailPageState
 
   @override
   Mission get widgetMission => widget.mission;
-
-  bool get _isMissionToday {
-    final today = DateTime.now();
-    return mission.date.year == today.year &&
-        mission.date.month == today.month &&
-        mission.date.day == today.day;
-  }
 
   @override
   Mission syncMission(BuildContext ctx) {
@@ -152,12 +144,13 @@ class _ClientMissionDetailPageState
         );
       case MissionStatus.onTheWay:
         return StatusBannerConfig(
-          color: AppColors.secondary,
+          color: AppColors.primary,
           icon: Icons.directions_car_rounded,
           title: mission.assignedPresta != null
               ? '${mission.assignedPresta!.name} est en route'
               : 'Votre prestataire est en route',
-          subtitle: 'Suivez son arrivée en temps réel depuis cette page.',
+          subtitle:
+              'Suivez son arrivée en temps réel depuis l\'onglet Missions.',
         );
       case MissionStatus.inProgress:
         return StatusBannerConfig(
@@ -267,11 +260,6 @@ class _ClientMissionDetailPageState
               onConfirm: _openValidationScreen,
               onDispute: _openCompletionDispute,
             ),
-          if (_isMissionToday &&
-              (mission.status == MissionStatus.confirmed ||
-                  mission.status == MissionStatus.onTheWay ||
-                  mission.status == MissionStatus.inProgress))
-            ClientTrackingCard(mission: mission, onOpenTracking: _openTracking),
         ],
       );
     }
@@ -297,21 +285,6 @@ class _ClientMissionDetailPageState
           label: 'Verifier et confirmer la mission',
           icon: Icons.verified_rounded,
           onTap: _openValidationScreen,
-        ),
-      );
-    }
-
-    if (_isMissionToday &&
-        (mission.status == MissionStatus.onTheWay ||
-            mission.status == MissionStatus.inProgress)) {
-      return DetailBottomArea(
-        child: DetailTealButton(
-          label: mission.status == MissionStatus.onTheWay
-              ? "Suivre l'arrivée du prestataire"
-              : 'Voir la progression en direct',
-          icon: Icons.location_on_rounded,
-          color: AppColors.secondary,
-          onTap: _openTracking,
         ),
       );
     }
@@ -393,11 +366,6 @@ class _ClientMissionDetailPageState
     ),
   );
 
-  void _openTracking() => Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => TrackingPage(mission: mission)),
-  );
-
   Future<void> _openValidationScreen() async => Navigator.push(
     context,
     MaterialPageRoute(builder: (_) => MissionValidationPage(mission: mission)),
@@ -422,6 +390,7 @@ class _ClientMissionDetailPageState
           contactAvatar: presta.avatarUrl,
           isVerified: presta.isVerified,
           missionTitle: mission.title,
+          missionId: mission.id,
           isMissionConfirmed: const {
             MissionStatus.confirmed,
             MissionStatus.onTheWay,

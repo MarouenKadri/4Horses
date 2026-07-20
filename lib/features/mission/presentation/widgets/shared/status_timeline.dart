@@ -9,13 +9,7 @@ import '../../../data/models/mission.dart';
 
 const _kAccent = AppColors.primary;
 
-const _kTimelineLabels = [
-  'Mission',
-  'Confirmée',
-  'En route',
-  'En cours',
-  'Fin',
-];
+const _kTimelineLabels = ['Mission', 'Confirmée', 'En cours', 'Fin'];
 
 const _kSpecialStatuses = {
   MissionStatus.cancelled,
@@ -86,14 +80,13 @@ class _TimelineTrack extends StatelessWidget {
       MissionStatus.waitingCandidates ||
       MissionStatus.candidateReceived ||
       MissionStatus.pendingAcceptance => 0,
-      MissionStatus.confirmed => 1,
-      MissionStatus.onTheWay => 2,
-      MissionStatus.inProgress => 3,
+      MissionStatus.confirmed || MissionStatus.onTheWay => 1,
+      MissionStatus.inProgress => 2,
       MissionStatus.completionRequested ||
       MissionStatus.completed ||
       MissionStatus.paymentHeld ||
       MissionStatus.awaitingRelease ||
-      MissionStatus.closed => 4,
+      MissionStatus.closed => 3,
       _ => 0,
     };
   }

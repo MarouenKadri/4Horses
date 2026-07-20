@@ -17,8 +17,18 @@ class NotificationProvider extends ChangeNotifier {
   bool isLoading = false;
   RealtimeChannel? _channel;
   StreamSubscription<AuthState>? _authSub;
+  NotifTargetRole _activeRole = NotifTargetRole.client;
 
   String? get _userId => Supabase.instance.client.auth.currentUser?.id;
+
+  /// Synchronise le rôle actif (client/freelancer) avec AuthProvider.currentRole
+  /// pour que le flux de notifications ne montre que celles pertinentes au
+  /// mode actuellement affiché.
+  void setActiveRole(NotifTargetRole role) {
+    if (_activeRole == role) return;
+    _activeRole = role;
+    notifyListeners();
+  }
 
   NotificationProvider({NotificationRepository? repository})
     : _repository = repository ?? SupabaseNotificationRepository() {
@@ -37,9 +47,12 @@ class NotificationProvider extends ChangeNotifier {
     if (Supabase.instance.client.auth.currentUser != null) _init();
   }
 
-  List<AppNotification> get notifications => List.unmodifiable(_notifications);
+  List<AppNotification> get notifications => List.unmodifiable(
+    _notifications.where((n) => n.targetRole == _activeRole),
+  );
 
-  int get unreadCount => _notifications.where((n) => !n.isRead).length;
+  int get unreadCount =>
+      notifications.where((n) => !n.isRead).length;
 
   // ─── Init ─────────────────────────────────────────────────────────────────
 
@@ -77,14 +90,19 @@ class NotificationProvider extends ChangeNotifier {
 
   void markAllRead() {
     final userId = _userId;
-    if (_notifications.every((n) => n.isRead)) return;
+    final activeRole = _activeRole;
+    if (notifications.every((n) => n.isRead)) return;
     _notifications = _notifications
-        .map((n) => n.isRead ? n : n.copyWith(isRead: true))
+        .map(
+          (n) => (n.targetRole == activeRole && !n.isRead)
+              ? n.copyWith(isRead: true)
+              : n,
+        )
         .toList();
     notifyListeners();
     if (userId != null) {
       _repository
-          .markAllRead(userId)
+          .markAllRead(userId, targetRole: activeRole.name)
           .catchError((e) => debugPrint('markAllRead error: $e'));
     }
   }
@@ -112,6 +130,7 @@ class NotificationProvider extends ChangeNotifier {
   Future<void> sendNotification(
     String targetUserId, {
     required NotifType type,
+    required NotifTargetRole targetRole,
     required String title,
     required String body,
     String? avatarUrl,
@@ -119,6 +138,7 @@ class NotificationProvider extends ChangeNotifier {
     await _repository.sendNotification(
       targetUserId,
       type: type.name,
+      targetRole: targetRole.name,
       title: title,
       body: body,
       avatarUrl: avatarUrl,

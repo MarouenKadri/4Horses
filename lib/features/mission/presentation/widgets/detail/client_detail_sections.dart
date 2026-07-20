@@ -248,200 +248,6 @@ class ClientPrestaCard extends StatelessWidget {
   }
 }
 
-class ClientTrackingCard extends StatelessWidget {
-  final Mission mission;
-  final VoidCallback? onOpenTracking;
-
-  const ClientTrackingCard({
-    super.key,
-    required this.mission,
-    this.onOpenTracking,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final prestaName = mission.assignedPresta?.name ?? 'Votre prestataire';
-    final startCode = mission.startCode;
-    final config = switch (mission.status) {
-      MissionStatus.confirmed => (
-        icon: Icons.schedule_send_rounded,
-        title: 'Code de demarrage pret',
-        subtitle:
-            'Communiquez ce code a $prestaName uniquement quand il arrive pour lancer la mission.',
-        accent: context.colors.textTertiary,
-        cta: 'Voir le suivi',
-      ),
-      MissionStatus.onTheWay => (
-        icon: Icons.navigation_rounded,
-        title: '$prestaName est en route',
-        subtitle:
-            'Le suivi en direct doit vous permettre de voir sa progression jusqu a l adresse.',
-        accent: AppColors.secondary,
-        cta: 'Ouvrir le suivi',
-      ),
-      MissionStatus.inProgress => (
-        icon: Icons.my_location_rounded,
-        title: 'Prestataire sur place',
-        subtitle:
-            '$prestaName est actuellement sur la mission. Le suivi reste visible pendant l intervention.',
-        accent: AppColors.primary,
-        cta: 'Voir la position',
-      ),
-      MissionStatus.completionRequested => (
-        icon: Icons.task_alt_rounded,
-        title: 'Le prestataire a signale la fin',
-        subtitle:
-            'Vérifiez la prestation puis confirmez la mission ou signalez un problème.',
-        accent: AppColors.warning,
-        cta: 'Verifier la mission',
-      ),
-      _ => (
-        icon: Icons.location_disabled_rounded,
-        title: 'Suivi indisponible',
-        subtitle: 'Aucune position live a afficher pour cette mission.',
-        accent: context.colors.textTertiary,
-        cta: null,
-      ),
-    };
-
-    return DetailSectionCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const DetailSectionTitle(title: 'Suivi mission'),
-          AppGap.h8,
-          Text(config.title, style: context.missionPrimaryValueStyle),
-          AppGap.h14,
-          Text(config.subtitle, style: context.missionEmphasisBodyStyle),
-          if (startCode != null &&
-              (mission.status == MissionStatus.confirmed ||
-                  mission.status == MissionStatus.onTheWay)) ...[
-            AppGap.h16,
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-              decoration: BoxDecoration(
-                color: AppColors.ink,
-                borderRadius: BorderRadius.circular(AppDesign.radius12),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Code de demarrage',
-                          style: context.missionDarkOverlineStyle.copyWith(
-                            letterSpacing: 0.2,
-                          ),
-                        ),
-                        AppGap.h8,
-                        Text(
-                          '${startCode.substring(0, 3)} ${startCode.substring(3)}',
-                          style: context.missionHeroTitleStyle.copyWith(
-                            letterSpacing: 2.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  AppGap.w12,
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(999),
-                      onTap: () async {
-                        await Clipboard.setData(ClipboardData(text: startCode));
-                        if (context.mounted) {
-                          showAppSnackBar(
-                            context,
-                            'Code de demarrage copie',
-                            icon: Icons.copy_rounded,
-                          );
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.10),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.12),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.copy_rounded,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                            AppGap.w6,
-                            Text(
-                              'Copier',
-                              style: context.missionButtonStyle.copyWith(
-                                fontSize: AppFontSize.md,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-          AppGap.h16,
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: context.colors.surfaceAlt,
-              borderRadius: BorderRadius.circular(AppDesign.radius12),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  mission.status == MissionStatus.confirmed
-                      ? Icons.hourglass_top_rounded
-                      : Icons.location_searching_rounded,
-                  size: 16,
-                  color: config.accent,
-                ),
-                AppGap.w8,
-                Expanded(
-                  child: Text(
-                    mission.status == MissionStatus.confirmed
-                        ? 'Le suivi apparaitra automatiquement quand le prestataire demarrera le trajet.'
-                        : mission.status == MissionStatus.completionRequested
-                        ? 'La mission est en attente de votre retour avant de passer au paiement.'
-                        : 'Le tracking live est prevu ici pour suivre le trajet du prestataire.',
-                    style: context.missionEmphasisBodyStyle.copyWith(
-                      fontSize: AppFontSize.smHalf,
-                      height: 1.35,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (config.cta != null) ...[
-            AppGap.h16,
-            DetailTealButton(label: config.cta!, onTap: onOpenTracking),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
 class ClientCompletionRequestedCard extends StatelessWidget {
   final Mission mission;
   final VoidCallback onConfirm;
@@ -454,6 +260,27 @@ class ClientCompletionRequestedCard extends StatelessWidget {
     required this.onDispute,
   });
 
+  /// Délai avant clôture + libération automatique du paiement, aligné sur
+  /// la fonction serveur `auto_close_completed_missions` (pg_cron).
+  static const _autoCloseDelay = Duration(hours: 8);
+
+  Duration? get _remaining {
+    final signaledAt = mission.updatedAt;
+    if (signaledAt == null) return null;
+    final remaining = signaledAt.add(_autoCloseDelay).difference(DateTime.now());
+    return remaining.isNegative ? Duration.zero : remaining;
+  }
+
+  String get _remainingLabel {
+    final remaining = _remaining;
+    if (remaining == null) return 'sous 8h';
+    if (remaining == Duration.zero) return 'dans quelques instants';
+    final hours = remaining.inHours;
+    final minutes = remaining.inMinutes % 60;
+    if (hours > 0) return 'dans ${hours}h${minutes > 0 ? ' $minutes min' : ''}';
+    return 'dans $minutes min';
+  }
+
   @override
   Widget build(BuildContext context) {
     final prestaName = mission.assignedPresta?.name ?? 'Le prestataire';
@@ -464,7 +291,7 @@ class ClientCompletionRequestedCard extends StatelessWidget {
           const DetailSectionTitle(title: 'Fin de mission'),
           AppGap.h8,
           Text(
-            'Fin de mission signalee',
+            'Fin de mission signalée',
             style: context.missionPrimaryValueStyle,
           ),
           AppGap.h14,
@@ -490,7 +317,7 @@ class ClientCompletionRequestedCard extends StatelessWidget {
                 AppGap.w8,
                 Expanded(
                   child: Text(
-                    'Sans action de votre part, le paiement pourra ensuite etre libere automatiquement.',
+                    'Sans action de votre part, le paiement sera libéré automatiquement $_remainingLabel.',
                     style: context.missionEmphasisBodyStyle.copyWith(
                       fontSize: AppFontSize.smHalf,
                       height: 1.35,

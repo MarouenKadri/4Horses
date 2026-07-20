@@ -83,6 +83,46 @@ class AppMapPin extends StatelessWidget {
   }
 }
 
+// ─── Position live (puck) ───────────────────────────────────────────────────
+
+/// Pastille pleine avec contour blanc + ombre, pour marquer une position
+/// en mouvement (ex. le freelancer pendant le suivi live) — plus visible
+/// qu'une icône nue sur fond de carte clair, et visuellement distincte du
+/// pin de destination ([AppMapPin]).
+class AppMapPuck extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final double size;
+
+  const AppMapPuck({
+    super.key,
+    this.icon = Icons.directions_run_rounded,
+    this.color = AppColors.primary,
+    this.size = 40,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 3),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.35),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Icon(icon, color: Colors.white, size: size * 0.5),
+    );
+  }
+}
+
 class _PinTailPainter extends CustomPainter {
   final Color color;
   const _PinTailPainter(this.color);
@@ -154,6 +194,11 @@ abstract final class AppMap {
 
   /// Dual-marker tracking map. The parent manages position streams and
   /// calls setState; [didUpdateWidget] moves the camera automatically.
+  ///
+  /// Pass [compact] when embedding this in a constrained-height container
+  /// (e.g. a preview card) rather than a full-screen view — it positions
+  /// overlays (waiting pill, recenter button) relative to the widget's own
+  /// bounds instead of [MediaQuery]'s screen height/top padding.
   static Widget tracking({
     Key? key,
     required LatLng? freelancerPosition,
@@ -163,22 +208,18 @@ abstract final class AppMap {
     AppMapTile tile = AppMapTile.cartoLightAll,
     bool showWaiting = true,
     String waitingText = 'En attente de la position…',
+    bool compact = false,
   }) => _AppMapTracking(
     key: key,
     freelancerPosition: freelancerPosition,
     destination: destination,
-    freelancerMarker:
-        freelancerMarker ??
-        const Icon(
-          Icons.directions_run_rounded,
-          color: AppColors.secondary,
-          size: 32,
-        ),
+    freelancerMarker: freelancerMarker ?? const AppMapPuck(),
     destinationMarker:
         destinationMarker ?? const AppMapPin(color: AppColors.success),
     tile: tile,
     showWaiting: showWaiting,
     waitingText: waitingText,
+    compact: compact,
   );
 }
 
@@ -570,6 +611,7 @@ class _AppMapTracking extends StatefulWidget {
   final AppMapTile tile;
   final bool showWaiting;
   final String waitingText;
+  final bool compact;
 
   const _AppMapTracking({
     super.key,
@@ -580,6 +622,7 @@ class _AppMapTracking extends StatefulWidget {
     required this.tile,
     required this.showWaiting,
     required this.waitingText,
+    required this.compact,
   });
 
   @override
@@ -620,111 +663,130 @@ class _AppMapTrackingState extends State<_AppMapTracking> {
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final topPadding = widget.compact
+        ? 8.0
+        : MediaQuery.of(context).padding.top;
     final center =
         widget.freelancerPosition ?? widget.destination ?? _defaultCenter;
 
-    return Stack(
-      children: [
-        const Positioned.fill(child: ColoredBox(color: Color(0xFFF0EDE8))),
-        Positioned.fill(
-          child: FlutterMap(
-            mapController: _mapCtrl,
-            options: MapOptions(
-              initialCenter: center,
-              initialZoom: widget.freelancerPosition != null ? 15 : 14,
-              onMapEvent: (event) {
-                if (event is MapEventMoveStart &&
-                    event.source != MapEventSource.mapController &&
-                    _following) {
-                  setState(() => _following = false);
-                }
-              },
-            ),
-            children: [
-              _buildTile(widget.tile),
-              if (widget.freelancerPosition != null &&
-                  widget.destination != null)
-                PolylineLayer(
-                  polylines: [
-                    Polyline(
-                      points: [widget.freelancerPosition!, widget.destination!],
-                      color: AppColors.secondary.withValues(alpha: 0.70),
-                      strokeWidth: 4,
-                    ),
-                  ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final recenterBottom = widget.compact
+            ? 12.0
+            : constraints.maxHeight * 0.42;
+
+        return Stack(
+          clipBehavior: Clip.hardEdge,
+          children: [
+            const Positioned.fill(child: ColoredBox(color: Color(0xFFF0EDE8))),
+            Positioned.fill(
+              child: FlutterMap(
+                mapController: _mapCtrl,
+                options: MapOptions(
+                  initialCenter: center,
+                  initialZoom: widget.freelancerPosition != null ? 15 : 14,
+                  onMapEvent: (event) {
+                    if (event is MapEventMoveStart &&
+                        event.source != MapEventSource.mapController &&
+                        _following) {
+                      setState(() => _following = false);
+                    }
+                  },
                 ),
-              MarkerLayer(
-                markers: [
-                  if (widget.destination != null)
-                    Marker(
-                      point: widget.destination!,
-                      width: 36,
-                      height: 36,
-                      child: widget.destinationMarker,
+                children: [
+                  _buildTile(widget.tile),
+                  if (widget.freelancerPosition != null &&
+                      widget.destination != null)
+                    PolylineLayer(
+                      polylines: [
+                        Polyline(
+                          points: [
+                            widget.freelancerPosition!,
+                            widget.destination!,
+                          ],
+                          color: AppColors.primary.withValues(alpha: 0.70),
+                          strokeWidth: 4,
+                        ),
+                      ],
                     ),
-                  if (widget.freelancerPosition != null)
-                    Marker(
-                      point: widget.freelancerPosition!,
-                      width: 36,
-                      height: 36,
-                      child: widget.freelancerMarker,
-                    ),
+                  MarkerLayer(
+                    markers: [
+                      if (widget.destination != null)
+                        Marker(
+                          point: widget.destination!,
+                          width: 44,
+                          height: 54,
+                          alignment: Alignment.bottomCenter,
+                          child: widget.destinationMarker,
+                        ),
+                      if (widget.freelancerPosition != null)
+                        Marker(
+                          point: widget.freelancerPosition!,
+                          width: 44,
+                          height: 44,
+                          alignment: Alignment.center,
+                          child: widget.freelancerMarker,
+                        ),
+                    ],
+                  ),
                 ],
               ),
-            ],
-          ),
-        ),
-        if (!_following && widget.freelancerPosition != null)
-          Positioned(
-            bottom: screenHeight * 0.42,
-            right: 16,
-            child: GestureDetector(
-              onTap: _recenter,
-              child: AppIconCircle(
-                icon: Icons.my_location_rounded,
-                size: 44,
-                iconSize: 20,
-                backgroundColor: Colors.white,
-                iconColor: AppColors.secondary,
-                boxShadow: AppShadows.card,
-              ),
             ),
-          ),
-        if (widget.showWaiting && widget.freelancerPosition == null)
-          Positioned(
-            top: topPadding + 64,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: AppSurfaceCard(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
+            if (!_following && widget.freelancerPosition != null)
+              Positioned(
+                bottom: recenterBottom,
+                right: 16,
+                child: GestureDetector(
+                  onTap: _recenter,
+                  child: AppIconCircle(
+                    icon: Icons.my_location_rounded,
+                    size: widget.compact ? 34 : 44,
+                    iconSize: widget.compact ? 16 : 20,
+                    backgroundColor: context.colors.surface,
+                    iconColor: AppColors.primary,
+                    boxShadow: AppShadows.card,
+                  ),
                 ),
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(99),
-                boxShadow: AppShadows.card,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(
-                      width: 14,
-                      height: 14,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.secondary,
-                      ),
+              ),
+            if (widget.showWaiting && widget.freelancerPosition == null)
+              Positioned(
+                top: topPadding + (widget.compact ? 0 : 64),
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: AppSurfaceCard(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
                     ),
-                    AppGap.w8,
-                    Text(widget.waitingText, style: context.text.labelMedium),
-                  ],
+                    color: context.colors.surface,
+                    borderRadius: BorderRadius.circular(99),
+                    boxShadow: AppShadows.card,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        AppGap.w8,
+                        Text(
+                          widget.waitingText,
+                          style: context.text.labelMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

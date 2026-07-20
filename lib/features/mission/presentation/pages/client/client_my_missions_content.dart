@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/design/app_design_system.dart';
 import '../../../data/models/mission.dart';
@@ -9,8 +10,11 @@ import '../../widgets/shared/mission_status_ui.dart';
 import '../../widgets/cards/variants/mission_summary_card.dart';
 import 'create_mission_page.dart';
 import 'client_mission_detail_page.dart';
+import 'tracking_page.dart';
 import '../../../../../app/app_bar/app_section_bar.dart';
 import '../../../../../app/widgets/app_segmented_tab_bar.dart';
+import '../../../../messaging/messaging_provider.dart';
+import '../../../../messaging/presentation/pages/chat_page.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// 📋 Inkern - Page Mes Missions (Client)
@@ -97,6 +101,59 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
         .toList();
   }
 
+  void _openTracking(Mission mission) {
+    final presta = mission.assignedPresta;
+    final contactable =
+        presta != null &&
+        mission.status != MissionStatus.awaitingRelease &&
+        mission.status != MissionStatus.closed;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => TrackingPage(
+          mission: mission,
+          onCall: contactable ? () => _openPhone(presta) : null,
+          onChat: contactable ? () => _openChat(mission, presta) : null,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openPhone(PrestaInfo presta) async {
+    final phone = presta.phone;
+    if (phone == null || phone.isEmpty) return;
+    final uri = Uri(scheme: 'tel', path: phone);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Future<void> _openChat(Mission mission, PrestaInfo presta) async {
+    final conversationId = await context
+        .read<MessagingProvider>()
+        .getOrCreateConversation(
+          otherUserId: presta.id,
+          iAmClient: true,
+          missionId: mission.id,
+        );
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChatPage(
+          conversationId: conversationId,
+          contactUserId: presta.id,
+          contactName: presta.name,
+          contactAvatar: presta.avatarUrl,
+          isVerified: presta.isVerified,
+          missionTitle: mission.title,
+          missionId: mission.id,
+          isMissionConfirmed: true,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) return const SkeletonList(key: ValueKey('skeleton'));
@@ -121,21 +178,35 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
               itemCount: missions.length,
               separatorBuilder: (context, _) =>
                   Divider(height: 1, color: context.colors.divider),
-              itemBuilder: (context, index) => MissionSummaryCard(
-                  mission: missions[index],
+              itemBuilder: (context, index) {
+                final mission = missions[index];
+                final isPublishedTab =
+                    widget.filter == _ClientTabFilter.published;
+                final isConfirmedTab =
+                    widget.filter == _ClientTabFilter.confirmed;
+                final isInProgressTab =
+                    widget.filter == _ClientTabFilter.inProgress;
+                return MissionSummaryCard(
+                  mission: mission,
                   role: MissionUiRole.client,
                   showDescription: true,
                   showAddress: true,
-                  onTap: () => Navigator.push(
-                    context,
-                    slideUpRoute(
-                      page: ClientMissionDetailPage(mission: missions[index]),
-                    ),
-                  ),
-                  extra: widget.filter == _ClientTabFilter.published
-                      ? _CandidatesBadge(count: missions[index].candidatesCount)
+                  live: isInProgressTab,
+                  showThumbnail: isPublishedTab,
+                  showDateHighlight: isConfirmedTab,
+                  onTap: () => isInProgressTab
+                      ? _openTracking(mission)
+                      : Navigator.push(
+                          context,
+                          slideUpRoute(
+                            page: ClientMissionDetailPage(mission: mission),
+                          ),
+                        ),
+                  extra: isPublishedTab
+                      ? _CandidatesBadge(count: mission.candidatesCount)
                       : null,
-              ),
+                );
+              },
             ),
     );
   }
@@ -187,7 +258,7 @@ class _CandidatesBadge extends StatelessWidget {
         color: hasOffers
             ? context.colors.primary.withValues(alpha: 0.08)
             : context.colors.surfaceAlt,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: hasOffers
               ? context.colors.primary.withValues(alpha: 0.25)

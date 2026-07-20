@@ -9,15 +9,17 @@ import '../../data/models/freelancer.dart';
 class FreelancerPreviewCard extends StatelessWidget {
   final Freelancer freelancer;
   final VoidCallback? onTap;
-  final double? width;
+  final double width;
   final int missionsCount;
   final int reviewsCount;
+
+  static const double defaultWidth = 140;
 
   const FreelancerPreviewCard({
     super.key,
     required this.freelancer,
     this.onTap,
-    this.width,
+    this.width = defaultWidth,
     this.missionsCount = 0,
     this.reviewsCount = 0,
   });

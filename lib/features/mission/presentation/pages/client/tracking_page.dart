@@ -2,21 +2,33 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/design/app_design_system.dart';
 import '../../../../../core/location/nominatim_service.dart';
 import '../../../data/models/mission.dart';
+import '../../mission_provider.dart';
 import '../../widgets/shared/mission_shared_widgets.dart';
+import '../../widgets/shared/status_timeline.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
-/// TrackingPage (Client) — carte temps réel synchronisée avec le freelancer
-/// via Supabase Realtime broadcast channel `tracking:{missionId}`
+/// TrackingPage (Client) — statut + ETA en premier plan, carte réduite en
+/// second plan. Statut synchronisé en direct via MissionProvider (souscription
+/// Realtime déjà active), position via broadcast `missions.tracking_lat/lng`.
 /// ═══════════════════════════════════════════════════════════════════════════
 
 class TrackingPage extends StatefulWidget {
   final Mission mission;
-  const TrackingPage({super.key, required this.mission});
+  final VoidCallback? onCall;
+  final VoidCallback? onChat;
+
+  const TrackingPage({
+    super.key,
+    required this.mission,
+    this.onCall,
+    this.onChat,
+  });
 
   @override
   State<TrackingPage> createState() => _TrackingPageState();
@@ -121,95 +133,132 @@ class _TrackingPageState extends State<TrackingPage> {
     });
   }
 
+  String _prestaName(Mission mission) =>
+      mission.assignedPresta?.name ?? 'Votre prestataire';
+
+  String _headline(Mission mission) => switch (mission.status) {
+    MissionStatus.confirmed => '${_prestaName(mission)} arrive bientôt',
+    MissionStatus.onTheWay => '${_prestaName(mission)} est en route',
+    MissionStatus.inProgress => 'Mission en cours',
+    MissionStatus.completionRequested => 'Fin de mission signalée',
+    _ => 'Suivi de mission',
+  };
+
+  IconData _headlineIcon(MissionStatus status) => switch (status) {
+    MissionStatus.confirmed => Icons.schedule_rounded,
+    MissionStatus.onTheWay => Icons.directions_run_rounded,
+    MissionStatus.inProgress => Icons.handyman_rounded,
+    MissionStatus.completionRequested => Icons.task_alt_rounded,
+    _ => Icons.location_on_rounded,
+  };
+
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final isOnTheWay = widget.mission.status == MissionStatus.onTheWay;
+    final liveMissions = context.watch<MissionProvider>().clientMissions;
+    final mission = liveMissions.firstWhere(
+      (m) => m.id == widget.mission.id,
+      orElse: () => widget.mission,
+    );
+    final status = mission.status;
+    final hasLivePosition = _freelancerPosition != null;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // ── Carte ─────────────────────────────────────────────
-          Positioned.fill(
-            child: AppMap.tracking(
-              freelancerPosition: _freelancerPosition,
-              destination: _destinationLatLng,
-              waitingText: 'En attente de la position du prestataire…',
-            ),
-          ),
-
-          // ── Bouton retour ─────────────────────────────────────
-          Positioned(
-            top: topPadding + 4,
-            left: 4,
-            child: Padding(
-              padding: AppInsets.a8,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                  onTap: () => Navigator.pop(context),
-                  child: AppIconCircle(
-                    icon: Icons.arrow_back_rounded,
-                    size: 42,
-                    iconSize: 18,
-                    backgroundColor: context.colors.surface,
-                    iconColor: context.colors.textPrimary,
-                    boxShadow: AppShadows.button,
+      backgroundColor: context.colors.background,
+      appBar: AppPageAppBar(
+        title: 'Suivi de mission',
+        leading: AppBackButtonLeading(onPressed: () => Navigator.pop(context)),
+      ),
+      body: SafeArea(
+        top: false,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+          children: [
+            // ── Statut narratif + ETA ──────────────────────────
+            Center(
+              child: Column(
+                children: [
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      _headlineIcon(status),
+                      color: AppColors.primary,
+                      size: 30,
+                    ),
                   ),
+                  AppGap.h14,
+                  Text(
+                    _headline(mission),
+                    textAlign: TextAlign.center,
+                    style: context.text.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  if (_distanceKm != null && hasLivePosition) ...[
+                    AppGap.h6,
+                    Text(
+                      status == MissionStatus.onTheWay
+                          ? 'Arrivée estimée'
+                          : 'Position en direct',
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.textTertiary,
+                      ),
+                    ),
+                    AppGap.h4,
+                    Text(
+                      _etaMinutes >= 60
+                          ? '${_etaMinutes ~/ 60}h ${_etaMinutes % 60}min'
+                          : '$_etaMinutes min',
+                      style: context.text.displaySmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    Text(
+                      _distanceKm! < 1
+                          ? '${(_distanceKm! * 1000).round()} m'
+                          : '${_distanceKm!.toStringAsFixed(1)} km',
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.textTertiary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            AppGap.h28,
+            StatusTimeline(status: status),
+            AppGap.h20,
+
+            // ── Mini carte ──────────────────────────────────────
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppDesign.radius16),
+              child: SizedBox(
+                height: 140,
+                child: AppMap.tracking(
+                  freelancerPosition: _freelancerPosition,
+                  destination: _destinationLatLng,
+                  showWaiting: status != MissionStatus.confirmed,
+                  waitingText: 'En attente de la position…',
+                  compact: true,
                 ),
               ),
             ),
-          ),
+            AppGap.h20,
 
-          // ── Titre ─────────────────────────────────────────────
-          Positioned(
-            top: topPadding + 12,
-            left: 60,
-            right: 60,
-            child: Center(
-              child: AppSurfaceCard(
-                padding: AppInsets.h16v8,
-                color: context.colors.surface,
-                borderRadius: BorderRadius.circular(AppDesign.radius20),
-                boxShadow: AppShadows.card,
-                child: Text(
-                  isOnTheWay ? 'Prestataire en route' : 'Mission en cours',
-                  style: context.text.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
+            // ── Infos mission ────────────────────────────────────
+            _ClientTrackingPanel(
+              mission: mission,
+              onCall: widget.onCall,
+              onChat: widget.onChat,
             ),
-          ),
-
-          // ── Carte ETA flottante ───────────────────────────────
-          if (_distanceKm != null)
-            Positioned(
-              bottom: screenHeight * 0.35,
-              left: 20,
-              right: 20,
-              child: _EtaCard(
-                etaMinutes: _etaMinutes,
-                distanceKm: _distanceKm!,
-                color: isOnTheWay ? AppColors.secondary : AppColors.primary,
-                label: isOnTheWay ? 'Arrivée estimée' : 'Mission en cours',
-              ),
-            ),
-
-          // ── Panneau bas ───────────────────────────────────────
-          AppScrollableSheet(
-            initialChildSize: 0.32,
-            minChildSize: 0.2,
-            maxChildSize: 0.6,
-            builder: (_, controller) => ListView(
-              controller: controller,
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-              children: [_ClientTrackingPanel(mission: widget.mission)],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -219,8 +268,14 @@ class _TrackingPageState extends State<TrackingPage> {
 
 class _ClientTrackingPanel extends StatelessWidget {
   final Mission mission;
+  final VoidCallback? onCall;
+  final VoidCallback? onChat;
 
-  const _ClientTrackingPanel({required this.mission});
+  const _ClientTrackingPanel({
+    required this.mission,
+    this.onCall,
+    this.onChat,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -248,51 +303,35 @@ class _ClientTrackingPanel extends StatelessWidget {
                     style: context.text.titleLarge,
                   ),
                   AppGap.h2,
-                  Row(
-                    children: [
-                      MissionStatusBadge(status: mission.status, compact: true),
-                    ],
-                  ),
+                  MissionStatusBadge(status: mission.status, compact: true),
                 ],
               ),
             ),
+            if (onCall != null) ...[
+              AppGap.w8,
+              TrackingContactIconButton(
+                icon: Icons.call_rounded,
+                onTap: onCall!,
+              ),
+            ],
+            if (onChat != null) ...[
+              AppGap.w8,
+              TrackingContactIconButton(
+                icon: Icons.chat_bubble_rounded,
+                onTap: onChat!,
+              ),
+            ],
           ],
         ),
-        if (mission.status == MissionStatus.inProgress) ...[
-          AppGap.h16,
-          AppSurfaceCard(
-            padding: AppInsets.a14,
-            color: AppColors.successLight,
-            borderRadius: BorderRadius.circular(AppDesign.radius14),
-            border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.play_circle_rounded,
-                  color: AppColors.primary,
-                  size: 20,
-                ),
-                AppGap.w10,
-                Text(
-                  'Mission en cours',
-                  style: context.text.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
         AppGap.h16,
         const Divider(height: 1),
         AppGap.h12,
         Row(
           children: [
-            const Icon(
+            Icon(
               Icons.location_on_rounded,
               size: 16,
-              color: AppColors.error,
+              color: context.colors.textSecondary,
             ),
             AppGap.w6,
             Expanded(
@@ -309,88 +348,3 @@ class _ClientTrackingPanel extends StatelessWidget {
   }
 }
 
-// ─── Carte ETA flottante ──────────────────────────────────────────────────────
-
-class _EtaCard extends StatelessWidget {
-  final int etaMinutes;
-  final double distanceKm;
-  final Color color;
-  final String label;
-
-  const _EtaCard({
-    required this.etaMinutes,
-    required this.distanceKm,
-    required this.color,
-    required this.label,
-  });
-
-  String get _timeLabel {
-    if (etaMinutes >= 60) return '${etaMinutes ~/ 60}h ${etaMinutes % 60}min';
-    return '$etaMinutes min';
-  }
-
-  String get _distLabel => distanceKm < 1
-      ? '${(distanceKm * 1000).round()} m'
-      : '${distanceKm.toStringAsFixed(1)} km';
-
-  @override
-  Widget build(BuildContext context) {
-    return AppSurfaceCard(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: AppShadows.card,
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.schedule_rounded, color: color, size: 22),
-          ),
-          AppGap.w14,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: context.text.labelSmall?.copyWith(
-                    color: context.colors.textTertiary,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                AppGap.h2,
-                Text(
-                  _timeLabel,
-                  style: context.text.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: color,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              _distLabel,
-              style: context.text.labelMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

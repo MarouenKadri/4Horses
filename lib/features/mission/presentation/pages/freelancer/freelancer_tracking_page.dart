@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -12,12 +11,21 @@ import '../../../../../core/location/nominatim_service.dart';
 import '../../../data/models/mission.dart';
 import '../../mission_provider.dart';
 import '../../widgets/shared/mission_shared_widgets.dart';
+import '../../widgets/shared/status_timeline.dart';
 import '../../../../../features/notifications/data/models/app_notification.dart';
 import '../../../../../features/notifications/notification_provider.dart';
 
 class FreelancerTrackingPage extends StatefulWidget {
   final Mission mission;
-  const FreelancerTrackingPage({super.key, required this.mission});
+  final VoidCallback? onCall;
+  final VoidCallback? onChat;
+
+  const FreelancerTrackingPage({
+    super.key,
+    required this.mission,
+    this.onCall,
+    this.onChat,
+  });
 
   @override
   State<FreelancerTrackingPage> createState() => _FreelancerTrackingPageState();
@@ -29,7 +37,14 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
   // GPS
   StreamSubscription<Position>? _positionSub;
   LatLng? _currentPosition;
+  LatLng? _startPosition;
   bool _locationError = false;
+  bool _autoOnTheWayTriggered = false;
+
+  /// Distance parcourue depuis la position initiale qui vaut départ pour la
+  /// mission — au-delà, on considère que le freelancer est réellement en
+  /// route et on bascule le statut sans action manuelle.
+  static const _autoOnTheWayDistanceMeters = 150;
 
   // Destination
   LatLng? _destinationLatLng;
@@ -100,8 +115,30 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
 
   void _onNewPosition(LatLng latlng, {bool moveMap = false}) {
     setState(() => _currentPosition = latlng);
+    _startPosition ??= latlng;
     _updateDistanceEta(latlng);
     _broadcastPosition(latlng);
+    _maybeAutoTriggerOnTheWay(latlng);
+  }
+
+  /// Bascule automatiquement `confirmed` → `onTheWay` dès qu'un déplacement
+  /// significatif est détecté depuis la position initiale — évite d'exiger
+  /// un clic manuel "Je suis en route" quand le GPS le sait déjà.
+  Future<void> _maybeAutoTriggerOnTheWay(LatLng current) async {
+    if (_autoOnTheWayTriggered) return;
+    if (_mission.status != MissionStatus.confirmed) return;
+    final start = _startPosition;
+    if (start == null) return;
+    final movedMeters = const Distance()(start, current);
+    if (movedMeters < _autoOnTheWayDistanceMeters) return;
+    _autoOnTheWayTriggered = true;
+    final before = _mission.status;
+    await _updateStatus(MissionStatus.onTheWay);
+    if (mounted && _mission.status == before) {
+      // L'update a échoué (voir _updateStatus) — autoriser un nouvel essai
+      // au prochain déplacement plutôt que de rester bloqué silencieusement.
+      _autoOnTheWayTriggered = false;
+    }
   }
 
   void _broadcastPosition(LatLng latlng) {
@@ -146,37 +183,41 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
     });
   }
 
-  String get _etaLabel {
-    if (_currentPosition == null || _distanceKm == null) return '…';
-    final dist = _distanceKm! < 1
-        ? '${(_distanceKm! * 1000).round()} m'
-        : '${_distanceKm!.toStringAsFixed(1)} km';
-    final eta = _etaMinutes >= 60
-        ? '${_etaMinutes ~/ 60}h ${_etaMinutes % 60}min'
-        : '$_etaMinutes min';
-    return '~$eta · $dist';
-  }
-
   // ── Recentrage ───────────────────────────────────────────────
 
   // ── Statut mission ───────────────────────────────────────────
 
-  void _updateStatus(MissionStatus newStatus) {
-    context.read<MissionProvider>().updateMissionStatus(_mission.id, newStatus);
-    final notifProvider = context.read<NotificationProvider>();
+  Future<void> _updateStatus(MissionStatus newStatus) async {
+    try {
+      await context.read<MissionProvider>().updateMissionStatus(
+        _mission.id,
+        newStatus,
+      );
+    } catch (_) {
+      if (mounted) {
+        showAppSnackBar(
+          context,
+          'Impossible de mettre à jour le statut. Vérifiez votre connexion et réessayez.',
+          icon: Icons.error_outline_rounded,
+        );
+      }
+      return;
+    }
+    if (!mounted) return;
 
+    final notifProvider = context.read<NotificationProvider>();
     final (title, body) = switch (newStatus) {
       MissionStatus.onTheWay => (
         'Prestataire en route',
         '${_mission.assignedPresta?.name ?? 'Votre prestataire'} est en route pour "${_mission.title}"',
       ),
       MissionStatus.inProgress => (
-        'Mission demarree',
+        'Mission démarrée',
         '"${_mission.title}" est maintenant en cours',
       ),
       MissionStatus.completionRequested => (
-        'Fin de mission signalee',
-        '"${_mission.title}" attend maintenant la reponse du client',
+        'Fin de mission signalée',
+        '"${_mission.title}" attend maintenant la réponse du client',
       ),
       _ => ('', ''),
     };
@@ -186,6 +227,7 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
       notifProvider.sendNotification(
         _mission.client!.id,
         type: NotifType.mission,
+        targetRole: NotifTargetRole.client,
         title: title,
         body: body,
       );
@@ -194,39 +236,39 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
     setState(() => _mission = _mission.copyWith(status: newStatus));
   }
 
-  Future<void> _openStartCodeSheet() async {
-    await showAppBottomSheet(
-      context: context,
-      wrapWithSurface: false,
-      isScrollControlled: true,
-      child: _StartCodeSheet(
-        missionTitle: _mission.title,
-        onSubmit: (code) async {
-          final ok = await context.read<MissionProvider>().unlockMissionStart(
-            _mission.id,
-            code,
-          );
-          if (!mounted) return ok;
-          if (ok) {
-            showAppSnackBar(
-              context,
-              'Code valide. Mission démarrée.',
-              icon: Icons.check_circle_rounded,
-            );
-          }
-          return ok;
-        },
-      ),
-    );
+  Future<void> _startMission() async {
+    final ok = await context.read<MissionProvider>().startMission(_mission.id);
+    if (!mounted) return;
+    if (ok) {
+      showAppSnackBar(
+        context,
+        'Mission démarrée.',
+        icon: Icons.check_circle_rounded,
+      );
+    } else {
+      showAppSnackBar(
+        context,
+        'Impossible de démarrer la mission. Réessayez.',
+        icon: Icons.error_outline_rounded,
+      );
+    }
   }
 
-  String get _pageTitle => switch (_mission.status) {
-    MissionStatus.confirmed => 'Prêt pour le code',
-    MissionStatus.onTheWay => 'En route',
+  String get _headline => switch (_mission.status) {
+    MissionStatus.confirmed => 'Prêt pour le départ',
+    MissionStatus.onTheWay => 'En route vers le client',
     MissionStatus.inProgress => 'Mission en cours',
     MissionStatus.completionRequested => 'Fin signalée',
     MissionStatus.awaitingRelease => 'Mission terminée',
     _ => 'Suivi de mission',
+  };
+
+  IconData get _headlineIcon => switch (_mission.status) {
+    MissionStatus.confirmed => Icons.schedule_rounded,
+    MissionStatus.onTheWay => Icons.directions_run_rounded,
+    MissionStatus.inProgress => Icons.handyman_rounded,
+    MissionStatus.completionRequested => Icons.task_alt_rounded,
+    _ => Icons.location_on_rounded,
   };
 
   @override
@@ -238,37 +280,26 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
     );
     if (live.status != _mission.status) _mission = live;
 
-    final topPadding = MediaQuery.of(context).padding.top;
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      body: Stack(
-        children: [
-          // ── Carte ─────────────────────────────────────────────
-          Positioned.fill(
-            child: AppMap.tracking(
-              freelancerPosition: _currentPosition,
-              destination: _destinationLatLng,
-              freelancerMarker: const AppMapPin(color: AppColors.primary),
-              showWaiting: !_locationError,
-              waitingText: 'Localisation en cours…',
-            ),
-          ),
-
-          // ── Erreur GPS ─────────────────────────────────────────
-          if (_locationError)
-            Positioned(
-              top: topPadding + 64,
-              left: 16,
-              right: 16,
-              child: AppSurfaceCard(
+      backgroundColor: context.colors.background,
+      appBar: AppPageAppBar(
+        title: 'Suivi de mission',
+        leading: AppBackButtonLeading(onPressed: () => Navigator.pop(context)),
+      ),
+      body: SafeArea(
+        top: false,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+          children: [
+            if (_locationError)
+              AppSurfaceCard(
+                margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
                 ),
                 color: context.colors.errorLight,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: AppShadows.card,
                 child: Row(
                   children: [
                     const Icon(
@@ -288,200 +319,104 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
                   ],
                 ),
               ),
-            ),
 
-          // ── Bouton retour ──────────────────────────────────────
-          Positioned(
-            top: topPadding + 4,
-            left: 4,
-            child: Padding(
-              padding: AppInsets.a8,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                  onTap: () => Navigator.pop(context),
-                  child: AppIconCircle(
-                    icon: Icons.arrow_back_rounded,
-                    size: 42,
-                    iconSize: 18,
-                    backgroundColor: context.colors.surface,
-                    iconColor: context.colors.textPrimary,
-                    boxShadow: AppShadows.button,
+            // ── Statut narratif + ETA ──────────────────────────
+            Center(
+              child: Column(
+                children: [
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      _headlineIcon,
+                      color: AppColors.primary,
+                      size: 30,
+                    ),
                   ),
+                  AppGap.h14,
+                  Text(
+                    _headline,
+                    textAlign: TextAlign.center,
+                    style: context.text.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  if (_distanceKm != null &&
+                      _mission.status == MissionStatus.onTheWay) ...[
+                    AppGap.h6,
+                    Text(
+                      'Distance jusqu\'au client',
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.textTertiary,
+                      ),
+                    ),
+                    AppGap.h4,
+                    Text(
+                      _etaMinutes >= 60
+                          ? '${_etaMinutes ~/ 60}h ${_etaMinutes % 60}min'
+                          : '$_etaMinutes min',
+                      style: context.text.displaySmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    Text(
+                      _distanceKm! < 1
+                          ? '${(_distanceKm! * 1000).round()} m'
+                          : '${_distanceKm!.toStringAsFixed(1)} km',
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.textTertiary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            AppGap.h28,
+            StatusTimeline(status: _mission.status),
+            AppGap.h20,
+
+            // ── Mini carte ──────────────────────────────────────
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppDesign.radius16),
+              child: SizedBox(
+                height: 140,
+                child: AppMap.tracking(
+                  freelancerPosition: _currentPosition,
+                  destination: _destinationLatLng,
+                  freelancerMarker: const AppMapPuck(),
+                  showWaiting: !_locationError,
+                  waitingText: 'Localisation en cours…',
+                  compact: true,
                 ),
               ),
             ),
-          ),
+            AppGap.h20,
 
-          // ── Titre ─────────────────────────────────────────────
-          Positioned(
-            top: topPadding + 12,
-            left: 60,
-            right: 60,
-            child: Center(
-              child: AppSurfaceCard(
-                padding: AppInsets.h16v8,
-                color: context.colors.surface,
-                borderRadius: BorderRadius.circular(AppDesign.radius20),
-                boxShadow: AppShadows.card,
-                child: Text(
-                  _pageTitle,
-                  style: context.text.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
+            // ── Infos + actions ──────────────────────────────────
+            _FreelancerTrackingPanel(
+              mission: _mission,
+              onCall: widget.onCall,
+              onChat: widget.onChat,
+              onStartRoute: _mission.status == MissionStatus.confirmed
+                  ? () => _updateStatus(MissionStatus.onTheWay)
+                  : null,
+              onStartMission:
+                  _mission.status == MissionStatus.confirmed ||
+                      _mission.status == MissionStatus.onTheWay
+                  ? _startMission
+                  : null,
+              onFinishMission: _mission.status == MissionStatus.inProgress
+                  ? () => _updateStatus(MissionStatus.completionRequested)
+                  : null,
             ),
-          ),
-
-          // ── Carte ETA flottante ────────────────────────────────
-          if (_distanceKm != null)
-            Positioned(
-              bottom: screenHeight * 0.41,
-              left: 20,
-              right: 20,
-              child: _EtaCard(
-                etaMinutes: _etaMinutes,
-                distanceKm: _distanceKm!,
-                color: _mission.status == MissionStatus.onTheWay
-                    ? AppColors.secondary
-                    : AppColors.primary,
-                label: _mission.status == MissionStatus.onTheWay
-                    ? 'Distance jusqu\'au client'
-                    : 'Mission en cours',
-              ),
-            ),
-
-          // ── Panneau bas ────────────────────────────────────────
-          AppScrollableSheet(
-            initialChildSize: 0.38,
-            minChildSize: 0.24,
-            maxChildSize: 0.68,
-            builder: (_, controller) => ListView(
-              controller: controller,
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-              children: [
-                _FreelancerTrackingPanel(
-                  mission: _mission,
-                  etaLabel: _distanceKm != null ? _etaLabel : null,
-                  onStartRoute: _mission.status == MissionStatus.confirmed
-                      ? () => _updateStatus(MissionStatus.onTheWay)
-                      : null,
-                  onEnterStartCode:
-                      _mission.status == MissionStatus.confirmed ||
-                          _mission.status == MissionStatus.onTheWay
-                      ? _openStartCodeSheet
-                      : null,
-                  startCodeHint: _mission.startCode,
-                  onCopyHint: _mission.startCode == null
-                      ? null
-                      : () async {
-                          await Clipboard.setData(
-                            ClipboardData(text: _mission.startCode!),
-                          );
-                          if (context.mounted) {
-                            showAppSnackBar(
-                              context,
-                              'Code copie pour test local',
-                              icon: Icons.copy_rounded,
-                            );
-                          }
-                        },
-                  onFinishMission: _mission.status == MissionStatus.inProgress
-                      ? () => _updateStatus(MissionStatus.completionRequested)
-                      : null,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── Carte ETA flottante ──────────────────────────────────────────────────────
-
-class _EtaCard extends StatelessWidget {
-  final int etaMinutes;
-  final double distanceKm;
-  final Color color;
-  final String label;
-
-  const _EtaCard({
-    required this.etaMinutes,
-    required this.distanceKm,
-    required this.color,
-    required this.label,
-  });
-
-  String get _timeLabel {
-    if (etaMinutes >= 60) return '${etaMinutes ~/ 60}h ${etaMinutes % 60}min';
-    return '$etaMinutes min';
-  }
-
-  String get _distLabel => distanceKm < 1
-      ? '${(distanceKm * 1000).round()} m'
-      : '${distanceKm.toStringAsFixed(1)} km';
-
-  @override
-  Widget build(BuildContext context) {
-    return AppSurfaceCard(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: AppShadows.card,
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.schedule_rounded, color: color, size: 22),
-          ),
-          AppGap.w14,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: context.text.labelSmall?.copyWith(
-                    color: context.colors.textTertiary,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                AppGap.h2,
-                Text(
-                  _timeLabel,
-                  style: context.text.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: color,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              _distLabel,
-              style: context.text.labelMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -491,77 +426,80 @@ class _EtaCard extends StatelessWidget {
 
 class _FreelancerTrackingPanel extends StatelessWidget {
   final Mission mission;
-  final String? etaLabel;
+  final VoidCallback? onCall;
+  final VoidCallback? onChat;
   final VoidCallback? onStartRoute;
-  final VoidCallback? onEnterStartCode;
+  final VoidCallback? onStartMission;
   final VoidCallback? onFinishMission;
-  final String? startCodeHint;
-  final VoidCallback? onCopyHint;
 
   const _FreelancerTrackingPanel({
     required this.mission,
-    this.etaLabel,
+    this.onCall,
+    this.onChat,
     this.onStartRoute,
-    this.onEnterStartCode,
+    this.onStartMission,
     this.onFinishMission,
-    this.startCodeHint,
-    this.onCopyHint,
   });
 
   @override
   Widget build(BuildContext context) {
+    final client = mission.client;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: mission.status.color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(18),
+            if (client != null) ...[
+              UserAvatar(
+                imageUrl: client.avatarUrl,
+                radius: 28,
+                showVerified: client.isVerified,
               ),
-              child: Icon(
-                mission.status.icon,
-                color: mission.status.color,
-                size: 28,
-              ),
-            ),
-            AppGap.w14,
+              AppGap.w14,
+            ],
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    mission.title,
-                    style: context.text.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                    client?.name ?? mission.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.titleLarge,
                   ),
-                  AppGap.h4,
-                  Row(
-                    children: [
-                      MissionStatusBadge(status: mission.status, compact: true),
-                      if (etaLabel != null &&
-                          mission.status == MissionStatus.onTheWay) ...[
-                        AppGap.w10,
-                        Text(
-                          etaLabel!,
-                          style: context.text.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.secondary,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                  AppGap.h2,
+                  MissionStatusBadge(status: mission.status, compact: true),
                 ],
               ),
             ),
+            if (onCall != null) ...[
+              AppGap.w8,
+              TrackingContactIconButton(
+                icon: Icons.call_rounded,
+                onTap: onCall!,
+              ),
+            ],
+            if (onChat != null) ...[
+              AppGap.w8,
+              TrackingContactIconButton(
+                icon: Icons.chat_bubble_rounded,
+                onTap: onChat!,
+              ),
+            ],
           ],
         ),
-        AppGap.h18,
+        AppGap.h6,
+        Text(
+          mission.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: context.text.bodySmall?.copyWith(
+            color: context.colors.textSecondary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        AppGap.h16,
         AppSurfaceCard(
           padding: AppInsets.a14,
           color: context.colors.surfaceAlt,
@@ -571,7 +509,7 @@ class _FreelancerTrackingPanel extends StatelessWidget {
               Icon(
                 mission.status == MissionStatus.inProgress
                     ? Icons.handyman_rounded
-                    : Icons.password_rounded,
+                    : Icons.directions_walk_rounded,
                 color: AppColors.primary,
                 size: 20,
               ),
@@ -580,14 +518,14 @@ class _FreelancerTrackingPanel extends StatelessWidget {
                 child: Text(
                   switch (mission.status) {
                     MissionStatus.confirmed =>
-                      'Partez vers le client puis demandez le code a 6 chiffres une fois sur place.',
+                      'Partez vers le client — votre trajet est détecté automatiquement. Une fois arrivé, démarrez la mission.',
                     MissionStatus.onTheWay =>
-                      'Quand vous arrivez, entrez le code donne par le client pour demarrer la mission.',
+                      'Une fois arrivé chez le client, démarrez la mission.',
                     MissionStatus.inProgress =>
-                      'La mission est en cours. Terminez-la ici a la fin de l intervention.',
+                      'La mission est en cours. Terminez-la ici à la fin de l\'intervention.',
                     MissionStatus.completionRequested =>
-                      'Vous avez signale la fin. Le client doit maintenant confirmer ou contester.',
-                    _ => 'Le suivi de mission est termine.',
+                      'Vous avez signalé la fin. Le client a 8h pour confirmer ou contester, sinon le paiement vous est versé automatiquement.',
+                    _ => 'Le suivi de mission est terminé.',
                   },
                   style: context.text.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
@@ -598,32 +536,13 @@ class _FreelancerTrackingPanel extends StatelessWidget {
             ],
           ),
         ),
-        if (startCodeHint != null &&
-            (mission.status == MissionStatus.confirmed ||
-                mission.status == MissionStatus.onTheWay)) ...[
-          AppGap.h12,
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Test local: code ${startCodeHint!.substring(0, 3)} ${startCodeHint!.substring(3)}',
-                  style: context.text.labelMedium?.copyWith(
-                    color: context.colors.textTertiary,
-                  ),
-                ),
-              ),
-              if (onCopyHint != null)
-                TextButton(onPressed: onCopyHint, child: const Text('Copier')),
-            ],
-          ),
-        ],
         AppGap.h16,
         Row(
           children: [
-            const Icon(
+            Icon(
               Icons.location_on_rounded,
               size: 16,
-              color: AppColors.error,
+              color: context.colors.textSecondary,
             ),
             AppGap.w6,
             Expanded(
@@ -638,124 +557,27 @@ class _FreelancerTrackingPanel extends StatelessWidget {
         AppGap.h18,
         if (onStartRoute != null)
           _TrackingPrimaryButton(
-            label: 'Je suis en route',
+            label: 'Marquer comme en route',
             icon: Icons.navigation_rounded,
             onTap: onStartRoute!,
           ),
-        if (onEnterStartCode != null) ...[
+        if (onStartMission != null) ...[
           if (onStartRoute != null) AppGap.h10,
           _TrackingPrimaryButton(
-            label: 'Entrer le code client',
-            icon: Icons.password_rounded,
-            onTap: onEnterStartCode!,
+            label: 'Commencer la mission',
+            icon: Icons.play_circle_rounded,
+            onTap: onStartMission!,
           ),
         ],
         if (onFinishMission != null) ...[
           AppGap.h10,
           _TrackingPrimaryButton(
-            label: 'J ai termine',
+            label: 'J\'ai terminé',
             icon: Icons.check_circle_rounded,
             onTap: onFinishMission!,
           ),
         ],
       ],
-    );
-  }
-}
-
-// ─── Code de démarrage (bottom sheet) ────────────────────────────────────────
-
-class _StartCodeSheet extends StatefulWidget {
-  final String missionTitle;
-  final Future<bool> Function(String code) onSubmit;
-
-  const _StartCodeSheet({required this.missionTitle, required this.onSubmit});
-
-  @override
-  State<_StartCodeSheet> createState() => _StartCodeSheetState();
-}
-
-class _StartCodeSheetState extends State<_StartCodeSheet> {
-  final _controller = TextEditingController();
-  String? _error;
-  bool _loading = false;
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Future<void> _verify() async {
-    final code = _controller.text.trim();
-    if (code.length != 6) {
-      setState(() => _error = 'Entrez un code a 6 chiffres.');
-      return;
-    }
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    final ok = await widget.onSubmit(code);
-    if (!mounted) return;
-    if (ok) {
-      Navigator.pop(context);
-      return;
-    }
-    setState(() {
-      _loading = false;
-      _error = 'Code invalide. Verifiez avec le client.';
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bottomPad = MediaQuery.of(context).padding.bottom;
-    return Padding(
-      padding: EdgeInsets.only(bottom: bottomPad),
-      child: AppFormSheet(
-        title: 'Entrer le code client',
-        color: context.colors.surface,
-        footer: AppButton(
-          label: 'Vérifier le code',
-          onPressed: _loading ? null : _verify,
-          variant: ButtonVariant.black,
-          isLoading: _loading,
-          height: 52,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Demandez au client le code de demarrage pour lancer "${widget.missionTitle}".',
-              style: context.text.bodyMedium?.copyWith(
-                color: context.colors.textSecondary,
-                height: 1.45,
-              ),
-            ),
-            AppGap.h18,
-            TextField(
-              controller: _controller,
-              autofocus: true,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(6),
-              ],
-              style: context.text.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-                letterSpacing: 6,
-              ),
-              decoration: AppInputDecorations.formField(
-                context,
-                hintText: '000000',
-                errorText: _error,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

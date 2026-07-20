@@ -72,13 +72,12 @@ class MessagingProvider extends ChangeNotifier {
     required bool iAmClient,
     String? missionId,
   }) async {
-    if (!iAmClient) return null;
     final userId = currentUserId;
     if (userId == null || userId == otherUserId) return null;
 
     return _repo.getOrCreateConversation(
-      clientId: userId,
-      freelancerId: otherUserId,
+      clientId: iAmClient ? userId : otherUserId,
+      freelancerId: iAmClient ? otherUserId : userId,
       missionId: missionId,
     );
   }
