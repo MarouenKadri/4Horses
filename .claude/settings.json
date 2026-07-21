@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ':*)",
+      "Bash(node)",
+      "Bash(sed -n '1745,1790p' lib/features/mission/presentation/pages/client/candidates_page.dart)",
+      "Bash(sed -n '1838,1875p' lib/features/mission/presentation/pages/client/candidates_page.dart)",
+      "Bash(sed -n '718,760p' lib/features/profile/presentation/pages/freelancer/edit_profile_page.dart)",
+      "Bash(sed -n '1200,1290p' lib/features/profile/presentation/pages/freelancer/edit_profile_page.dart)",
+      "Bash(sed -n '395,420p' lib/features/story/presentation/pages/story_composer_page.dart)",
+      "Bash(sed -n '878,910p' lib/features/profile/presentation/pages/shared/privacy_settings_page.dart)",
+      "Bash(grep -n \"input\\\\s*=\" lib/core/design/tokens/app_radius.dart)",
+      "Bash(grep -rn \"static.*input\" lib/core/design/tokens/app_radius.dart)",
+      "Read(//tmp/**)",
+      "Bash(del \"c:\\\\Users\\\\marou\\\\Downloads\\\\service-home-main\\\\lib\\\\features\\\\client\\\\presentation\\\\pages\\\\freelancer_reviews_page.dart\")",
+      "Bash(head -847 \"c:\\\\Users\\\\marou\\\\Downloads\\\\service-home-main\\\\lib\\\\features\\\\client\\\\presentation\\\\pages\\\\client_discover_content.dart\")",
+      "Bash(mv /tmp/discover_trimmed.dart \"c:\\\\Users\\\\marou\\\\Downloads\\\\service-home-main\\\\lib\\\\features\\\\client\\\\presentation\\\\pages\\\\client_discover_content.dart\")",
+      "mcp__claude_ai_Supabase__get_project_url",
+      "mcp__claude_ai_Supabase__get_publishable_keys",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\marou\\\\Desktop\\\\working space\\\\BYRSA\\\\lib\\\\features\\\\profile\\\\\" -Recurse -File | Select-Object -Property FullName | ConvertTo-Csv -NoTypeInformation | Select-Object -Skip 1)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\marou\\Desktop\\working space\\BYRSA"
+    ]
+  }
+}
