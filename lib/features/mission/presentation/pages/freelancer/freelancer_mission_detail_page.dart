@@ -282,16 +282,19 @@ class _FreelancerMissionDetailPageState
       children.add(
         FreelancerLocationShareCard(
           status: mission.status,
-          onOpenMissionPilot: () => Navigator.push(
-            ctx,
-            MaterialPageRoute(
-              builder: (_) => FreelancerTrackingPage(
-                mission: mission,
-                onCall: contactable ? _openPhoneClient : null,
-                onChat: contactable ? _openChat : null,
+          onOpenMissionPilot: () {
+            ctx.read<MissionProvider>().markTrackingStarted(mission.id);
+            Navigator.push(
+              ctx,
+              MaterialPageRoute(
+                builder: (_) => FreelancerTrackingPage(
+                  mission: mission,
+                  onCall: contactable ? _openPhoneClient : null,
+                  onChat: contactable ? _openChat : null,
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       );
     }

@@ -214,6 +214,9 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
                     widget.filter == _ClientTabFilter.published;
                 final isInProgressTab =
                     widget.filter == _ClientTabFilter.inProgress;
+                final isActivelyTracked =
+                    mission.status == MissionStatus.onTheWay ||
+                    mission.status == MissionStatus.inProgress;
                 return MissionSummaryCard(
                   mission: mission,
                   role: MissionUiRole.client,
@@ -222,7 +225,9 @@ class _ClientMissionTabState extends State<_ClientMissionTab> {
                   live: isInProgressTab,
                   showThumbnail: isPublishedTab,
                   showDateHighlight: isConfirmedTab,
-                  isPriority: mission.id == priorityMissionId,
+                  isPriority: isConfirmedTab
+                      ? mission.id == priorityMissionId
+                      : isInProgressTab && isActivelyTracked,
                   onTap: () => isInProgressTab
                       ? _openTracking(mission)
                       : Navigator.push(

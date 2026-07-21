@@ -19,6 +19,18 @@ class MissionProvider extends ChangeNotifier {
   List<Mission> _freelancerMissions = [];
   bool isLoading = false;
 
+  /// Missions pour lesquelles le freelancer a ouvert l'écran de suivi au
+  /// moins une fois — sert uniquement à éteindre la bordure pulsante de la
+  /// carte "Confirmées" (état en mémoire, pas persisté ni synchronisé).
+  final Set<String> _trackingStartedMissionIds = {};
+
+  bool hasTrackingStarted(String missionId) =>
+      _trackingStartedMissionIds.contains(missionId);
+
+  void markTrackingStarted(String missionId) {
+    if (_trackingStartedMissionIds.add(missionId)) notifyListeners();
+  }
+
   StreamSubscription<AuthState>? _authSub;
   RealtimeChannel? _channel;
 
@@ -447,24 +459,24 @@ class MissionProvider extends ChangeNotifier {
   }
 
   static MissionStatus _statusFromDb(String? s) => switch (s) {
-    'draft'                => MissionStatus.draft,
-    'waiting_candidates'   => MissionStatus.waitingCandidates,
-    'candidate_received'   => MissionStatus.candidateReceived,
-    'presta_chosen'        => MissionStatus.confirmed,
-    'confirmed'            => MissionStatus.confirmed,
-    'on_the_way'           => MissionStatus.onTheWay,
-    'in_progress'          => MissionStatus.inProgress,
+    'draft' => MissionStatus.draft,
+    'waiting_candidates' => MissionStatus.waitingCandidates,
+    'candidate_received' => MissionStatus.candidateReceived,
+    'presta_chosen' => MissionStatus.confirmed,
+    'confirmed' => MissionStatus.confirmed,
+    'on_the_way' => MissionStatus.onTheWay,
+    'in_progress' => MissionStatus.inProgress,
     'completion_requested' => MissionStatus.completionRequested,
-    'completed'            => MissionStatus.completed,
-    'payment_held'         => MissionStatus.paymentHeld,
-    'awaiting_release'     => MissionStatus.awaitingRelease,
-    'waiting_payment'      => MissionStatus.awaitingRelease,
-    'in_dispute'           => MissionStatus.inDispute,
-    'dispute'              => MissionStatus.inDispute,
-    'closed'               => MissionStatus.closed,
-    'cancelled'            => MissionStatus.cancelled,
-    'expired'              => MissionStatus.expired,
-    _                      => MissionStatus.waitingCandidates,
+    'completed' => MissionStatus.completed,
+    'payment_held' => MissionStatus.paymentHeld,
+    'awaiting_release' => MissionStatus.awaitingRelease,
+    'waiting_payment' => MissionStatus.awaitingRelease,
+    'in_dispute' => MissionStatus.inDispute,
+    'dispute' => MissionStatus.inDispute,
+    'closed' => MissionStatus.closed,
+    'cancelled' => MissionStatus.cancelled,
+    'expired' => MissionStatus.expired,
+    _ => MissionStatus.waitingCandidates,
   };
 
   // ─── Helpers ─────────────────────────────────────────────────────────────

@@ -18,6 +18,7 @@ import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/shared/mission_status_ui.dart';
 import 'create_mission_page.dart';
 import 'mission_validation_page.dart';
+import 'tracking_page.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// ClientMissionDetailPage — rôle client
@@ -42,7 +43,6 @@ class ClientMissionDetailPage extends StatefulWidget {
 
 class _ClientMissionDetailPageState
     extends MissionDetailBase<ClientMissionDetailPage> {
-
   // ─── Computed flags ─────────────────────────────────────────────────────────
 
   bool get canModify =>
@@ -223,6 +223,9 @@ class _ClientMissionDetailPageState
       return ClientCandidatesCard(
         count: mission.candidatesCount,
         onViewCandidates: _openCandidates,
+        // candidateReceived affiche déjà le CTA "Voir les candidats" en bas
+        // de page (buildBottom) — pas de bouton en double ici.
+        showButton: mission.status != MissionStatus.candidateReceived,
       );
     }
     if (mission.assignedPresta != null) {
@@ -259,6 +262,32 @@ class _ClientMissionDetailPageState
               mission: mission,
               onConfirm: _openValidationScreen,
               onDispute: _openCompletionDispute,
+            ),
+          if (mission.status == MissionStatus.confirmed ||
+              mission.status == MissionStatus.onTheWay ||
+              mission.status == MissionStatus.inProgress)
+            DetailSectionCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const DetailSectionTitle(title: 'Suivi mission'),
+                  AppGap.h10,
+                  DetailTealButton(
+                    label: 'Voir le suivi de la mission',
+                    icon: Icons.location_on_rounded,
+                    onTap: () => Navigator.push(
+                      ctx,
+                      MaterialPageRoute(
+                        builder: (_) => TrackingPage(
+                          mission: mission,
+                          onCall: contactable ? () => _openPhone(presta) : null,
+                          onChat: contactable ? () => _openChat(presta) : null,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
         ],
       );

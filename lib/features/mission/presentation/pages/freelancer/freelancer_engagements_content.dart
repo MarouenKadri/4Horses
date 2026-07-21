@@ -261,9 +261,8 @@ class _MissionTabState extends State<_MissionTab> {
       return const SkeletonList(key: ValueKey('skeleton'));
     }
 
-    final missions = _filter(
-      context.watch<MissionProvider>().freelancerMissions,
-    );
+    final provider = context.watch<MissionProvider>();
+    final missions = _filter(provider.freelancerMissions);
     final isConfirmedTab = widget.filter == _TabFilter.confirmed;
     final priorityMissionId = isConfirmedTab
         ? _mostUrgentMissionId(missions)
@@ -294,6 +293,9 @@ class _MissionTabState extends State<_MissionTab> {
                     (mission.status == MissionStatus.waitingCandidates ||
                         mission.status == MissionStatus.candidateReceived);
                 final isInProgressTab = widget.filter == _TabFilter.inProgress;
+                final isActivelyTracked =
+                    mission.status == MissionStatus.onTheWay ||
+                    mission.status == MissionStatus.inProgress;
 
                 return MissionSummaryCard(
                   mission: mission,
@@ -301,7 +303,10 @@ class _MissionTabState extends State<_MissionTab> {
                   showDescription: false,
                   live: isInProgressTab,
                   showDateHighlight: isConfirmedTab,
-                  isPriority: mission.id == priorityMissionId,
+                  isPriority: isConfirmedTab
+                      ? mission.id == priorityMissionId &&
+                            !provider.hasTrackingStarted(mission.id)
+                      : isInProgressTab && isActivelyTracked,
                   onTap: () => isInProgressTab
                       ? _openTracking(mission)
                       : Navigator.push(

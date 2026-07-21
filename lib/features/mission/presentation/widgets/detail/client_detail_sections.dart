@@ -11,10 +11,16 @@ class ClientCandidatesCard extends StatelessWidget {
   final int count;
   final VoidCallback onViewCandidates;
 
+  /// false quand le CTA "Voir les candidatures" est déjà affiché ailleurs
+  /// sur la page (ex. en bas de page pour candidateReceived) — évite le
+  /// doublon de bouton tout en gardant le compteur visible ici.
+  final bool showButton;
+
   const ClientCandidatesCard({
     super.key,
     required this.count,
     required this.onViewCandidates,
+    this.showButton = true,
   });
 
   @override
@@ -70,7 +76,7 @@ class ClientCandidatesCard extends StatelessWidget {
               ),
             ],
           ),
-          if (count > 0) ...[
+          if (count > 0 && showButton) ...[
             AppGap.h18,
             DetailTealButton(
               label: 'Voir les candidatures',
@@ -267,7 +273,9 @@ class ClientCompletionRequestedCard extends StatelessWidget {
   Duration? get _remaining {
     final signaledAt = mission.updatedAt;
     if (signaledAt == null) return null;
-    final remaining = signaledAt.add(_autoCloseDelay).difference(DateTime.now());
+    final remaining = signaledAt
+        .add(_autoCloseDelay)
+        .difference(DateTime.now());
     return remaining.isNegative ? Duration.zero : remaining;
   }
 
