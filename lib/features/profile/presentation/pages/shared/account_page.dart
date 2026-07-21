@@ -633,7 +633,6 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
               variant: ButtonVariant.destructive,
               onPressed: (canDelete && _confirmed) ? _confirm : null,
               isLoading: _isLoading,
-              height: 54,
             ),
             AppGap.h10,
             AppButton(

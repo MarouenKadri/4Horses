@@ -264,13 +264,8 @@ class _LoginPageState extends State<LoginPage> {
                   padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
                   child: Row(
                     children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_rounded,
-                          size: 20,
-                        ),
+                      AppBackButtonLeading(
                         onPressed: () => Navigator.pop(context),
-                        color: context.colors.textPrimary,
                       ),
                     ],
                   ),

@@ -77,7 +77,7 @@ class _AppSectionBarState extends State<AppSectionBar>
         behavior: HitTestBehavior.opaque,
         onTap: widget.onGoToAccount,
         child: Text(
-          widget.pageTitle ?? 'Byrsa',
+          widget.pageTitle ?? '4horses',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: context.appBarTitleStyle,
@@ -88,10 +88,11 @@ class _AppSectionBarState extends State<AppSectionBar>
         if (widget.showRolePill) ...[
           const SizedBox(width: 8),
           AppBarActionCircleButton(
-            icon: Icons.swap_horiz_rounded,
-            backgroundColor: context.colors.textPrimary,
-            iconColor: context.colors.background,
-            iconSize: 20,
+            icon: Icons.sync_alt_rounded,
+            backgroundColor: Colors.transparent,
+            iconColor: AppColors.primary,
+            border: Border.all(color: AppColors.primary, width: 1.5),
+            iconSize: 18,
             size: 34,
             onTap: () => showAppBottomSheet(
               context: context,
@@ -112,9 +113,9 @@ class _AppSectionBarState extends State<AppSectionBar>
   Widget _buildBellButton(BuildContext context, int unreadCount) {
     return AppBarActionCircleButton(
       icon: Icons.notifications_none_rounded,
-      backgroundColor: context.colors.surfaceAlt,
+      backgroundColor: Colors.transparent,
       iconColor: context.colors.textPrimary,
-      iconSize: 20,
+      iconSize: 23,
       size: 34,
       scale: _bellScale,
       badgeLabel: unreadCount > 0

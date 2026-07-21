@@ -151,11 +151,16 @@ class _PostRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 12),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── En-tête auteur ────────────────────────────────────────
+          // ── Image, en premier (carrousel si plusieurs) ────────────
+          if (post.images.isNotEmpty) ...[
+            _PostImages(images: post.images, onTap: onImageTap),
+            AppGap.h10,
+          ],
+          // ── En-tête auteur, en légende sous l'image ───────────────
           GestureDetector(
             onTap: onAuthorTap,
             behavior: HitTestBehavior.opaque,
@@ -164,30 +169,32 @@ class _PostRow extends StatelessWidget {
                 _AuthorAvatar(
                   imageUrl: post.authorAvatar,
                   name: post.authorName,
+                  size: 26,
                 ),
-                AppGap.w10,
+                AppGap.w8,
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        post.authorName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.text.labelLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          height: 1.2,
-                        ),
+                  child: RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      style: context.text.labelMedium?.copyWith(
+                        color: context.colors.textPrimary,
                       ),
-                      Text(
-                        _meta,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.text.labelMedium?.copyWith(
-                          color: context.colors.textTertiary,
+                      children: [
+                        TextSpan(
+                          text: post.authorName,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
-                      ),
-                    ],
+                        TextSpan(
+                          text: '  ·  ',
+                          style: TextStyle(color: context.colors.textHint),
+                        ),
+                        TextSpan(
+                          text: _meta,
+                          style: TextStyle(color: context.colors.textTertiary),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -195,55 +202,64 @@ class _PostRow extends StatelessWidget {
           ),
           // ── Légende ───────────────────────────────────────────────
           if (post.caption.isNotEmpty) ...[
-            AppGap.h10,
+            AppGap.h6,
             Text(
               post.caption,
-              maxLines: 4,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: context.text.bodyMedium?.copyWith(height: 1.45),
+              style: context.text.bodyMedium?.copyWith(height: 1.35),
             ),
           ],
-          // ── Images (carrousel si plusieurs) ───────────────────────
-          if (post.images.isNotEmpty) ...[
-            AppGap.h10,
-            _PostImages(images: post.images, onTap: onImageTap),
-          ],
-          // ── Barre de vote ─────────────────────────────────────────
+          // ── Vote ───────────────────────────────────────────────────
           AppGap.h8,
-          GestureDetector(
-            onTap: onLikeTap,
-            behavior: HitTestBehavior.opaque,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    transitionBuilder: (child, anim) =>
-                        ScaleTransition(scale: anim, child: child),
-                    child: Icon(
-                      isLiked
-                          ? Icons.favorite_rounded
-                          : Icons.favorite_border_rounded,
-                      key: ValueKey(isLiked),
-                      size: 20,
-                      color: isLiked
-                          ? AppColors.pinkRed
-                          : context.colors.textSecondary,
-                    ),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: onLikeTap,
+                behavior: HitTestBehavior.opaque,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
                   ),
-                  AppGap.w6,
-                  Text(
-                    '$likesCount',
-                    style: context.text.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.textSecondary,
-                    ),
+                  decoration: BoxDecoration(
+                    color: isLiked
+                        ? context.colors.primary.withValues(alpha: 0.12)
+                        : context.colors.surfaceAlt,
+                    borderRadius: BorderRadius.circular(999),
                   ),
-                ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        transitionBuilder: (child, anim) =>
+                            ScaleTransition(scale: anim, child: child),
+                        child: Icon(
+                          Icons.arrow_upward_rounded,
+                          key: ValueKey(isLiked),
+                          size: 17,
+                          color: isLiked
+                              ? context.colors.primary
+                              : context.colors.textSecondary,
+                        ),
+                      ),
+                      AppGap.w6,
+                      Text(
+                        '$likesCount',
+                        style: context.text.labelMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: isLiked
+                              ? context.colors.primary
+                              : context.colors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
@@ -254,14 +270,19 @@ class _PostRow extends StatelessWidget {
 class _AuthorAvatar extends StatelessWidget {
   final String imageUrl;
   final String name;
+  final double size;
 
-  const _AuthorAvatar({required this.imageUrl, required this.name});
+  const _AuthorAvatar({
+    required this.imageUrl,
+    required this.name,
+    this.size = 32,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 36,
-      height: 36,
+      width: size,
+      height: size,
       decoration: const BoxDecoration(shape: BoxShape.circle),
       clipBehavior: Clip.hardEdge,
       child: imageUrl.isNotEmpty
@@ -275,17 +296,17 @@ class _AuthorAvatar extends StatelessWidget {
   }
 
   Widget _initial(BuildContext context) => ColoredBox(
-        color: AppColors.secondary,
-        child: Center(
-          child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: context.text.labelLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: AppColors.primary,
-            ),
-          ),
+    color: AppColors.secondary,
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: context.text.labelLarge?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: AppColors.primary,
         ),
-      );
+      ),
+    ),
+  );
 }
 
 /// Carrousel d'images du post : PageView 4:3 + points de position.
@@ -311,7 +332,7 @@ class _PostImagesState extends State<_PostImages> {
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
           child: AspectRatio(
-            aspectRatio: 4 / 3,
+            aspectRatio: 16 / 9,
             child: multiple
                 ? PageView.builder(
                     itemCount: widget.images.length,

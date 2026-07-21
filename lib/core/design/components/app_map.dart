@@ -209,6 +209,9 @@ abstract final class AppMap {
     bool showWaiting = true,
     String waitingText = 'En attente de la position…',
     bool compact = false,
+    double? initialZoom,
+    bool interactive = true,
+    VoidCallback? onTap,
   }) => _AppMapTracking(
     key: key,
     freelancerPosition: freelancerPosition,
@@ -220,6 +223,9 @@ abstract final class AppMap {
     showWaiting: showWaiting,
     waitingText: waitingText,
     compact: compact,
+    initialZoom: initialZoom,
+    interactive: interactive,
+    onTap: onTap,
   );
 }
 
@@ -612,6 +618,9 @@ class _AppMapTracking extends StatefulWidget {
   final bool showWaiting;
   final String waitingText;
   final bool compact;
+  final double? initialZoom;
+  final bool interactive;
+  final VoidCallback? onTap;
 
   const _AppMapTracking({
     super.key,
@@ -623,6 +632,9 @@ class _AppMapTracking extends StatefulWidget {
     required this.showWaiting,
     required this.waitingText,
     required this.compact,
+    this.initialZoom,
+    this.interactive = true,
+    this.onTap,
   });
 
   @override
@@ -684,7 +696,17 @@ class _AppMapTrackingState extends State<_AppMapTracking> {
                 mapController: _mapCtrl,
                 options: MapOptions(
                   initialCenter: center,
-                  initialZoom: widget.freelancerPosition != null ? 15 : 14,
+                  initialZoom:
+                      widget.initialZoom ??
+                      (widget.freelancerPosition != null ? 15 : 14),
+                  interactionOptions: InteractionOptions(
+                    flags: widget.interactive
+                        ? InteractiveFlag.all
+                        : InteractiveFlag.none,
+                  ),
+                  onTap: widget.onTap != null
+                      ? (_, __) => widget.onTap!()
+                      : null,
                   onMapEvent: (event) {
                     if (event is MapEventMoveStart &&
                         event.source != MapEventSource.mapController &&

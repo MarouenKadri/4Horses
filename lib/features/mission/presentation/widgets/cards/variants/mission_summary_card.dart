@@ -24,7 +24,7 @@ import '../../shared/mission_status_ui.dart';
 //   • showDateHighlight — pavé date/heure mis en avant (ex. onglet "Confirmées")
 // ─────────────────────────────────────────────────────────────────────────────
 
-class MissionSummaryCard extends StatelessWidget {
+class MissionSummaryCard extends StatefulWidget {
   final Mission mission;
   final VoidCallback onTap;
   final MissionUiRole role;
@@ -47,6 +47,10 @@ class MissionSummaryCard extends StatelessWidget {
   /// au lieu de la simple ligne d'exécution grise.
   final bool showDateHighlight;
 
+  /// Bordure pulsante — signale la mission confirmée la plus urgente
+  /// (prochaine échéance) quand plusieurs sont "Confirmées" en même temps.
+  final bool isPriority;
+
   const MissionSummaryCard({
     super.key,
     required this.mission,
@@ -59,10 +63,62 @@ class MissionSummaryCard extends StatelessWidget {
     this.live = false,
     this.showThumbnail = false,
     this.showDateHighlight = false,
+    this.isPriority = false,
   });
 
   @override
+  State<MissionSummaryCard> createState() => _MissionSummaryCardState();
+}
+
+class _MissionSummaryCardState extends State<MissionSummaryCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseCtrl;
+  late final Animation<double> _pulseAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1100),
+    );
+    _pulseAnim = Tween<double>(
+      begin: 0.25,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    if (widget.isPriority) _pulseCtrl.repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(covariant MissionSummaryCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isPriority && !oldWidget.isPriority) {
+      _pulseCtrl.repeat(reverse: true);
+    } else if (!widget.isPriority && oldWidget.isPriority) {
+      _pulseCtrl
+        ..stop()
+        ..value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final mission = widget.mission;
+    final role = widget.role;
+    final onTap = widget.onTap;
+    final showDescription = widget.showDescription;
+    final showAddress = widget.showAddress;
+    final extra = widget.extra;
+    final statusTrailing = widget.statusTrailing;
+    final live = widget.live;
+    final showThumbnail = widget.showThumbnail;
+    final showDateHighlight = widget.showDateHighlight;
     final statusLabel = MissionStatusUi.badgeLabel(
       status: mission.status,
       role: role,
@@ -86,7 +142,7 @@ class MissionSummaryCard extends StatelessWidget {
 
     final isToday = mission.formattedDate == 'Aujourd\'hui';
 
-    return InkWell(
+    Widget content = InkWell(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -345,6 +401,26 @@ class MissionSummaryCard extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+
+    if (!widget.isPriority) return content;
+
+    return AnimatedBuilder(
+      animation: _pulseAnim,
+      builder: (context, child) => Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: AppColors.error.withValues(alpha: _pulseAnim.value),
+            width: 1.6,
+          ),
+        ),
+        child: child,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: content,
       ),
     );
   }

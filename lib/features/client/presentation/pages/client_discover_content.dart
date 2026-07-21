@@ -261,35 +261,68 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
               // Filter button — rounded square
               GestureDetector(
                 onTap: _showFilterSheet,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: _selectedCategoryId != null
-                        ? AppColors.inkDark
-                        : context.colors.surface,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: _selectedCategoryId != null
-                          ? AppColors.inkDark
-                          : context.colors.border,
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.05),
-                        blurRadius: 16,
-                        offset: Offset(0, 3),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: _selectedCategoryId != null
+                            ? AppColors.inkDark
+                            : context.colors.surface,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: _selectedCategoryId != null
+                              ? AppColors.inkDark
+                              : context.colors.border,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromRGBO(0, 0, 0, 0.05),
+                            blurRadius: 16,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.tune_rounded,
-                    size: 20,
-                    color: _selectedCategoryId != null
-                        ? Colors.white
-                        : context.colors.textSecondary,
-                  ),
+                      child: Icon(
+                        Icons.tune_rounded,
+                        size: 20,
+                        color: _selectedCategoryId != null
+                            ? Colors.white
+                            : context.colors.textSecondary,
+                      ),
+                    ),
+                    if (_selectedCategoryId != null)
+                      Positioned(
+                        top: -4,
+                        right: -4,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() => _selectedCategoryId = null);
+                            context.read<ProfileProvider>().loadFreelancers();
+                          },
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: context.colors.error,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: context.colors.surface,
+                                width: 2,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.close_rounded,
+                              size: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ],

@@ -44,8 +44,8 @@ class HomeActionBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(
-        AppBarMetrics.toolbarHeight + (bottom?.preferredSize.height ?? 0),
-      );
+    AppBarMetrics.toolbarHeight + (bottom?.preferredSize.height ?? 0),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +59,8 @@ class HomeActionBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Icons.notifications_none_rounded,
           onTap: onNotificationsTap,
           size: 34,
-          iconSize: 20,
-          backgroundColor: context.colors.surfaceAlt,
+          iconSize: 23,
+          backgroundColor: Colors.transparent,
           iconColor: context.colors.textPrimary,
           badgeLabel: unreadCount > 0
               ? (unreadCount > 99 ? '99+' : '$unreadCount')
@@ -87,11 +87,12 @@ class HomeAppBarCoordinator {
     final current = selectedLocation?.label ?? parseCity(currentAddress);
     final initType =
         selectedLocation?.icon == Icons.location_on_rounded ||
-                selectedLocation?.icon == Icons.location_city_rounded
-            ? LocationType.other
-            : LocationType.current;
-    final previousOther =
-        initType == LocationType.other ? selectedLocation?.label : null;
+            selectedLocation?.icon == Icons.location_city_rounded
+        ? LocationType.other
+        : LocationType.current;
+    final previousOther = initType == LocationType.other
+        ? selectedLocation?.label
+        : null;
 
     return Navigator.push<LocationData>(
       context,
@@ -148,8 +149,8 @@ class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(
-        AppBarMetrics.toolbarHeight + (bottom?.preferredSize.height ?? 0),
-      );
+    AppBarMetrics.toolbarHeight + (bottom?.preferredSize.height ?? 0),
+  );
 
   @override
   State<HomeAppBar> createState() => _HomeAppBarState();

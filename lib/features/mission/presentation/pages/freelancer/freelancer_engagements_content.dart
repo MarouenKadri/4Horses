@@ -230,7 +230,7 @@ class _MissionTabState extends State<_MissionTab> {
   }
 
   List<Mission> _filter(List<Mission> all) {
-    return all
+    final filtered = all
         .where(
           (m) => MissionStatusUi.missionBelongsToTab(
             mission: m,
@@ -239,6 +239,20 @@ class _MissionTabState extends State<_MissionTab> {
           ),
         )
         .toList();
+    // Postulées / Confirmées : la mission la plus proche en date en premier.
+    if (widget.filter != _TabFilter.inProgress) {
+      filtered.sort((a, b) => a.scheduledStart.compareTo(b.scheduledStart));
+    }
+    return filtered;
+  }
+
+  /// Mission confirmée dont l'horaire planifié est le plus proche —
+  /// signalée par une bordure pulsante. S'il n'y en a qu'une, c'est elle.
+  String? _mostUrgentMissionId(List<Mission> missions) {
+    if (missions.isEmpty) return null;
+    final sorted = [...missions]
+      ..sort((a, b) => a.scheduledStart.compareTo(b.scheduledStart));
+    return sorted.first.id;
   }
 
   @override
@@ -250,6 +264,10 @@ class _MissionTabState extends State<_MissionTab> {
     final missions = _filter(
       context.watch<MissionProvider>().freelancerMissions,
     );
+    final isConfirmedTab = widget.filter == _TabFilter.confirmed;
+    final priorityMissionId = isConfirmedTab
+        ? _mostUrgentMissionId(missions)
+        : null;
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 280),
@@ -275,7 +293,6 @@ class _MissionTabState extends State<_MissionTab> {
                     widget.filter == _TabFilter.applied &&
                     (mission.status == MissionStatus.waitingCandidates ||
                         mission.status == MissionStatus.candidateReceived);
-                final isConfirmedTab = widget.filter == _TabFilter.confirmed;
                 final isInProgressTab = widget.filter == _TabFilter.inProgress;
 
                 return MissionSummaryCard(
@@ -284,6 +301,7 @@ class _MissionTabState extends State<_MissionTab> {
                   showDescription: false,
                   live: isInProgressTab,
                   showDateHighlight: isConfirmedTab,
+                  isPriority: mission.id == priorityMissionId,
                   onTap: () => isInProgressTab
                       ? _openTracking(mission)
                       : Navigator.push(

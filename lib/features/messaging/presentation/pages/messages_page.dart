@@ -133,9 +133,7 @@ class _ConversationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasUnread = conversation.unreadCount > 0;
-    final avatar =
-        conversation.otherUserAvatar ??
-        'https://api.dicebear.com/7.x/avataaars/png?seed=${conversation.otherUserId}';
+    final avatar = conversation.otherUserAvatar ?? '';
     final isOtherFreelancer = currentUserId == conversation.clientId;
 
     void goToProfile() {
@@ -197,13 +195,11 @@ class _ConversationTile extends StatelessWidget {
         padding: AppInsets.h16v12,
         child: Row(
           children: [
-            CircleAvatar(
+            AppAvatar(
+              imageUrl: avatar,
               radius: 28,
-              backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
-              onBackgroundImageError: avatar.isNotEmpty ? (_, __) {} : null,
-              child: avatar.isEmpty
-                  ? const Icon(Icons.person_rounded, size: 28)
-                  : null,
+              fallbackName: conversation.otherUserName,
+              isVerified: conversation.isOtherVerified,
             ),
             AppGap.w14,
             Expanded(

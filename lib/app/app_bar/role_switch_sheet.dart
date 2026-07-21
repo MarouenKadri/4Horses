@@ -23,80 +23,79 @@ class RoleSwitchSheet extends StatelessWidget {
     final isClient = auth.currentRole == UserRole.client;
     final isLoading = auth.isLoading;
 
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.inkDark,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // ── Handle ─────────────────────────────────────────────
-          Container(
-            width: 36,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(999),
+    return AppDarkSheet(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Handle ─────────────────────────────────────────────
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(999),
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          // ── Titre ──────────────────────────────────────────────
-          Text(
-            'Changer de mode',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-              height: 1,
+            const SizedBox(height: 20),
+            // ── Titre ──────────────────────────────────────────────
+            Text(
+              'Changer de mode',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                height: 1,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          // ── Cards ──────────────────────────────────────────────
-          _RoleCard(
-            icon: Icons.person_rounded,
-            label: 'Client',
-            subtitle: 'Publiez des missions et\ntrouvez des prestataires',
-            isSelected: isClient,
-            onTap: isClient || isLoading
-                ? null
-                : () async {
-                    Navigator.pop(context);
-                    await context.read<AuthProvider>().switchRole(UserRole.client);
-                  },
-          ),
-          const SizedBox(height: 10),
-          _RoleCard(
-            icon: Icons.handyman_rounded,
-            label: 'Prestataire',
-            subtitle: 'Proposez vos services et\nrépondez aux missions',
-            isSelected: !isClient,
-            onTap: !isClient || isLoading
-                ? null
-                : () async {
-                    Navigator.pop(context);
-                    await context.read<AuthProvider>().switchRole(UserRole.provider);
-                  },
-          ),
-          if (isLoading) ...[
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AppLoadingIndicator(size: AppBarMetrics.loadingIndicatorSize),
-                AppGap.w8,
-                const Text(
-                  'Changement en cours...',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.gray500,
+            const SizedBox(height: 20),
+            // ── Cards ──────────────────────────────────────────────
+            _RoleCard(
+              icon: Icons.person_rounded,
+              label: 'Client',
+              subtitle: 'Publiez des missions et\ntrouvez des prestataires',
+              isSelected: isClient,
+              onTap: isClient || isLoading
+                  ? null
+                  : () async {
+                      Navigator.pop(context);
+                      await context.read<AuthProvider>().switchRole(
+                        UserRole.client,
+                      );
+                    },
+            ),
+            const SizedBox(height: 10),
+            _RoleCard(
+              icon: Icons.handyman_rounded,
+              label: 'Prestataire',
+              subtitle: 'Proposez vos services et\nrépondez aux missions',
+              isSelected: !isClient,
+              onTap: !isClient || isLoading
+                  ? null
+                  : () async {
+                      Navigator.pop(context);
+                      await context.read<AuthProvider>().switchRole(
+                        UserRole.provider,
+                      );
+                    },
+            ),
+            if (isLoading) ...[
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AppLoadingIndicator(size: AppBarMetrics.loadingIndicatorSize),
+                  AppGap.w8,
+                  const Text(
+                    'Changement en cours...',
+                    style: TextStyle(fontSize: 13, color: AppColors.gray500),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

@@ -347,11 +347,7 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
       padding: const EdgeInsets.fromLTRB(8, 8, 20, 8),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, size: 18),
-            color: context.colors.textPrimary,
-            onPressed: () => Navigator.pop(context),
-          ),
+          AppBackButtonLeading(onPressed: () => Navigator.pop(context)),
           Text(
             _headerTitle,
             style: context.text.headlineSmall?.copyWith(

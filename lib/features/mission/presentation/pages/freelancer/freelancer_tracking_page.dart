@@ -14,6 +14,8 @@ import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/shared/status_timeline.dart';
 import '../../../../../features/notifications/data/models/app_notification.dart';
 import '../../../../../features/notifications/notification_provider.dart';
+import '../shared/tracking_map_page.dart';
+import 'freelancer_mission_detail_page.dart';
 
 class FreelancerTrackingPage extends StatefulWidget {
   final Mission mission;
@@ -325,8 +327,8 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
               child: Column(
                 children: [
                   Container(
-                    width: 64,
-                    height: 64,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       color: AppColors.primary.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
@@ -334,32 +336,31 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
                     child: Icon(
                       _headlineIcon,
                       color: AppColors.primary,
-                      size: 30,
+                      size: 24,
                     ),
                   ),
-                  AppGap.h14,
+                  AppGap.h8,
                   Text(
                     _headline,
                     textAlign: TextAlign.center,
-                    style: context.text.headlineSmall?.copyWith(
+                    style: context.text.titleLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                   if (_distanceKm != null &&
                       _mission.status == MissionStatus.onTheWay) ...[
-                    AppGap.h6,
+                    AppGap.h4,
                     Text(
                       'Distance jusqu\'au client',
-                      style: context.text.bodySmall?.copyWith(
+                      style: context.text.labelMedium?.copyWith(
                         color: context.colors.textTertiary,
                       ),
                     ),
-                    AppGap.h4,
                     Text(
                       _etaMinutes >= 60
                           ? '${_etaMinutes ~/ 60}h ${_etaMinutes % 60}min'
                           : '$_etaMinutes min',
-                      style: context.text.displaySmall?.copyWith(
+                      style: context.text.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary,
                       ),
@@ -368,7 +369,7 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
                       _distanceKm! < 1
                           ? '${(_distanceKm! * 1000).round()} m'
                           : '${_distanceKm!.toStringAsFixed(1)} km',
-                      style: context.text.bodySmall?.copyWith(
+                      style: context.text.labelMedium?.copyWith(
                         color: context.colors.textTertiary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -377,15 +378,15 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
                 ],
               ),
             ),
-            AppGap.h28,
+            AppGap.h14,
             StatusTimeline(status: _mission.status),
-            AppGap.h20,
+            AppGap.h14,
 
             // ── Mini carte ──────────────────────────────────────
             ClipRRect(
               borderRadius: BorderRadius.circular(AppDesign.radius16),
               child: SizedBox(
-                height: 140,
+                height: 150,
                 child: AppMap.tracking(
                   freelancerPosition: _currentPosition,
                   destination: _destinationLatLng,
@@ -393,10 +394,41 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
                   showWaiting: !_locationError,
                   waitingText: 'Localisation en cours…',
                   compact: true,
+                  initialZoom: 12,
+                  interactive: false,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => TrackingMapPage(
+                        freelancerPosition: _currentPosition,
+                        destination: _destinationLatLng,
+                        address: _mission.address.fullAddress,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-            AppGap.h20,
+            AppGap.h8,
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_rounded,
+                  size: 14,
+                  color: context.colors.textSecondary,
+                ),
+                AppGap.w6,
+                Expanded(
+                  child: Text(
+                    _mission.address.fullAddress,
+                    style: context.text.labelMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            AppGap.h14,
 
             // ── Infos + actions ──────────────────────────────────
             _FreelancerTrackingPanel(
@@ -414,6 +446,22 @@ class _FreelancerTrackingPageState extends State<FreelancerTrackingPage> {
               onFinishMission: _mission.status == MissionStatus.inProgress
                   ? () => _updateStatus(MissionStatus.completionRequested)
                   : null,
+            ),
+            AppGap.h14,
+
+            // ── Photo mission + titre ────────────────────────────
+            MissionTrackingPreviewImage(
+              mission: _mission,
+              height: 100,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => FreelancerMissionDetailPage(
+                    mission: _mission,
+                    isOwn: true,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -453,10 +501,10 @@ class _FreelancerTrackingPanel extends StatelessWidget {
             if (client != null) ...[
               UserAvatar(
                 imageUrl: client.avatarUrl,
-                radius: 28,
+                radius: 22,
                 showVerified: client.isVerified,
               ),
-              AppGap.w14,
+              AppGap.w12,
             ],
             Expanded(
               child: Column(
@@ -489,19 +537,9 @@ class _FreelancerTrackingPanel extends StatelessWidget {
             ],
           ],
         ),
-        AppGap.h6,
-        Text(
-          mission.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: context.text.bodySmall?.copyWith(
-            color: context.colors.textSecondary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        AppGap.h16,
+        AppGap.h10,
         AppSurfaceCard(
-          padding: AppInsets.a14,
+          padding: AppInsets.a10,
           color: context.colors.surfaceAlt,
           borderRadius: BorderRadius.circular(AppDesign.radius14),
           child: Row(
@@ -511,9 +549,9 @@ class _FreelancerTrackingPanel extends StatelessWidget {
                     ? Icons.handyman_rounded
                     : Icons.directions_walk_rounded,
                 color: AppColors.primary,
-                size: 20,
+                size: 18,
               ),
-              AppGap.w10,
+              AppGap.w8,
               Expanded(
                 child: Text(
                   switch (mission.status) {
@@ -527,7 +565,9 @@ class _FreelancerTrackingPanel extends StatelessWidget {
                       'Vous avez signalé la fin. Le client a 8h pour confirmer ou contester, sinon le paiement vous est versé automatiquement.',
                     _ => 'Le suivi de mission est terminé.',
                   },
-                  style: context.text.bodyMedium?.copyWith(
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.text.bodySmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: context.colors.textPrimary,
                   ),
@@ -536,25 +576,7 @@ class _FreelancerTrackingPanel extends StatelessWidget {
             ],
           ),
         ),
-        AppGap.h16,
-        Row(
-          children: [
-            Icon(
-              Icons.location_on_rounded,
-              size: 16,
-              color: context.colors.textSecondary,
-            ),
-            AppGap.w6,
-            Expanded(
-              child: Text(
-                mission.address.fullAddress,
-                style: context.text.bodySmall,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        AppGap.h18,
+        AppGap.h12,
         if (onStartRoute != null)
           _TrackingPrimaryButton(
             label: 'Marquer comme en route',
@@ -562,7 +584,7 @@ class _FreelancerTrackingPanel extends StatelessWidget {
             onTap: onStartRoute!,
           ),
         if (onStartMission != null) ...[
-          if (onStartRoute != null) AppGap.h10,
+          if (onStartRoute != null) AppGap.h8,
           _TrackingPrimaryButton(
             label: 'Commencer la mission',
             icon: Icons.play_circle_rounded,
@@ -570,7 +592,7 @@ class _FreelancerTrackingPanel extends StatelessWidget {
           ),
         ],
         if (onFinishMission != null) ...[
-          AppGap.h10,
+          AppGap.h8,
           _TrackingPrimaryButton(
             label: 'J\'ai terminé',
             icon: Icons.check_circle_rounded,
@@ -603,7 +625,6 @@ class _TrackingPrimaryButton extends StatelessWidget {
       variant: ButtonVariant.black,
       icon: icon,
       iconTrailing: false,
-      height: 54,
     );
   }
 }

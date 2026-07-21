@@ -91,6 +91,11 @@ class _TimelineTrack extends StatelessWidget {
     };
   }
 
+  /// La dernière étape reste affichée (case pleine) une fois `closed`, mais
+  /// ne doit plus pulser : la mission est réellement terminée, il n'y a plus
+  /// rien en attente (contrairement à completionRequested/awaitingRelease).
+  bool get _isFinalStatusSettled => currentStatus == MissionStatus.closed;
+
   @override
   Widget build(BuildContext context) {
     final currentIdx = _currentIndex;
@@ -123,10 +128,12 @@ class _TimelineTrack extends StatelessWidget {
               return Expanded(child: _Connector(done: isDone));
             }
             final stepIndex = i ~/ 2;
+            final isLastStep = stepIndex == _kTimelineLabels.length - 1;
+            final isSettledLastStep = isLastStep && _isFinalStatusSettled;
             return _TimelineStep(
               label: _kTimelineLabels[stepIndex],
-              isDone: stepIndex < currentIdx,
-              isCurrent: stepIndex == currentIdx,
+              isDone: stepIndex < currentIdx || isSettledLastStep,
+              isCurrent: stepIndex == currentIdx && !isSettledLastStep,
             );
           }),
         ),

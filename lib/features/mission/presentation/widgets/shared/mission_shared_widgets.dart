@@ -587,6 +587,162 @@ class MissionImageHeader extends StatelessWidget {
   }
 }
 
+// ─── Photo mission + titre en overlay (écrans de suivi) ───────────────────────
+
+class MissionTrackingPreviewImage extends StatelessWidget {
+  final Mission mission;
+  final VoidCallback onTap;
+  final double height;
+
+  const MissionTrackingPreviewImage({
+    super.key,
+    required this.mission,
+    required this.onTap,
+    this.height = 160,
+  });
+
+  Widget _buildBackground(BuildContext context) {
+    if (mission.images.isEmpty) {
+      final accent = mission.categoryColor;
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              accent.withValues(alpha: 0.28),
+              accent.withValues(alpha: 0.10),
+            ],
+          ),
+        ),
+        child: Center(
+          child: Icon(
+            mission.categoryIcon,
+            size: height * 0.32,
+            color: accent.withValues(alpha: 0.55),
+          ),
+        ),
+      );
+    }
+    return Image.network(
+      mission.images.first,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => Container(
+        color: context.colors.surfaceAlt,
+        child: Icon(
+          Icons.image_not_supported_rounded,
+          size: 32,
+          color: context.colors.textTertiary,
+        ),
+      ),
+      loadingBuilder: (ctx, child, progress) {
+        if (progress == null) return child;
+        return Container(
+          color: context.colors.surfaceAlt,
+          child: Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: context.colors.textTertiary,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppDesign.radius16),
+        child: SizedBox(
+          height: height,
+          width: double.infinity,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              _buildBackground(context),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.65),
+                    ],
+                    stops: const [0.4, 1.0],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 14,
+                right: 14,
+                bottom: 12,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        mission.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.text.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    AppGap.w6,
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      size: 20,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              if (mission.images.length > 1)
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.55),
+                      borderRadius: BorderRadius.circular(AppRadius.small),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.photo_library_rounded,
+                          size: 13,
+                          color: Colors.white,
+                        ),
+                        AppGap.w4,
+                        Text(
+                          '${mission.images.length}',
+                          style: context.text.labelMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ─── État Vide ────────────────────────────────────────────────────────────────
 
 class EmptyState extends StatelessWidget {
@@ -887,7 +1043,6 @@ class MissionLocationRow extends StatelessWidget {
   }
 }
 
-
 // ─── Card Container ───────────────────────────────────────────────────────────
 
 class CardContainer extends StatelessWidget {
@@ -954,4 +1109,3 @@ class TrackingContactIconButton extends StatelessWidget {
     );
   }
 }
-

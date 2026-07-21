@@ -6,7 +6,6 @@ import '../providers/chat_provider.dart';
 import 'location_message_bubble.dart';
 import 'message_time_status.dart';
 
-
 class ChatMessageBubble extends StatelessWidget {
   final ChatMessage message;
   final bool isMe;
@@ -80,20 +79,15 @@ class _TextBubble extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: isMe ? context.colors.textPrimary : context.colors.surface,
-        border: isMe ? null : Border.all(color: context.colors.divider, width: 0.8),
+        border: isMe
+            ? null
+            : Border.all(color: context.colors.divider, width: 0.8),
         borderRadius: BorderRadius.only(
           topLeft: const Radius.circular(18),
           topRight: const Radius.circular(18),
           bottomLeft: Radius.circular(isMe ? 18 : 4),
           bottomRight: Radius.circular(isMe ? 4 : 18),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: isMe
@@ -106,7 +100,11 @@ class _TextBubble extends StatelessWidget {
                 (isMe
                         ? context.chatBubbleTextOnDarkStyle
                         : context.chatBubbleTextStyle)
-                    .copyWith(color: isMe ? context.colors.surface : context.colors.textPrimary),
+                    .copyWith(
+                      color: isMe
+                          ? context.colors.surface
+                          : context.colors.textPrimary,
+                    ),
           ),
           AppGap.h4,
           MessageTimeStatus(message: message, isMe: isMe),
@@ -162,7 +160,9 @@ class _SystemBubble extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: context.chatSystemStyle.copyWith(color: context.colors.textTertiary),
+        style: context.chatSystemStyle.copyWith(
+          color: context.colors.textTertiary,
+        ),
         textAlign: TextAlign.center,
       ),
     );

@@ -13,7 +13,6 @@ import '../../../mission/presentation/pages/client/create_mission_page.dart';
 import '../../../mission/presentation/pages/client/client_mission_detail_page.dart';
 import '../../../mission/presentation/widgets/shared/mission_shared_widgets.dart';
 
-
 class ChatPage extends StatefulWidget {
   final String? conversationId;
   final String? contactUserId;
@@ -188,7 +187,9 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           RichText(
             text: TextSpan(
-              style: context.text.bodyMedium?.copyWith(color: context.colors.textSecondary),
+              style: context.text.bodyMedium?.copyWith(
+                color: context.colors.textSecondary,
+              ),
               children: [
                 const TextSpan(text: 'Vous allez accepter '),
                 TextSpan(
@@ -360,12 +361,7 @@ class _ChatPageState extends State<ChatPage> {
         preferredSize: const Size.fromHeight(1),
         child: Container(height: 0.5, color: context.colors.divider),
       ),
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_rounded,
-          color: context.colors.textPrimary,
-          size: 18,
-        ),
+      leading: AppBackButtonLeading(
         onPressed: () => Navigator.pop(context, _candidateAccepted),
       ),
       titleSpacing: 0,
@@ -389,7 +385,9 @@ class _ChatPageState extends State<ChatPage> {
                     Flexible(
                       child: Text(
                         widget.contactName,
-                        style: context.chatTitleStyle.copyWith(color: context.colors.textPrimary),
+                        style: context.chatTitleStyle.copyWith(
+                          color: context.colors.textPrimary,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -406,7 +404,9 @@ class _ChatPageState extends State<ChatPage> {
                 const SizedBox(height: 1),
                 Text(
                   widget.isOnline ? 'En ligne' : 'Vu récemment',
-                  style: context.chatMetaStyle.copyWith(color: context.colors.textHint),
+                  style: context.chatMetaStyle.copyWith(
+                    color: context.colors.textHint,
+                  ),
                 ),
               ],
             ),
@@ -637,17 +637,17 @@ class _MissionActionCard extends StatelessWidget {
 
     final headline = switch (status) {
       MissionStatus.confirmed => 'Mission confirmée',
-      MissionStatus.onTheWay => isFreelancer
-          ? 'En route vers le client'
-          : '${mission.assignedPresta?.name ?? 'Le prestataire'} est en route',
+      MissionStatus.onTheWay =>
+        isFreelancer
+            ? 'En route vers le client'
+            : '${mission.assignedPresta?.name ?? 'Le prestataire'} est en route',
       MissionStatus.inProgress => 'Mission en cours',
       MissionStatus.completionRequested => 'Fin de mission signalée',
       _ => mission.status.label,
     };
 
     final (actionLabel, onAction) = switch ((status, isFreelancer)) {
-      (MissionStatus.confirmed, true) ||
-      (MissionStatus.onTheWay, true) => (
+      (MissionStatus.confirmed, true) || (MissionStatus.onTheWay, true) => (
         'Commencer la mission',
         () => _startMission(context, mission!),
       ),
@@ -785,7 +785,9 @@ class _MissionBanner extends StatelessWidget {
           Flexible(
             child: Text(
               parts.join(' • '),
-              style: context.chatBannerStyle.copyWith(color: context.colors.textSecondary),
+              style: context.chatBannerStyle.copyWith(
+                color: context.colors.textSecondary,
+              ),
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

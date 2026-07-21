@@ -11,6 +11,8 @@ import '../../../data/models/mission.dart';
 import '../../mission_provider.dart';
 import '../../widgets/shared/mission_shared_widgets.dart';
 import '../../widgets/shared/status_timeline.dart';
+import '../shared/tracking_map_page.dart';
+import 'client_mission_detail_page.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// TrackingPage (Client) — statut + ETA en premier plan, carte réduite en
@@ -178,8 +180,8 @@ class _TrackingPageState extends State<TrackingPage> {
               child: Column(
                 children: [
                   Container(
-                    width: 64,
-                    height: 64,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       color: AppColors.primary.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
@@ -187,33 +189,32 @@ class _TrackingPageState extends State<TrackingPage> {
                     child: Icon(
                       _headlineIcon(status),
                       color: AppColors.primary,
-                      size: 30,
+                      size: 24,
                     ),
                   ),
-                  AppGap.h14,
+                  AppGap.h8,
                   Text(
                     _headline(mission),
                     textAlign: TextAlign.center,
-                    style: context.text.headlineSmall?.copyWith(
+                    style: context.text.titleLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                   if (_distanceKm != null && hasLivePosition) ...[
-                    AppGap.h6,
+                    AppGap.h4,
                     Text(
                       status == MissionStatus.onTheWay
                           ? 'Arrivée estimée'
                           : 'Position en direct',
-                      style: context.text.bodySmall?.copyWith(
+                      style: context.text.labelMedium?.copyWith(
                         color: context.colors.textTertiary,
                       ),
                     ),
-                    AppGap.h4,
                     Text(
                       _etaMinutes >= 60
                           ? '${_etaMinutes ~/ 60}h ${_etaMinutes % 60}min'
                           : '$_etaMinutes min',
-                      style: context.text.displaySmall?.copyWith(
+                      style: context.text.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary,
                       ),
@@ -222,7 +223,7 @@ class _TrackingPageState extends State<TrackingPage> {
                       _distanceKm! < 1
                           ? '${(_distanceKm! * 1000).round()} m'
                           : '${_distanceKm!.toStringAsFixed(1)} km',
-                      style: context.text.bodySmall?.copyWith(
+                      style: context.text.labelMedium?.copyWith(
                         color: context.colors.textTertiary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -231,31 +232,75 @@ class _TrackingPageState extends State<TrackingPage> {
                 ],
               ),
             ),
-            AppGap.h28,
+            AppGap.h14,
             StatusTimeline(status: status),
-            AppGap.h20,
+            AppGap.h14,
 
             // ── Mini carte ──────────────────────────────────────
             ClipRRect(
               borderRadius: BorderRadius.circular(AppDesign.radius16),
               child: SizedBox(
-                height: 140,
+                height: 150,
                 child: AppMap.tracking(
                   freelancerPosition: _freelancerPosition,
                   destination: _destinationLatLng,
                   showWaiting: status != MissionStatus.confirmed,
                   waitingText: 'En attente de la position…',
                   compact: true,
+                  initialZoom: 12,
+                  interactive: false,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => TrackingMapPage(
+                        freelancerPosition: _freelancerPosition,
+                        destination: _destinationLatLng,
+                        address: mission.address.fullAddress,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-            AppGap.h20,
+            AppGap.h8,
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_rounded,
+                  size: 14,
+                  color: context.colors.textSecondary,
+                ),
+                AppGap.w6,
+                Expanded(
+                  child: Text(
+                    mission.address.fullAddress,
+                    style: context.text.labelMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            AppGap.h14,
 
             // ── Infos mission ────────────────────────────────────
             _ClientTrackingPanel(
               mission: mission,
               onCall: widget.onCall,
               onChat: widget.onChat,
+            ),
+            AppGap.h14,
+
+            // ── Photo mission + titre ────────────────────────────
+            MissionTrackingPreviewImage(
+              mission: mission,
+              height: 100,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ClientMissionDetailPage(mission: mission),
+                ),
+              ),
             ),
           ],
         ),
@@ -271,11 +316,7 @@ class _ClientTrackingPanel extends StatelessWidget {
   final VoidCallback? onCall;
   final VoidCallback? onChat;
 
-  const _ClientTrackingPanel({
-    required this.mission,
-    this.onCall,
-    this.onChat,
-  });
+  const _ClientTrackingPanel({required this.mission, this.onCall, this.onChat});
 
   @override
   Widget build(BuildContext context) {
@@ -289,10 +330,10 @@ class _ClientTrackingPanel extends StatelessWidget {
             if (presta != null) ...[
               UserAvatar(
                 imageUrl: presta.avatarUrl,
-                radius: 28,
+                radius: 22,
                 showVerified: presta.isVerified,
               ),
-              AppGap.w14,
+              AppGap.w12,
             ],
             Expanded(
               child: Column(
@@ -323,28 +364,7 @@ class _ClientTrackingPanel extends StatelessWidget {
             ],
           ],
         ),
-        AppGap.h16,
-        const Divider(height: 1),
-        AppGap.h12,
-        Row(
-          children: [
-            Icon(
-              Icons.location_on_rounded,
-              size: 16,
-              color: context.colors.textSecondary,
-            ),
-            AppGap.w6,
-            Expanded(
-              child: Text(
-                mission.address.fullAddress,
-                style: context.text.bodySmall,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
       ],
     );
   }
 }
-

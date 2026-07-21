@@ -3,7 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import '../../../../core/design/app_design_system.dart';
 import '../../data/services/message_moderation_service.dart';
 
-
 class ChatInputBar extends StatefulWidget {
   final Future<String?> Function(String text) onSendMessage;
   final VoidCallback onSendSuccess;
@@ -145,34 +144,45 @@ class _ChatInputBarState extends State<ChatInputBar> {
                         decoration: BoxDecoration(
                           color: context.colors.surface,
                           borderRadius: BorderRadius.circular(AppRadius.full),
-                          border: Border.all(color: context.colors.divider, width: 1),
+                          border: Border.all(
+                            color: context.colors.divider,
+                            width: 1,
+                          ),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                left: 14,
-                                bottom: 11,
+                                left: 8,
+                                bottom: 5,
                               ),
-                              child: GestureDetector(
-                                onTap: _isSendingLocation
-                                    ? null
-                                    : _handleSendLocation,
-                                child: _isSendingLocation
-                                    ? SizedBox(
-                                        width: 22,
-                                        height: 22,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: context.colors.textPrimary,
-                                        ),
-                                      )
-                                    : Icon(
-                                        Icons.location_on_outlined,
-                                        color: context.colors.textPrimary,
-                                        size: 22,
-                                      ),
+                              child: Material(
+                                color: Colors.transparent,
+                                shape: const CircleBorder(),
+                                clipBehavior: Clip.hardEdge,
+                                child: InkWell(
+                                  onTap: _isSendingLocation
+                                      ? null
+                                      : _handleSendLocation,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: _isSendingLocation
+                                        ? SizedBox(
+                                            width: 22,
+                                            height: 22,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: context.colors.textPrimary,
+                                            ),
+                                          )
+                                        : Icon(
+                                            Icons.location_on_outlined,
+                                            color: context.colors.textPrimary,
+                                            size: 22,
+                                          ),
+                                  ),
+                                ),
                               ),
                             ),
                             Expanded(
@@ -238,7 +248,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                                   child: Icon(
                                     isForbidden
                                         ? Icons.block_rounded
-                                        : Icons.arrow_upward_rounded,
+                                        : Icons.send_rounded,
                                     color: context.colors.surface,
                                     size: 18,
                                   ),

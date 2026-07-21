@@ -90,12 +90,20 @@ class AppPageAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       centerTitle: centerTitle,
       toolbarHeight: toolbarHeight,
+      titleSpacing: NavigationToolbar.kMiddleSpacing,
       shape: showBorder
           ? Border(bottom: BorderSide(color: context.colors.border, width: 0.8))
           : null,
       leading: leading,
-      title: resolvedTitle,
-      actions: actions,
+      title: Padding(
+        padding: const EdgeInsets.only(top: 6),
+        child: resolvedTitle,
+      ),
+      actions: actions
+          ?.map(
+            (a) => Padding(padding: const EdgeInsets.only(top: 6), child: a),
+          )
+          .toList(),
       bottom: bottom,
     );
   }
@@ -169,6 +177,7 @@ class AppBarActionCircleButton extends StatelessWidget {
   final String? badgeLabel;
   final Color badgeColor;
   final Animation<double>? scale;
+  final bool badgeAtBottom;
 
   const AppBarActionCircleButton({
     super.key,
@@ -183,6 +192,7 @@ class AppBarActionCircleButton extends StatelessWidget {
     this.badgeLabel,
     this.badgeColor = AppColors.error,
     this.scale,
+    this.badgeAtBottom = false,
   });
 
   @override
@@ -206,7 +216,8 @@ class AppBarActionCircleButton extends StatelessWidget {
         scale == null ? action : ScaleTransition(scale: scale!, child: action),
         if (badgeLabel != null)
           Positioned(
-            top: -2,
+            top: badgeAtBottom ? null : -2,
+            bottom: badgeAtBottom ? -2 : null,
             right: -2,
             child: AppCountBadge(
               label: badgeLabel!,

@@ -4,7 +4,6 @@ import '../../../../core/design/app_design_system.dart';
 import '../../data/models/message.dart';
 import 'message_time_status.dart';
 
-
 class LocationMessageBubble extends StatelessWidget {
   final ChatMessage message;
   final LocationContent location;
@@ -34,19 +33,15 @@ class LocationMessageBubble extends StatelessWidget {
         width: 230,
         decoration: BoxDecoration(
           color: isMe ? context.colors.textPrimary : context.colors.surface,
+          border: isMe
+              ? null
+              : Border.all(color: context.colors.divider, width: 0.8),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(18),
             topRight: const Radius.circular(18),
             bottomLeft: Radius.circular(isMe ? 18 : 4),
             bottomRight: Radius.circular(isMe ? 4 : 18),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         clipBehavior: Clip.hardEdge,
         child: Column(
@@ -121,7 +116,9 @@ class LocationMessageBubble extends StatelessWidget {
                     child: Text(
                       'Position partagée',
                       style: context.chatLocationLabelStyle.copyWith(
-                        color: isMe ? context.colors.surface : context.colors.textPrimary,
+                        color: isMe
+                            ? context.colors.surface
+                            : context.colors.textPrimary,
                       ),
                     ),
                   ),

@@ -198,7 +198,7 @@ class AppButton extends StatelessWidget {
               elevation: 0,
               shadowColor: Colors.transparent,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(999),
+                borderRadius: BorderRadius.circular(AppRadius.button),
               ),
             ),
             child: child,

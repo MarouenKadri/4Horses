@@ -130,7 +130,6 @@ class StepDate extends StatelessWidget {
             variant: ButtonVariant.outline,
             icon: Icons.calendar_month_outlined,
             iconTrailing: false,
-            height: 54,
             onPressed: () async {
               final date = await showDatePicker(
                 context: context,
@@ -274,7 +273,6 @@ class StepTime extends StatelessWidget {
             variant: ButtonVariant.outline,
             icon: Icons.schedule_outlined,
             iconTrailing: false,
-            height: 54,
             onPressed: () async {
               final time = await showTimePicker(
                 context: context,
