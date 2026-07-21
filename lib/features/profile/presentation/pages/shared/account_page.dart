@@ -10,6 +10,7 @@ import '../client/client_payment_methods_page.dart';
 import '../shared/archives_page.dart';
 import '../freelancer/freelancer_activity_page.dart';
 import '../freelancer/freelancer_payment_methods_page.dart';
+import 'about_page.dart';
 import 'change_password_page.dart';
 import 'contact_support_page.dart';
 import 'my_information_page.dart';
@@ -151,7 +152,10 @@ class _AccountPageState extends State<AccountPage> {
                 _FlatTile(
                   icon: Icons.info_outline_rounded,
                   title: 'À propos',
-                  onTap: () {},
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AboutPage()),
+                  ),
                 ),
                 _FlatTile(
                   icon: Icons.logout_rounded,
