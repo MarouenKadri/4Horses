@@ -8,7 +8,6 @@ export 'data/models/freelancer.dart';
 export 'services/image_picker_service.dart';
 
 // ─── Widgets ──────────────────────────────────────────────────────────────────
-export 'presentation/widgets/google_sign_in_button.dart';
 export 'presentation/widgets/payment_security_card.dart';
 export 'presentation/widgets/photo_picker.dart';
 export 'presentation/widgets/status_dot_badge.dart';
