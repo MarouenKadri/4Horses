@@ -152,182 +152,132 @@ class _FreelancerDiscoveryView extends StatefulWidget {
       _FreelancerDiscoveryViewState();
 }
 
+enum _FreelancerSort { relevance, ratingDesc, priceAsc, priceDesc }
+
 class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
-  final _searchController = TextEditingController();
-  String? _selectedCategoryId;
+  final Set<String> _selectedCategoryIds = {};
+  double _minRating = 0;
+  _FreelancerSort _sort = _FreelancerSort.relevance;
 
   @override
   void initState() {
     super.initState();
-    _selectedCategoryId = widget.initialCategoryId;
+    if (widget.initialCategoryId != null) {
+      _selectedCategoryIds.add(widget.initialCategoryId!);
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProfileProvider>().loadFreelancers();
     });
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
+  bool get _hasActiveFilters =>
+      _selectedCategoryIds.isNotEmpty || _minRating > 0;
 
   List<Map<String, dynamic>> get _filteredFreelancers {
     final rawList = context.watch<ProfileProvider>().freelancers;
     final normalized = rawList.map(_normalizeFreelancerRow).toList();
 
-    return normalized.where((f) {
-      if (_searchController.text.isNotEmpty) {
-        final query = _searchController.text.toLowerCase();
-        final name = (f['name'] as String).toLowerCase();
-        final services = (f['services'] as List).join(' ').toLowerCase();
-        if (!name.contains(query) && !services.contains(query)) return false;
-      }
-      if (_selectedCategoryId != null) {
+    final filtered = normalized.where((f) {
+      if (_selectedCategoryIds.isNotEmpty) {
         final categoryIds = f['categoryIds'] as List<String>;
-        if (!categoryIds.contains(_selectedCategoryId)) return false;
+        if (!categoryIds.any(_selectedCategoryIds.contains)) return false;
+      }
+      if (_minRating > 0) {
+        final rating = f['rating'] as double;
+        if (rating < _minRating) return false;
       }
       return true;
     }).toList();
+
+    switch (_sort) {
+      case _FreelancerSort.relevance:
+        break;
+      case _FreelancerSort.ratingDesc:
+        filtered.sort(
+          (a, b) => (b['rating'] as double).compareTo(a['rating'] as double),
+        );
+      case _FreelancerSort.priceAsc:
+        filtered.sort(
+          (a, b) => (a['hourlyRate'] as int).compareTo(b['hourlyRate'] as int),
+        );
+      case _FreelancerSort.priceDesc:
+        filtered.sort(
+          (a, b) => (b['hourlyRate'] as int).compareTo(a['hourlyRate'] as int),
+        );
+    }
+    return filtered;
+  }
+
+  String get _filterSummary {
+    final parts = <String>[];
+    if (_selectedCategoryIds.isNotEmpty) {
+      parts.add(
+        _selectedCategoryIds.length == 1
+            ? ServiceCategory.resolve(_selectedCategoryIds.first)?.name ??
+                  '1 catégorie'
+            : '${_selectedCategoryIds.length} catégories',
+      );
+    }
+    if (_minRating > 0) parts.add('$_minRating★ et +');
+    if (_sort != _FreelancerSort.relevance) parts.add(_sortLabels[_sort]!);
+    return parts.join(' · ');
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Search & Filters Header — iOS pill style
-        Container(
-          color: context.colors.surface,
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          child: Row(
-            children: [
-              // Pill search field
-              Expanded(
-                child: Container(
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: context.colors.surface,
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: context.colors.border),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.05),
-                        blurRadius: 16,
-                        offset: Offset(0, 3),
+        // Bandeau résultats + filtre — toute la ligne est cliquable
+        GestureDetector(
+          onTap: _showFilterSheet,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            color: context.colors.surface,
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+            child: Row(
+              children: [
+                Expanded(
+                  child: RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      style: context.text.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: context.colors.textPrimary,
                       ),
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (_) {
-                      setState(() {});
-                      context.read<ProfileProvider>().loadFreelancers(
-                        search: _searchController.text,
-                      );
-                    },
-                    style: context.text.bodyMedium,
-                    decoration: InputDecoration(
-                      hintText: 'Rechercher un service, un nom...',
-                      hintStyle: context.text.bodyMedium?.copyWith(
-                        color: context.colors.textTertiary,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search_rounded,
-                        color: context.colors.textTertiary,
-                        size: 20,
-                      ),
-                      suffixIcon: _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.close_rounded,
-                                color: context.colors.textTertiary,
-                                size: 18,
-                              ),
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() {});
-                                context
-                                    .read<ProfileProvider>()
-                                    .loadFreelancers();
-                              },
-                            )
-                          : null,
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                      children: [
+                        TextSpan(text: '${_filteredFreelancers.length} '),
+                        TextSpan(
+                          text: _hasActiveFilters
+                              ? _filterSummary
+                              : 'prestataires',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: context.colors.textTertiary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              // Filter button — rounded square
-              GestureDetector(
-                onTap: _showFilterSheet,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: _selectedCategoryId != null
-                            ? AppColors.inkDark
-                            : context.colors.surface,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: _selectedCategoryId != null
-                              ? AppColors.inkDark
-                              : context.colors.border,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color.fromRGBO(0, 0, 0, 0.05),
-                            blurRadius: 16,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.tune_rounded,
-                        size: 20,
-                        color: _selectedCategoryId != null
-                            ? Colors.white
-                            : context.colors.textSecondary,
-                      ),
-                    ),
-                    if (_selectedCategoryId != null)
-                      Positioned(
-                        top: -4,
-                        right: -4,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() => _selectedCategoryId = null);
-                            context.read<ProfileProvider>().loadFreelancers();
-                          },
-                          child: Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: context.colors.error,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: context.colors.surface,
-                                width: 2,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.close_rounded,
-                              size: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
+                Text(
+                  'Filtrer',
+                  style: context.text.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 2),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
+              ],
+            ),
           ),
         ),
+        Divider(height: 1, color: context.colors.divider),
 
         // Freelancers list
         Expanded(
@@ -385,94 +335,175 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
 
   void _resetFilters() {
     setState(() {
-      _searchController.clear();
-      _selectedCategoryId = null;
+      _selectedCategoryIds.clear();
+      _minRating = 0;
+      _sort = _FreelancerSort.relevance;
     });
-    context.read<ProfileProvider>().loadFreelancers();
   }
 
+  static const _sortLabels = {
+    _FreelancerSort.relevance: 'Pertinence',
+    _FreelancerSort.ratingDesc: 'Mieux notés',
+    _FreelancerSort.priceAsc: 'Prix croissant',
+    _FreelancerSort.priceDesc: 'Prix décroissant',
+  };
+
   void _showFilterSheet() {
+    // Copies de travail : appliquées seulement au clic sur "Appliquer".
+    var draftCategoryIds = {..._selectedCategoryIds};
+    var draftMinRating = _minRating;
+    var draftSort = _sort;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: context.colors.surface,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setSheet) => Padding(
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Handle bar
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: ctx.colors.border,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Catégorie',
-                    style: context.text.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+          padding: EdgeInsets.fromLTRB(
+            20,
+            14,
+            20,
+            32 + MediaQuery.of(ctx).viewInsets.bottom,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: ctx.colors.border,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  if (_selectedCategoryId != null)
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Filtres',
+                      style: ctx.text.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     GestureDetector(
-                      onTap: () {
-                        setState(() => _selectedCategoryId = null);
-                        setSheet(() {});
-                        Navigator.pop(ctx);
-                      },
+                      onTap: () => setSheet(() {
+                        draftCategoryIds = {};
+                        draftMinRating = 0;
+                        draftSort = _FreelancerSort.relevance;
+                      }),
                       child: Text(
                         'Réinitialiser',
-                        style: context.text.labelMedium?.copyWith(
+                        style: ctx.text.labelMedium?.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _CategoryChip(
-                    label: 'Tous',
-                    selected: _selectedCategoryId == null,
-                    onTap: () {
-                      setState(() => _selectedCategoryId = null);
-                      setSheet(() {});
-                      Navigator.pop(ctx);
-                    },
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // ── Catégories (multi-sélection) ──
+                Text(
+                  'Catégories',
+                  style: ctx.text.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: ctx.colors.textSecondary,
                   ),
-                  ...ServiceCategory.all.map(
-                    (cat) => _CategoryChip(
-                      label: cat.name,
-                      icon: cat.icon,
-                      color: cat.color,
-                      selected: _selectedCategoryId == cat.id,
-                      onTap: () {
-                        setState(() => _selectedCategoryId = cat.id);
-                        setSheet(() {});
-                        Navigator.pop(ctx);
-                      },
-                    ),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final cat in ServiceCategory.all)
+                      AppFilterChip(
+                        label: cat.name,
+                        icon: cat.icon,
+                        color: cat.color,
+                        selected: draftCategoryIds.contains(cat.id),
+                        onTap: () => setSheet(() {
+                          if (!draftCategoryIds.remove(cat.id)) {
+                            draftCategoryIds.add(cat.id);
+                          }
+                        }),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                // ── Note minimale ──
+                Text(
+                  'Note minimale',
+                  style: ctx.text.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: ctx.colors.textSecondary,
                   ),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final threshold in [0.0, 3.0, 4.0, 4.5])
+                      AppFilterChip(
+                        label: threshold == 0 ? 'Toutes' : '$threshold★ et +',
+                        selected: draftMinRating == threshold,
+                        onTap: () => setSheet(() => draftMinRating = threshold),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                // ── Tri ──
+                Text(
+                  'Trier par',
+                  style: ctx.text.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: ctx.colors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final entry in _sortLabels.entries)
+                      AppFilterChip(
+                        label: entry.value,
+                        selected: draftSort == entry.key,
+                        onTap: () => setSheet(() => draftSort = entry.key),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 28),
+
+                AppButton(
+                  label: 'Appliquer',
+                  variant: ButtonVariant.black,
+                  onPressed: () {
+                    setState(() {
+                      _selectedCategoryIds
+                        ..clear()
+                        ..addAll(draftCategoryIds);
+                      _minRating = draftMinRating;
+                      _sort = draftSort;
+                    });
+                    Navigator.pop(ctx);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -493,67 +524,6 @@ class _FreelancerDiscoveryViewState extends State<_FreelancerDiscoveryView> {
           reviewsCount: freelancer['reviewsCount'] as int,
           missionsCount: freelancer['missionsCount'] as int,
           responseTime: 'Répond en ${freelancer['responseTime']}',
-        ),
-      ),
-    );
-  }
-}
-
-class _CategoryChip extends StatelessWidget {
-  final String label;
-  final IconData? icon;
-  final Color? color;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _CategoryChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    this.icon,
-    this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final accent = color ?? AppColors.primary;
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-        decoration: BoxDecoration(
-          color: selected ? accent.withValues(alpha: 0.10) : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected
-                ? accent.withValues(alpha: 0.45)
-                : context.colors.border,
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(
-                icon,
-                size: 13,
-                color: selected ? accent : context.colors.textTertiary,
-              ),
-              const SizedBox(width: 5),
-            ],
-            Text(
-              label,
-              style: context.text.labelMedium!.copyWith(
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                color: selected ? accent : context.colors.textSecondary,
-                height: 1,
-              ),
-            ),
-          ],
         ),
       ),
     );

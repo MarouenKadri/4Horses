@@ -17,3 +17,4 @@ export 'components/app_map.dart';
 export 'components/app_avatar.dart';
 export 'components/app_empty_state.dart';
 export 'components/app_status_badge.dart';
+export 'components/app_filter_chip.dart';

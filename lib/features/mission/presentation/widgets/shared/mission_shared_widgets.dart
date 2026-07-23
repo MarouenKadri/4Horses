@@ -764,45 +764,58 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: AppInsets.a32,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 96,
-              height: 96,
-              decoration: BoxDecoration(
-                color: AppColors.secondary,
-                shape: BoxShape.circle,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 360),
+        child: Padding(
+          padding: AppInsets.a32,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: context.colors.surfaceAlt,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: context.colors.border),
+                ),
+                child: Icon(icon, size: 32, color: context.colors.primary),
               ),
-              child: Icon(icon, size: 44, color: AppColors.primary),
-            ),
-            AppGap.h20,
-            Text(
-              title,
-              style: context.text.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            AppGap.h8,
-            Text(
-              subtitle,
-              style: context.text.bodyMedium?.copyWith(
-                color: context.colors.textTertiary,
-                height: 1.5,
+              AppGap.h18,
+              Text(
+                title,
+                style: context.text.titleMedium?.copyWith(
+                  fontSize: AppFontSize.xl,
+                  fontWeight: FontWeight.w800,
+                  color: context.colors.textPrimary,
+                  height: 1.18,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            if (buttonText != null && onButtonPressed != null) ...[
-              AppGap.h28,
-              AppButton(
-                label: buttonText!,
-                variant: ButtonVariant.primary,
-                icon: Icons.add_rounded,
-                onPressed: onButtonPressed,
+              AppGap.h8,
+              Text(
+                subtitle,
+                style: context.text.bodyMedium?.copyWith(
+                  fontSize: AppFontSize.base,
+                  color: context.colors.textSecondary,
+                  height: 1.42,
+                ),
+                textAlign: TextAlign.center,
               ),
+              if (buttonText != null && onButtonPressed != null) ...[
+                AppGap.h22,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 260),
+                  child: AppButton(
+                    label: buttonText!,
+                    variant: ButtonVariant.secondary,
+                    icon: Icons.refresh_rounded,
+                    onPressed: onButtonPressed,
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

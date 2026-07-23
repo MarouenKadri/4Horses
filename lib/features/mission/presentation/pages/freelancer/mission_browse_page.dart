@@ -246,9 +246,9 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
         child: Column(
           children: [
             if (widget.embedded)
-              _buildEmbeddedHeader()
+              _buildResultsFilterBand(filtered.length)
             else if (showHeader)
-              _buildHeader(),
+              _buildHeader(filtered.length),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _refresh,
@@ -262,8 +262,8 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                       )
                     else if (filtered.isEmpty)
                       SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 260,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 40),
                           child: EmptyState(
                             icon: Icons.search_off_rounded,
                             title: _showAppliedOnly
@@ -272,6 +272,12 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                             subtitle: _showAppliedOnly
                                 ? 'Vous n’avez pas encore postulé à une mission dans cette liste.'
                                 : 'Ajustez vos filtres ou revenez plus tard pour découvrir de nouvelles missions.',
+                            buttonText: _hasActiveFilters
+                                ? 'Réinitialiser les filtres'
+                                : null,
+                            onButtonPressed: _hasActiveFilters
+                                ? () => setState(_resetFilters)
+                                : null,
                           ),
                         ),
                       )
@@ -341,103 +347,118 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(8, 8, 20, 8),
-      child: Row(
-        children: [
-          AppBackButtonLeading(onPressed: () => Navigator.pop(context)),
-          Text(
-            _headerTitle,
-            style: context.text.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.5,
-              color: context.colors.textPrimary,
-            ),
+  Widget _buildHeader(int resultCount) {
+    return Column(
+      children: [
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.fromLTRB(8, 8, 20, 8),
+          child: Row(
+            children: [
+              AppBackButtonLeading(onPressed: () => Navigator.pop(context)),
+              Text(
+                _headerTitle,
+                style: context.text.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                  color: context.colors.textPrimary,
+                ),
+              ),
+            ],
           ),
-          const Spacer(),
-          _buildFilterButton(),
-        ],
-      ),
+        ),
+        _buildResultsFilterBand(resultCount),
+      ],
     );
   }
 
-  /// Rangée compacte du mode embarqué : uniquement le bouton filtres.
-  Widget _buildEmbeddedHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-      child: Row(
-        children: [
-          if (_hasActiveFilters)
-            GestureDetector(
-              onTap: () => setState(_resetFilters),
-              child: Text(
-                'Réinitialiser les filtres',
-                style: context.text.labelMedium?.copyWith(
-                  color: context.colors.textSecondary,
-                  decoration: TextDecoration.underline,
+  /// Bandeau "N résultats · Filtrer" — toute la ligne est cliquable.
+  /// Utilisé aussi bien en mode embarqué qu'en page standalone.
+  Widget _buildResultsFilterBand(int resultCount) {
+    return GestureDetector(
+      onTap: _showFilterSheet,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        color: context.colors.surface,
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+        child: Row(
+          children: [
+            Expanded(
+              child: RichText(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  style: context.text.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.textPrimary,
+                  ),
+                  children: [
+                    TextSpan(text: '$resultCount '),
+                    TextSpan(
+                      text: _hasActiveFilters
+                          ? '$_activeFilterCount filtre${_activeFilterCount > 1 ? 's' : ''} actif${_activeFilterCount > 1 ? 's' : ''}'
+                          : 'missions',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        color: context.colors.textTertiary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          const Spacer(),
-          _buildFilterButton(size: 38, iconSize: 18),
-        ],
+            Text(
+              'Filtrer',
+              style: context.text.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(width: 2),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 20,
+              color: AppColors.primary,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFilterButton({double size = 44, double iconSize = 20}) {
-    final active = _hasActiveFilters;
-    return GestureDetector(
-      onTap: _showFilterSheet,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              color: active
-                  ? context.colors.textPrimary
-                  : context.colors.surfaceAlt,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.tune_rounded,
-              size: iconSize,
-              color: active
-                  ? context.colors.background
-                  : context.colors.textPrimary,
-            ),
-          ),
-          if (active)
-            Positioned(
-              top: -2,
-              right: -2,
-              child: AppCountBadge(
-                label: '$_activeFilterCount',
-                backgroundColor: AppColors.error,
-                foregroundColor: Colors.white,
-                padding: AppInsets.h4v1,
-              ),
-            ),
-        ],
+  Widget _sectionTitle(BuildContext context, String title) {
+    return Text(
+      title,
+      style: context.text.labelMedium?.copyWith(
+        fontWeight: FontWeight.w700,
+        color: context.colors.textSecondary,
       ),
     );
   }
 
   void _showFilterSheet() {
+    // Copies de travail : appliquées seulement au clic sur "Appliquer".
+    var draftShowAppliedOnly = _showAppliedOnly;
+    var draftPublisherFilter = _publisherFilter;
+    var draftCategoryId = _selectedCategoryId;
+    var draftDateFilter = _selectedDateFilter;
+    var draftBudgetFilter = _selectedBudgetFilter;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: context.colors.surface,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setSheet) => Padding(
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            14,
+            20,
+            32 + MediaQuery.of(ctx).viewInsets.bottom,
+          ),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -448,342 +469,232 @@ class _MissionBrowsePageState extends State<MissionBrowsePage> {
                     width: 36,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: context.colors.border,
+                      color: ctx.colors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
-                AppGap.h20,
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Filtres missions',
-                      style: context.text.titleMedium?.copyWith(
+                      'Filtres',
+                      style: ctx.text.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    if (_hasActiveFilters)
-                      GestureDetector(
-                        onTap: () {
-                          setState(_resetFilters);
-                          setSheet(() {});
-                        },
-                        child: Text(
-                          'Réinitialiser',
-                          style: context.text.labelMedium?.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                    GestureDetector(
+                      onTap: () => setSheet(() {
+                        draftShowAppliedOnly = false;
+                        draftPublisherFilter = widget.publisherType;
+                        draftCategoryId = widget.initialCategoryId;
+                        draftDateFilter = _MissionDateFilter.all;
+                        draftBudgetFilter = _MissionBudgetFilter.all;
+                      }),
+                      child: Text(
+                        'Réinitialiser',
+                        style: ctx.text.labelMedium?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
+                    ),
                   ],
                 ),
-                AppGap.h24,
-                _buildFilterSectionTitle(context, 'Affichage'),
-                AppGap.h16,
+                const SizedBox(height: 20),
+
+                _sectionTitle(ctx, 'Affichage'),
+                const SizedBox(height: 10),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _FilterPill(
+                    AppFilterChip(
                       label: 'Toutes',
-                      selected: !_showAppliedOnly,
-                      onTap: () {
-                        setState(() => _showAppliedOnly = false);
-                        setSheet(() {});
-                      },
+                      selected: !draftShowAppliedOnly,
+                      onTap: () => setSheet(() => draftShowAppliedOnly = false),
                     ),
-                    _FilterPill(
+                    AppFilterChip(
                       label: 'Déjà postulé',
                       icon: Icons.task_alt_rounded,
-                      selected: _showAppliedOnly,
-                      onTap: () {
-                        setState(() => _showAppliedOnly = true);
-                        setSheet(() {});
-                      },
+                      selected: draftShowAppliedOnly,
+                      onTap: () => setSheet(() => draftShowAppliedOnly = true),
                     ),
                   ],
                 ),
-                AppGap.h24,
-                _buildFilterSectionTitle(context, 'Type de client'),
-                AppGap.h16,
+                const SizedBox(height: 24),
+
+                _sectionTitle(ctx, 'Type de client'),
+                const SizedBox(height: 10),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _FilterPill(
+                    AppFilterChip(
                       label: 'Tous',
-                      selected: _publisherFilter == null,
-                      onTap: () {
-                        setState(() => _publisherFilter = null);
-                        setSheet(() {});
-                      },
+                      selected: draftPublisherFilter == null,
+                      onTap: () => setSheet(() => draftPublisherFilter = null),
                     ),
-                    _FilterPill(
+                    AppFilterChip(
                       label: 'Particulier',
                       icon: Icons.person_outline_rounded,
-                      selected: _publisherFilter == PublisherType.particulier,
-                      onTap: () {
-                        setState(
-                          () => _publisherFilter = PublisherType.particulier,
-                        );
-                        setSheet(() {});
-                      },
+                      selected:
+                          draftPublisherFilter == PublisherType.particulier,
+                      onTap: () => setSheet(
+                        () => draftPublisherFilter = PublisherType.particulier,
+                      ),
                     ),
-                    _FilterPill(
+                    AppFilterChip(
                       label: 'Agence',
                       icon: Icons.business_outlined,
-                      selected: _publisherFilter == PublisherType.agence,
-                      onTap: () {
-                        setState(() => _publisherFilter = PublisherType.agence);
-                        setSheet(() {});
-                      },
+                      selected: draftPublisherFilter == PublisherType.agence,
+                      onTap: () => setSheet(
+                        () => draftPublisherFilter = PublisherType.agence,
+                      ),
                     ),
                   ],
                 ),
-                AppGap.h24,
-                _buildFilterSectionTitle(context, 'Type de service'),
-                AppGap.h16,
+                const SizedBox(height: 24),
+
+                _sectionTitle(ctx, 'Type de service'),
+                const SizedBox(height: 10),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _FilterPill(
+                    AppFilterChip(
                       label: 'Tous',
-                      selected: _selectedCategoryId == null,
-                      onTap: () {
-                        setState(() => _selectedCategoryId = null);
-                        setSheet(() {});
-                      },
+                      selected: draftCategoryId == null,
+                      onTap: () => setSheet(() => draftCategoryId = null),
                     ),
-                    ...ServiceCategory.all.map(
-                      (category) => _FilterPill(
+                    for (final category in ServiceCategory.all)
+                      AppFilterChip(
                         label: category.name,
                         icon: category.icon,
                         color: category.color,
-                        selected: _selectedCategoryId == category.id,
-                        onTap: () {
-                          setState(() => _selectedCategoryId = category.id);
-                          setSheet(() {});
-                        },
+                        selected: draftCategoryId == category.id,
+                        onTap: () =>
+                            setSheet(() => draftCategoryId = category.id),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                _sectionTitle(ctx, 'Date'),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    AppFilterChip(
+                      label: 'Toutes',
+                      selected: draftDateFilter == _MissionDateFilter.all,
+                      onTap: () => setSheet(
+                        () => draftDateFilter = _MissionDateFilter.all,
+                      ),
+                    ),
+                    AppFilterChip(
+                      label: 'Aujourd’hui',
+                      selected: draftDateFilter == _MissionDateFilter.today,
+                      onTap: () => setSheet(
+                        () => draftDateFilter = _MissionDateFilter.today,
+                      ),
+                    ),
+                    AppFilterChip(
+                      label: '7 jours',
+                      selected: draftDateFilter == _MissionDateFilter.thisWeek,
+                      onTap: () => setSheet(
+                        () => draftDateFilter = _MissionDateFilter.thisWeek,
+                      ),
+                    ),
+                    AppFilterChip(
+                      label: 'Ce mois',
+                      selected: draftDateFilter == _MissionDateFilter.thisMonth,
+                      onTap: () => setSheet(
+                        () => draftDateFilter = _MissionDateFilter.thisMonth,
                       ),
                     ),
                   ],
                 ),
-                AppGap.h24,
-                _buildFilterSectionTitle(context, 'Date'),
-                AppGap.h16,
+                const SizedBox(height: 24),
+
+                _sectionTitle(ctx, 'Tarif'),
+                const SizedBox(height: 10),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _FilterPill(
-                      label: 'Toutes',
-                      selected: _selectedDateFilter == _MissionDateFilter.all,
-                      onTap: () {
-                        setState(
-                          () => _selectedDateFilter = _MissionDateFilter.all,
-                        );
-                        setSheet(() {});
-                      },
-                    ),
-                    _FilterPill(
-                      label: 'Aujourd hui',
-                      selected: _selectedDateFilter == _MissionDateFilter.today,
-                      onTap: () {
-                        setState(
-                          () => _selectedDateFilter = _MissionDateFilter.today,
-                        );
-                        setSheet(() {});
-                      },
-                    ),
-                    _FilterPill(
-                      label: '7 jours',
-                      selected:
-                          _selectedDateFilter == _MissionDateFilter.thisWeek,
-                      onTap: () {
-                        setState(
-                          () =>
-                              _selectedDateFilter = _MissionDateFilter.thisWeek,
-                        );
-                        setSheet(() {});
-                      },
-                    ),
-                    _FilterPill(
-                      label: 'Ce mois',
-                      selected:
-                          _selectedDateFilter == _MissionDateFilter.thisMonth,
-                      onTap: () {
-                        setState(
-                          () => _selectedDateFilter =
-                              _MissionDateFilter.thisMonth,
-                        );
-                        setSheet(() {});
-                      },
-                    ),
-                  ],
-                ),
-                AppGap.h24,
-                _buildFilterSectionTitle(context, 'Tarif'),
-                AppGap.h16,
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _FilterPill(
+                    AppFilterChip(
                       label: 'Tous',
-                      selected:
-                          _selectedBudgetFilter == _MissionBudgetFilter.all,
-                      onTap: () {
-                        setState(
-                          () =>
-                              _selectedBudgetFilter = _MissionBudgetFilter.all,
-                        );
-                        setSheet(() {});
-                      },
+                      selected: draftBudgetFilter == _MissionBudgetFilter.all,
+                      onTap: () => setSheet(
+                        () => draftBudgetFilter = _MissionBudgetFilter.all,
+                      ),
                     ),
-                    _FilterPill(
+                    AppFilterChip(
                       label: '< 50€',
                       selected:
-                          _selectedBudgetFilter == _MissionBudgetFilter.under50,
-                      onTap: () {
-                        setState(
-                          () => _selectedBudgetFilter =
-                              _MissionBudgetFilter.under50,
-                        );
-                        setSheet(() {});
-                      },
+                          draftBudgetFilter == _MissionBudgetFilter.under50,
+                      onTap: () => setSheet(
+                        () => draftBudgetFilter = _MissionBudgetFilter.under50,
+                      ),
                     ),
-                    _FilterPill(
+                    AppFilterChip(
                       label: '50€ - 150€',
                       selected:
-                          _selectedBudgetFilter ==
-                          _MissionBudgetFilter.from50To150,
-                      onTap: () {
-                        setState(
-                          () => _selectedBudgetFilter =
-                              _MissionBudgetFilter.from50To150,
-                        );
-                        setSheet(() {});
-                      },
+                          draftBudgetFilter == _MissionBudgetFilter.from50To150,
+                      onTap: () => setSheet(
+                        () => draftBudgetFilter =
+                            _MissionBudgetFilter.from50To150,
+                      ),
                     ),
-                    _FilterPill(
+                    AppFilterChip(
                       label: '150€ - 300€',
                       selected:
-                          _selectedBudgetFilter ==
+                          draftBudgetFilter ==
                           _MissionBudgetFilter.from150To300,
-                      onTap: () {
-                        setState(
-                          () => _selectedBudgetFilter =
-                              _MissionBudgetFilter.from150To300,
-                        );
-                        setSheet(() {});
-                      },
+                      onTap: () => setSheet(
+                        () => draftBudgetFilter =
+                            _MissionBudgetFilter.from150To300,
+                      ),
                     ),
-                    _FilterPill(
+                    AppFilterChip(
                       label: '> 300€',
                       selected:
-                          _selectedBudgetFilter == _MissionBudgetFilter.over300,
-                      onTap: () {
-                        setState(
-                          () => _selectedBudgetFilter =
-                              _MissionBudgetFilter.over300,
-                        );
-                        setSheet(() {});
-                      },
+                          draftBudgetFilter == _MissionBudgetFilter.over300,
+                      onTap: () => setSheet(
+                        () => draftBudgetFilter = _MissionBudgetFilter.over300,
+                      ),
                     ),
-                    _FilterPill(
+                    AppFilterChip(
                       label: 'Sur devis',
-                      selected:
-                          _selectedBudgetFilter == _MissionBudgetFilter.quote,
-                      onTap: () {
-                        setState(
-                          () => _selectedBudgetFilter =
-                              _MissionBudgetFilter.quote,
-                        );
-                        setSheet(() {});
-                      },
+                      selected: draftBudgetFilter == _MissionBudgetFilter.quote,
+                      onTap: () => setSheet(
+                        () => draftBudgetFilter = _MissionBudgetFilter.quote,
+                      ),
                     ),
                   ],
                 ),
-                AppGap.h28,
-                SizedBox(
-                  width: double.infinity,
-                  child: AppButton(
-                    label: 'Appliquer',
-                    variant: ButtonVariant.black,
-                    onPressed: () => Navigator.pop(ctx),
-                  ),
+                const SizedBox(height: 28),
+
+                AppButton(
+                  label: 'Appliquer',
+                  variant: ButtonVariant.black,
+                  onPressed: () {
+                    setState(() {
+                      _showAppliedOnly = draftShowAppliedOnly;
+                      _publisherFilter = draftPublisherFilter;
+                      _selectedCategoryId = draftCategoryId;
+                      _selectedDateFilter = draftDateFilter;
+                      _selectedBudgetFilter = draftBudgetFilter;
+                    });
+                    Navigator.pop(ctx);
+                  },
                 ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterSectionTitle(BuildContext context, String title) {
-    return Text(
-      title,
-      style: context.text.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-    );
-  }
-}
-
-class _FilterPill extends StatelessWidget {
-  final String label;
-  final IconData? icon;
-  final Color? color;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _FilterPill({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    this.icon,
-    this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final accent = color ?? context.colors.textSecondary;
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-        decoration: BoxDecoration(
-          color: selected
-              ? context.colors.textPrimary
-              : context.colors.surfaceAlt,
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(
-                icon,
-                size: 13,
-                color: selected ? context.colors.background : accent,
-              ),
-              AppGap.w6,
-            ],
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: selected
-                    ? context.colors.background
-                    : context.colors.textPrimary,
-              ),
-            ),
-          ],
         ),
       ),
     );
