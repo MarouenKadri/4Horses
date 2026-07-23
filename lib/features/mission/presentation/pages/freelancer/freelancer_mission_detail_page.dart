@@ -113,9 +113,49 @@ class _FreelancerMissionDetailPageState
 
   @override
   Widget? buildHeroMenu(BuildContext ctx) {
+    // Signaler n'a de sens qu'avant engagement — une fois la mission
+    // confirmée, le freelancer annule sa participation au lieu de signaler.
+    if (mission.status == MissionStatus.confirmed) {
+      return DetailHeroBtn(
+        icon: Icons.more_horiz_rounded,
+        onTap: _showWithdrawFromConfirmedDialog,
+      );
+    }
+    if (_isAccepted) return null;
     return DetailHeroBtn(
       icon: Icons.more_horiz_rounded,
       onTap: _showReportSheet,
+    );
+  }
+
+  void _showWithdrawFromConfirmedDialog() {
+    showAppDialog(
+      context: context,
+      title: const Text('Annuler ma participation ?'),
+      content: Text(
+        'Vous ne serez plus assigné à "${mission.title}". Le client sera informé et la mission redeviendra visible aux autres prestataires.',
+      ),
+      cancelLabel: 'Retour',
+      confirmLabel: 'Annuler ma participation',
+      confirmVariant: ButtonVariant.destructive,
+      onConfirm: () async {
+        Navigator.pop(context);
+        try {
+          await context.read<MissionProvider>().withdrawFromConfirmedMission(
+            mission.id,
+          );
+          if (!mounted) return;
+          Navigator.pop(context);
+          showAppSnackBar(context, 'Participation annulée.');
+        } catch (_) {
+          if (!mounted) return;
+          showAppSnackBar(
+            context,
+            'Erreur lors de l\'annulation. Réessayez.',
+            type: SnackBarType.error,
+          );
+        }
+      },
     );
   }
 
@@ -482,19 +522,22 @@ class _FreelancerMissionDetailPageState
   }
 
   void _confirmReport() {
-    showAppBottomSheet(
+    showAppDialog(
       context: context,
-      wrapWithSurface: false,
-      child: FreelancerReportConfirmSheet(
-        missionTitle: mission.title,
-        onConfirm: () {
-          Navigator.pop(context);
-          showAppSnackBar(
-            context,
-            'Mission signalee. Merci pour votre retour.',
-          );
-        },
+      title: const Text('Signaler la mission ?'),
+      content: const Text(
+        'Merci de nous aider à garder la plateforme sûre. Votre signalement sera examiné par notre équipe.',
       ),
+      cancelLabel: 'Annuler',
+      confirmLabel: 'Signaler',
+      confirmVariant: ButtonVariant.destructive,
+      onConfirm: () {
+        Navigator.pop(context);
+        showAppSnackBar(
+          context,
+          'Mission signalee. Merci pour votre retour.',
+        );
+      },
     );
   }
 

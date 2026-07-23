@@ -285,6 +285,29 @@ class SupabaseMissionRepository implements MissionRepository {
     }
   }
 
+  @override
+  Future<void> withdrawFromConfirmedMission(String missionId) async {
+    if (_userId == null) return;
+    try {
+      await _supabase
+          .from('missions')
+          .update({
+            'status': _statusToDb(MissionStatus.waitingCandidates),
+            'assigned_presta_id': null,
+          })
+          .eq('id', missionId)
+          .eq('assigned_presta_id', _userId!);
+      await _supabase
+          .from('candidates')
+          .delete()
+          .eq('mission_id', missionId)
+          .eq('freelancer_id', _userId!);
+    } catch (e) {
+      debugPrint('withdrawFromConfirmedMission error: $e');
+      rethrow;
+    }
+  }
+
   // ─── Sérialisation ───────────────────────────────────────────────────────
 
   static Mission _fromJson(Map<String, dynamic> j) {

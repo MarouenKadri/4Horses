@@ -441,22 +441,30 @@ class _ClientMissionDetailPageState
   );
 
   void _showCancelDialog() {
-    showAppBottomSheet(
+    final startsIn = mission.scheduledStart.difference(DateTime.now());
+    final isRefund100 = startsIn.inMinutes >= 24 * 60;
+    final refundAmount =
+        mission.budget.averageAmount * (isRefund100 ? 1.0 : 0.5);
+    final refundLabel = isRefund100
+        ? 'remboursée à 100% (${refundAmount.toStringAsFixed(0)} €), car vous annulez plus de 24h avant le début.'
+        : 'remboursée à 50% (${refundAmount.toStringAsFixed(0)} €), car vous annulez moins de 24h avant le début.';
+
+    showAppDialog(
       context: context,
-      wrapWithSurface: false,
-      child: ClientCancelSheet(
-        missionTitle: mission.title,
-        missionStart: mission.scheduledStart,
-        missionAmount: mission.budget.averageAmount,
-        onConfirm: () {
-          context.read<MissionProvider>().updateMissionStatus(
-            mission.id,
-            MissionStatus.cancelled,
-          );
-          Navigator.pop(context);
-          Navigator.pop(context);
-        },
+      title: const Text('Annuler la mission ?'),
+      content: Text(
+        '"${mission.title}" sera $refundLabel',
       ),
+      cancelLabel: 'Garder la mission',
+      confirmLabel: 'Confirmer l\'annulation',
+      confirmVariant: ButtonVariant.destructive,
+      onConfirm: () {
+        context.read<MissionProvider>().updateMissionStatus(
+          mission.id,
+          MissionStatus.cancelled,
+        );
+        Navigator.pop(context);
+      },
     );
   }
 

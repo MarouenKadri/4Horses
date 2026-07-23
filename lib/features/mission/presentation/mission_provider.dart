@@ -336,6 +336,27 @@ class MissionProvider extends ChangeNotifier {
     }
   }
 
+  /// Le freelancer annule sa participation à une mission confirmée —
+  /// elle repasse en recherche de prestataire côté client.
+  Future<void> withdrawFromConfirmedMission(String missionId) async {
+    final prevFreelancer = List<Mission>.from(_freelancerMissions);
+
+    _freelancerMissions = _freelancerMissions
+        .where((m) => m.id != missionId)
+        .toList();
+    notifyListeners();
+
+    try {
+      await _repository.withdrawFromConfirmedMission(missionId);
+      await _load();
+    } catch (e) {
+      debugPrint('withdrawFromConfirmedMission failed: $e');
+      _freelancerMissions = prevFreelancer;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   // ─── Brouillon ───────────────────────────────────────────────────────────
 
   Future<void> saveDraft(Mission draft) async {

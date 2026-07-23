@@ -15,6 +15,10 @@ abstract class MissionRepository {
   Future<void> submitProposal(String missionId, double price, String message);
   Future<List<Map<String, dynamic>>> fetchCandidates(String missionId);
   Future<void> withdrawCandidacy(String missionId);
+
+  /// Le freelancer annule sa participation à une mission déjà confirmée —
+  /// la mission repasse en recherche de prestataire côté client.
+  Future<void> withdrawFromConfirmedMission(String missionId);
 }
 
 /// ─── Implémentation In-Memory (données de démo) ───────────────────────────
@@ -59,4 +63,7 @@ class InMemoryMissionRepository implements MissionRepository {
 
   @override
   Future<void> withdrawCandidacy(String missionId) async {}
+
+  @override
+  Future<void> withdrawFromConfirmedMission(String missionId) async {}
 }

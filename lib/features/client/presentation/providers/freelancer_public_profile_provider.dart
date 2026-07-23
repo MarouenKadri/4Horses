@@ -10,6 +10,7 @@ class FreelancerPublicProfileProvider extends ChangeNotifier {
   FreelancerPublicProfile? profile;
   bool isLoading = false;
   String? error;
+  bool _disposed = false;
 
   FreelancerPublicProfileProvider({
     GetFreelancerPublicProfile? getFreelancerPublicProfile,
@@ -18,6 +19,18 @@ class FreelancerPublicProfileProvider extends ChangeNotifier {
            GetFreelancerPublicProfile(
              SupabaseFreelancerPublicProfileRepository(),
            );
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (_disposed) return;
+    super.notifyListeners();
+  }
 
   Future<void> load(String? freelancerId) async {
     if (freelancerId == null || freelancerId.isEmpty) {

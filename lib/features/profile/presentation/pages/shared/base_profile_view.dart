@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../app/auth_provider.dart';
 import '../../../../../app/enum/user_role.dart';
 import '../../../../../core/design/app_design_system.dart';
+import '../../../../auth/presentation/pages/login/login_page.dart';
 import '../../../../reviews/data/repositories/supabase_review_repository.dart';
 import '../../../../reviews/domain/entities/review.dart';
 import '../../../../reviews/presentation/widgets/review_card.dart';
@@ -123,6 +124,12 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
 
   Future<void> openChat(BuildContext context) async {
     if (isOpeningChat) return;
+
+    if (!context.read<AuthProvider>().isLogged) {
+      _showLoginRequiredDialog(context);
+      return;
+    }
+
     setState(() => isOpeningChat = true);
 
     String? conversationId;
@@ -137,6 +144,25 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => buildChatPage(conversationId)),
+    );
+  }
+
+  void _showLoginRequiredDialog(BuildContext context) {
+    showAppDialog<void>(
+      context: context,
+      title: const Text('Connexion requise'),
+      content: const Text(
+        'Connectez-vous pour contacter ce prestataire par message.',
+      ),
+      cancelLabel: 'Annuler',
+      confirmLabel: 'Se connecter',
+      onConfirm: () {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+        );
+      },
     );
   }
 
