@@ -193,7 +193,9 @@ abstract class BaseProfileState<T extends StatefulWidget> extends State<T> {
                   builder: (context) {
                     final reserve = buildReserveAction(context);
                     final contactBtn = AppButton(
-                      label: isOpeningChat ? 'Connexion...' : contactButtonLabel,
+                      label: isOpeningChat
+                          ? 'Connexion...'
+                          : contactButtonLabel,
                       variant: reserve == null
                           ? ButtonVariant.black
                           : ButtonVariant.outline,

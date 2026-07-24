@@ -152,15 +152,15 @@ class _Avatar extends StatelessWidget {
   }
 
   Widget _initial(BuildContext context) => ColoredBox(
-        color: AppColors.secondary,
-        child: Center(
-          child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: context.text.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: AppColors.primary,
-            ),
-          ),
+    color: AppColors.secondary,
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: context.text.titleMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: AppColors.primary,
         ),
-      );
+      ),
+    ),
+  );
 }

@@ -321,4 +321,3 @@ abstract class MissionDetailBase<T extends StatefulWidget> extends State<T> {
     return DetailStatusBanner(config: cfg);
   }
 }
-

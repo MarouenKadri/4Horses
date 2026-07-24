@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 typedef AppNavPagesBuilder = List<Widget> Function(ValueChanged<int> goToIndex);
-typedef AppNavFabBuilder = Widget? Function(
-  BuildContext context,
-  int currentIndex,
-  bool fabExpanded,
-  ValueChanged<bool> setFabExpanded,
-  ValueChanged<int> goToIndex,
-);
+typedef AppNavFabBuilder =
+    Widget? Function(
+      BuildContext context,
+      int currentIndex,
+      bool fabExpanded,
+      ValueChanged<bool> setFabExpanded,
+      ValueChanged<int> goToIndex,
+    );
 
 class NavItem {
   final IconData icon;

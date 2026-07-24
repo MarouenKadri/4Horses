@@ -192,7 +192,8 @@ class FreelancerLocationShareCard extends StatelessWidget {
             'Le client peut vérifier que vous êtes bien sur place pendant l\'intervention.',
         cta: 'Voir le pilotage',
         accent: AppColors.primary,
-        info: 'Signalez la fin de la mission une fois l\'intervention terminée.',
+        info:
+            'Signalez la fin de la mission une fois l\'intervention terminée.',
       ),
       _ => (
         icon: Icons.location_disabled_rounded,
@@ -300,4 +301,3 @@ class FreelancerActionSheet extends StatelessWidget {
 }
 
 // ─── FreelancerProposalSheet ──────────────────────────────────────────────────
-

@@ -81,9 +81,10 @@ class _LocationSearchPageState extends State<LocationSearchPage>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    _pulseScale = Tween<double>(begin: 1.0, end: 1.08).animate(
-      CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut),
-    );
+    _pulseScale = Tween<double>(
+      begin: 1.0,
+      end: 1.08,
+    ).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -112,8 +113,11 @@ class _LocationSearchPageState extends State<LocationSearchPage>
     try {
       final places = await NominatimService.search(query, limit: 6);
       if (!mounted) return;
-      setState(() =>
-          _results = places.map(_NominatimResult.fromPlace).toList(growable: false));
+      setState(
+        () => _results = places
+            .map(_NominatimResult.fromPlace)
+            .toList(growable: false),
+      );
       if (_results.isNotEmpty) {
         final first = _results.first;
         final latlng = LatLng(first.lat, first.lon);
@@ -273,8 +277,10 @@ class _LocationSearchPageState extends State<LocationSearchPage>
               )
             : null,
         fillColor: context.colors.surface.withValues(alpha: 0.42),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 18,
+          vertical: 16,
+        ),
         radius: 24,
         noBorder: true,
       );
@@ -293,10 +299,26 @@ class _LocationSearchPageState extends State<LocationSearchPage>
               children: [
                 ColorFiltered(
                   colorFilter: const ColorFilter.matrix([
-                    0.9, 0.0, 0.0, 0.0, 10,
-                    0.0, 0.9, 0.0, 0.0, 10,
-                    0.0, 0.0, 0.9, 0.0, 10,
-                    0.0, 0.0, 0.0, 1.0, 0,
+                    0.9,
+                    0.0,
+                    0.0,
+                    0.0,
+                    10,
+                    0.0,
+                    0.9,
+                    0.0,
+                    0.0,
+                    10,
+                    0.0,
+                    0.0,
+                    0.9,
+                    0.0,
+                    10,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0,
                   ]),
                   child: FlutterMap(
                     mapController: _mapCtrl,
@@ -309,14 +331,16 @@ class _LocationSearchPageState extends State<LocationSearchPage>
                         userAgentPackageName: 'com.fourhorses.app',
                       ),
                       if (_pin != null)
-                        MarkerLayer(markers: [
-                          Marker(
-                            point: _pin!,
-                            width: 44,
-                            height: 52,
-                            child: const AppMapPin(),
-                          ),
-                        ]),
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: _pin!,
+                              width: 44,
+                              height: 52,
+                              child: const AppMapPin(),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
@@ -360,11 +384,13 @@ class _LocationSearchPageState extends State<LocationSearchPage>
                     onTap: () => Navigator.pop(context),
                     size: AppBarMetrics.mapBackButtonSize,
                     iconSize: AppBarMetrics.mapBackButtonIconSize,
-                    backgroundColor:
-                        context.colors.surface.withValues(alpha: 0.72),
+                    backgroundColor: context.colors.surface.withValues(
+                      alpha: 0.72,
+                    ),
                     iconColor: context.colors.textPrimary,
                     border: Border.all(
-                        color: context.colors.border.withValues(alpha: 0.65)),
+                      color: context.colors.border.withValues(alpha: 0.65),
+                    ),
                     boxShadow: const [
                       BoxShadow(
                         color: Color.fromRGBO(0, 0, 0, 0.08),
@@ -404,7 +430,9 @@ class _LocationSearchPageState extends State<LocationSearchPage>
                           blurRadius: 6,
                         ),
                         BoxShadow(
-                          color: context.colors.textPrimary.withValues(alpha: 0.05),
+                          color: context.colors.textPrimary.withValues(
+                            alpha: 0.05,
+                          ),
                           offset: const Offset(2, 3),
                           blurRadius: 10,
                         ),
@@ -492,12 +520,18 @@ class _LocationSearchPageState extends State<LocationSearchPage>
         return AppBarOptionTile(
           onTap: () => _selectResult(r),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          leading: Icon(Icons.place_outlined,
-              size: 20, color: context.colors.textSecondary),
+          leading: Icon(
+            Icons.place_outlined,
+            size: 20,
+            color: context.colors.textSecondary,
+          ),
           title: r.shortName,
           subtitle: r.displayName,
-          trailing: Icon(Icons.chevron_right_rounded,
-              color: context.colors.textHint, size: 18),
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: context.colors.textHint,
+            size: 18,
+          ),
         );
       },
     );
@@ -572,10 +606,14 @@ class _LocationSearchPageState extends State<LocationSearchPage>
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: context.colors.surface.withValues(alpha: 0.56),
+                            color: context.colors.surface.withValues(
+                              alpha: 0.56,
+                            ),
                             borderRadius: BorderRadius.circular(18),
                             border: Border.all(
-                              color: context.colors.border.withValues(alpha: 0.5),
+                              color: context.colors.border.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
                           ),
                           child: Text(
@@ -597,7 +635,6 @@ class _LocationSearchPageState extends State<LocationSearchPage>
     );
   }
 }
-
 
 class _AddrItem extends StatelessWidget {
   final IconData icon;
@@ -648,7 +685,9 @@ class _AddrItem extends StatelessWidget {
         subtitle: subtitle,
         trailing: isLoading
             ? AppLoadingIndicator(
-                size: AppBarMetrics.trailingIndicatorSize, color: teal)
+                size: AppBarMetrics.trailingIndicatorSize,
+                color: teal,
+              )
             : AnimatedOpacity(
                 duration: const Duration(milliseconds: 180),
                 opacity: isSelected ? 1 : 0,

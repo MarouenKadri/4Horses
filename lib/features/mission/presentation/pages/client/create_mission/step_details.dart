@@ -400,7 +400,6 @@ class _StepDetailsState extends State<StepDetails> {
             },
           ),
         ),
-
       ],
     );
   }

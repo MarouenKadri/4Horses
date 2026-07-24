@@ -19,9 +19,11 @@ class MissionsShell extends StatelessWidget {
     final role = context.watch<AuthProvider>().currentRole;
 
     return switch (role) {
-      UserRole.client   => ClientMyMissionsContent(onGoToAccount: onGoToAccount),
-      UserRole.provider => FreelancerEngagementsContent(onGoToAccount: onGoToAccount),
-      _                 => const SizedBox.shrink(),
+      UserRole.client => ClientMyMissionsContent(onGoToAccount: onGoToAccount),
+      UserRole.provider => FreelancerEngagementsContent(
+        onGoToAccount: onGoToAccount,
+      ),
+      _ => const SizedBox.shrink(),
     };
   }
 }

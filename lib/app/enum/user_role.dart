@@ -1,5 +1,1 @@
-enum UserRole {
-  guest,
-  client,
-  provider,
-}
+enum UserRole { guest, client, provider }

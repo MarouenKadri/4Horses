@@ -174,9 +174,9 @@ class _PostComposerPageState extends State<PostComposerPage> {
 
     // Un seul post avec toutes les images.
     final story = await context.read<StoryProvider>().createStory(
-          imageFiles: List.of(_files),
-          caption: _captionController.text.trim(),
-        );
+      imageFiles: List.of(_files),
+      caption: _captionController.text.trim(),
+    );
 
     if (!mounted) return;
     if (story != null) {
@@ -551,4 +551,3 @@ class _PhotoThumbnail extends StatelessWidget {
     );
   }
 }
-

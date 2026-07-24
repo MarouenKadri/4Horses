@@ -452,9 +452,7 @@ class _ClientMissionDetailPageState
     showAppDialog(
       context: context,
       title: const Text('Annuler la mission ?'),
-      content: Text(
-        '"${mission.title}" sera $refundLabel',
-      ),
+      content: Text('"${mission.title}" sera $refundLabel'),
       cancelLabel: 'Garder la mission',
       confirmLabel: 'Confirmer l\'annulation',
       confirmVariant: ButtonVariant.destructive,

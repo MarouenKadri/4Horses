@@ -209,19 +209,19 @@ class _MiniAvatar extends StatelessWidget {
   }
 
   Widget _initial(BuildContext context) => ColoredBox(
-        color: AppColors.primary,
-        child: Center(
-          child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: context.text.labelSmall!.copyWith(
-              fontSize: AppFontSize.micro,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-              height: 1,
-            ),
-          ),
+    color: AppColors.primary,
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: context.text.labelSmall!.copyWith(
+          fontSize: AppFontSize.micro,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+          height: 1,
         ),
-      );
+      ),
+    ),
+  );
 }
 
 class _AvatarFallback extends StatelessWidget {

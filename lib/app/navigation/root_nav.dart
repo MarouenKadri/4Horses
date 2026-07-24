@@ -59,13 +59,20 @@ class _ModeSwitchSplashState extends State<_ModeSwitchSplash>
   void initState() {
     super.initState();
 
-    _entryCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 450));
-    _progressCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))
-      ..forward();
+    _entryCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    );
+    _progressCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..forward();
 
-    _fade  = CurvedAnimation(parent: _entryCtrl, curve: Curves.easeOut);
-    _slide = Tween<Offset>(begin: const Offset(0, 0.03), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _entryCtrl, curve: Curves.easeOutCubic));
+    _fade = CurvedAnimation(parent: _entryCtrl, curve: Curves.easeOut);
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.03),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _entryCtrl, curve: Curves.easeOutCubic));
     _progress = CurvedAnimation(parent: _progressCtrl, curve: Curves.easeInOut);
 
     _entryCtrl.forward();
@@ -80,9 +87,9 @@ class _ModeSwitchSplashState extends State<_ModeSwitchSplash>
 
   @override
   Widget build(BuildContext context) {
-    final isClient    = _isClient;
-    final modeLabel   = isClient ? 'Mode Client'      : 'Mode Prestataire';
-    final modeIcon    = isClient ? Icons.person_rounded : Icons.handyman_rounded;
+    final isClient = _isClient;
+    final modeLabel = isClient ? 'Mode Client' : 'Mode Prestataire';
+    final modeIcon = isClient ? Icons.person_rounded : Icons.handyman_rounded;
     final modeTagline = isClient
         ? 'Préparation de votre espace client'
         : 'Préparation de votre espace prestataire';
@@ -115,7 +122,9 @@ class _ModeSwitchSplashState extends State<_ModeSwitchSplash>
                       icon: modeIcon,
                       size: 64,
                       iconSize: 30,
-                      backgroundColor: AppColors.primary.withValues(alpha: 0.12),
+                      backgroundColor: AppColors.primary.withValues(
+                        alpha: 0.12,
+                      ),
                       iconColor: AppColors.primary,
                     ),
                     AppGap.h20,

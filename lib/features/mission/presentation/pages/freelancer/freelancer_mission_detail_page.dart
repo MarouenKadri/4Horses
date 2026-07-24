@@ -533,10 +533,7 @@ class _FreelancerMissionDetailPageState
       confirmVariant: ButtonVariant.destructive,
       onConfirm: () {
         Navigator.pop(context);
-        showAppSnackBar(
-          context,
-          'Mission signalee. Merci pour votre retour.',
-        );
+        showAppSnackBar(context, 'Mission signalee. Merci pour votre retour.');
       },
     );
   }

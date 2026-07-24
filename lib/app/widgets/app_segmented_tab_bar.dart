@@ -22,8 +22,7 @@ class AppSegmentedTab {
 ///   • Avec [selectedIndex] → mode standalone (setState), pas besoin de TabController
 ///
 /// Design : actif = fond noir + texte blanc, inactif = fond blanc + bordure grise.
-class AppSegmentedTabBar extends StatefulWidget
-    implements PreferredSizeWidget {
+class AppSegmentedTabBar extends StatefulWidget implements PreferredSizeWidget {
   final List<AppSegmentedTab> tabs;
 
   // Mode TabController

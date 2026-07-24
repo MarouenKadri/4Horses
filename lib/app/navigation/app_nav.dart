@@ -69,11 +69,11 @@ class AppNav extends StatelessWidget {
           ],
           fabBuilder: isClient
               ? (context, _, __, ___, ____) => _CreateMissionNavButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const PostMissionFlow()),
-                    ),
-                  )
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PostMissionFlow()),
+                  ),
+                )
               : null,
         ),
         badgeCounts: {2: messaging.totalUnread},
@@ -105,7 +105,11 @@ class _CreateMissionNavButton extends StatelessWidget {
                 color: AppColors.inkDark,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.add_rounded, size: 22, color: Colors.white),
+              child: const Icon(
+                Icons.add_rounded,
+                size: 22,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 4),
             const Text(

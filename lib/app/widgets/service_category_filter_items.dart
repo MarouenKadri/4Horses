@@ -7,7 +7,10 @@ import '../../core/design/app_design_system.dart';
 class ServiceCategoryFilterItems {
   const ServiceCategoryFilterItems._();
 
-  static List<AppCategoryItem> build(BuildContext context, {bool includeAll = true}) {
+  static List<AppCategoryItem> build(
+    BuildContext context, {
+    bool includeAll = true,
+  }) {
     final items = <AppCategoryItem>[
       if (includeAll)
         AppCategoryItem(

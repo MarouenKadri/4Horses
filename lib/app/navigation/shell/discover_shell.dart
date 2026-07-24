@@ -19,9 +19,11 @@ class DiscoverShell extends StatelessWidget {
     final role = context.watch<AuthProvider>().currentRole;
 
     return switch (role) {
-      UserRole.client   => ClientDiscoverContent(onGoToAccount: onGoToAccount),
-      UserRole.provider => FreelancerExploreContent(onGoToAccount: onGoToAccount),
-      _                 => const SizedBox.shrink(),
+      UserRole.client => ClientDiscoverContent(onGoToAccount: onGoToAccount),
+      UserRole.provider => FreelancerExploreContent(
+        onGoToAccount: onGoToAccount,
+      ),
+      _ => const SizedBox.shrink(),
     };
   }
 }

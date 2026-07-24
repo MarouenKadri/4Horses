@@ -241,7 +241,8 @@ class Mission {
       // Le statut change → l'horodatage de mise à jour doit suivre, sinon un
       // compte à rebours basé dessus (ex. clôture auto 24h) resterait figé
       // sur une ancienne valeur après une transition de statut locale.
-      updatedAt: updatedAt ?? (status != null ? DateTime.now() : this.updatedAt),
+      updatedAt:
+          updatedAt ?? (status != null ? DateTime.now() : this.updatedAt),
       client: client ?? this.client,
       assignedPresta: assignedPresta ?? this.assignedPresta,
       candidatesCount: candidatesCount ?? this.candidatesCount,

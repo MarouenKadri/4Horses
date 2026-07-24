@@ -9,11 +9,7 @@ class AppSheetProfileHeader extends StatelessWidget {
   final VoidCallback? onAccountTap;
   final bool dark;
 
-  const AppSheetProfileHeader({
-    super.key,
-    this.onAccountTap,
-    this.dark = true,
-  });
+  const AppSheetProfileHeader({super.key, this.onAccountTap, this.dark = true});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +23,9 @@ class AppSheetProfileHeader extends StatelessWidget {
         : (isClient ? 'C' : 'F');
 
     final textColor = dark ? AppColors.snow : context.colors.textPrimary;
-    final subtitleColor = dark ? AppColors.gray500 : context.colors.textSecondary;
+    final subtitleColor = dark
+        ? AppColors.gray500
+        : context.colors.textSecondary;
     final dividerColor = dark ? AppColors.whiteAlpha12 : context.colors.divider;
 
     return Column(
@@ -53,10 +51,8 @@ class AppSheetProfileHeader extends StatelessWidget {
                         ? Image.network(
                             avatarUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _AvatarFallback(
-                              initials: initials,
-                              dark: dark,
-                            ),
+                            errorBuilder: (_, __, ___) =>
+                                _AvatarFallback(initials: initials, dark: dark),
                           )
                         : _AvatarFallback(initials: initials, dark: dark),
                   ),
@@ -75,7 +71,9 @@ class AppSheetProfileHeader extends StatelessWidget {
                       ),
                       AppGap.h2,
                       Text(
-                        isClient ? 'Mode Client actif' : 'Mode Prestataire actif',
+                        isClient
+                            ? 'Mode Client actif'
+                            : 'Mode Prestataire actif',
                         style: context.appBarSheetAccountSubtitleStyle.copyWith(
                           fontSize: AppFontSize.md,
                           fontWeight: FontWeight.w400,

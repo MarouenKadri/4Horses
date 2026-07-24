@@ -416,11 +416,7 @@ class _SuggestionsList extends StatelessWidget {
                   ),
                 ),
                 if (i < suggestions.length - 1)
-                  Divider(
-                    height: 1,
-                    indent: 46,
-                    color: context.colors.divider,
-                  ),
+                  Divider(height: 1, indent: 46, color: context.colors.divider),
               ],
             );
           }).toList(),

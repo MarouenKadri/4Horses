@@ -51,8 +51,9 @@ void main() {
     });
     test('nombres en toutes lettres bloqués', () {
       expect(
-        check('zero six douze trente quatre cinquante six soixante dix huit')
-            .blocked,
+        check(
+          'zero six douze trente quatre cinquante six soixante dix huit',
+        ).blocked,
         isTrue,
       );
     });
@@ -98,9 +99,7 @@ void main() {
         isFalse,
       );
       expect(
-        service
-            .check('78', conversationId: conv, recordFragment: true)
-            .blocked,
+        service.check('78', conversationId: conv, recordFragment: true).blocked,
         isTrue,
       );
     });
@@ -115,7 +114,10 @@ void main() {
 
   group('Messages légitimes', () {
     test('message normal autorisé', () {
-      expect(check('Bonjour, je suis disponible demain à 14h').blocked, isFalse);
+      expect(
+        check('Bonjour, je suis disponible demain à 14h').blocked,
+        isFalse,
+      );
     });
     test('prix autorisé', () {
       expect(check('Je propose 50€ pour cette mission').blocked, isFalse);

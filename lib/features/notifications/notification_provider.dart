@@ -51,8 +51,7 @@ class NotificationProvider extends ChangeNotifier {
     _notifications.where((n) => n.targetRole == _activeRole),
   );
 
-  int get unreadCount =>
-      notifications.where((n) => !n.isRead).length;
+  int get unreadCount => notifications.where((n) => !n.isRead).length;
 
   // ─── Init ─────────────────────────────────────────────────────────────────
 

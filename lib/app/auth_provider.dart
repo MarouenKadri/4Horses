@@ -271,7 +271,9 @@ class AuthProvider extends ChangeNotifier {
       await _supabase.auth.signInWithOtp(phone: phone);
       return null;
     } on AuthException catch (e) {
-      debugPrint('sendPhoneLoginOtp AuthException: ${e.message} (status=${e.statusCode})');
+      debugPrint(
+        'sendPhoneLoginOtp AuthException: ${e.message} (status=${e.statusCode})',
+      );
       return _friendlyError(e.message);
     } catch (e) {
       debugPrint('sendPhoneLoginOtp error: $e');

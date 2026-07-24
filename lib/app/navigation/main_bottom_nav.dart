@@ -48,12 +48,7 @@ class MainBottomNav extends StatelessWidget {
         : navTiles;
 
     return AppNavBarSurface(
-      child: SizedBox(
-        height: 80,
-        child: Row(
-          children: rowChildren,
-        ),
-      ),
+      child: SizedBox(height: 80, child: Row(children: rowChildren)),
     );
   }
 }
@@ -90,15 +85,14 @@ class _NavTileState extends State<_NavTile>
     _tapController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: AppNavMetrics.tapAnimationMs),
-      reverseDuration:
-          const Duration(milliseconds: AppNavMetrics.tapReverseAnimationMs),
+      reverseDuration: const Duration(
+        milliseconds: AppNavMetrics.tapReverseAnimationMs,
+      ),
     );
     _tapScale = Tween<double>(
       begin: 1.0,
       end: AppNavMetrics.tapScaleEnd,
-    ).animate(
-      CurvedAnimation(parent: _tapController, curve: Curves.easeInOut),
-    );
+    ).animate(CurvedAnimation(parent: _tapController, curve: Curves.easeInOut));
   }
 
   @override
@@ -134,7 +128,9 @@ class _NavTileState extends State<_NavTile>
                   AppNavItemPill(
                     selected: widget.selected,
                     child: Icon(
-                      widget.selected ? widget.item.activeIcon : widget.item.icon,
+                      widget.selected
+                          ? widget.item.activeIcon
+                          : widget.item.icon,
                       size: widget.selected ? 26 : 24,
                       color: widget.selected ? activeColor : inactiveColor,
                     ),
@@ -142,16 +138,17 @@ class _NavTileState extends State<_NavTile>
                   const SizedBox(height: 4),
                   Text(
                     widget.item.label,
-                    style: (widget.selected
-                            ? context.navLabelSelectedStyle
-                            : context.navLabelStyle)
-                        .copyWith(
-                          fontSize: AppFontSize.tinyHalf,
-                          color: widget.selected
-                              ? labelActiveColor
-                              : inactiveColor,
-                          height: 1,
-                        ),
+                    style:
+                        (widget.selected
+                                ? context.navLabelSelectedStyle
+                                : context.navLabelStyle)
+                            .copyWith(
+                              fontSize: AppFontSize.tinyHalf,
+                              color: widget.selected
+                                  ? labelActiveColor
+                                  : inactiveColor,
+                              height: 1,
+                            ),
                   ),
                 ],
               ),
@@ -160,7 +157,9 @@ class _NavTileState extends State<_NavTile>
                   top: AppNavMetrics.badgeTopOffset,
                   right: AppNavMetrics.badgeRightOffset,
                   child: AppCountBadge(
-                    label: widget.badgeCount > 9 ? '9+' : '${widget.badgeCount}',
+                    label: widget.badgeCount > 9
+                        ? '9+'
+                        : '${widget.badgeCount}',
                     backgroundColor: AppColors.error,
                     foregroundColor: Colors.white,
                     padding: AppInsets.h4v1,
@@ -202,22 +201,23 @@ class AnimatedFab extends StatelessWidget {
       curve: Curves.easeOutCubic,
       width: targetWidth,
       height: AppNavMetrics.fabHeight,
-          decoration: BoxDecoration(
-            borderRadius: borderRadius,
-            boxShadow: [
-              BoxShadow(
-            color: AppColors.primaryDark
-                .withValues(alpha: expanded ? 0.26 : 0.18),
-                blurRadius: expanded ? 26 : 18,
-                offset: const Offset(0, 12),
-              ),
-              BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.10),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+      decoration: BoxDecoration(
+        borderRadius: borderRadius,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryDark.withValues(
+              alpha: expanded ? 0.26 : 0.18,
+            ),
+            blurRadius: expanded ? 26 : 18,
+            offset: const Offset(0, 12),
           ),
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.10),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Material(
         color: Colors.transparent,
         borderRadius: borderRadius,
@@ -227,14 +227,9 @@ class AnimatedFab extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryDark,
-              ],
+              colors: [AppColors.primary, AppColors.primaryDark],
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.26),
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.26)),
           ),
           child: InkWell(
             onTap: onPressed,
@@ -248,8 +243,9 @@ class AnimatedFab extends StatelessWidget {
                     : collapsedHorizontalPadding,
               ),
               child: Row(
-                mainAxisAlignment:
-                    expanded ? MainAxisAlignment.start : MainAxisAlignment.center,
+                mainAxisAlignment: expanded
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
                 children: [
                   Container(
                     width: 28,
@@ -258,11 +254,7 @@ class AnimatedFab extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.16),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 18,
-                    ),
+                    child: Icon(icon, color: Colors.white, size: 18),
                   ),
                   Flexible(
                     child: ClipRect(

@@ -170,35 +170,41 @@ class AppColorTokens {
   final bool _isDark;
 
   AppColorTokens(BuildContext context)
-      : _isDark = Theme.of(context).brightness == Brightness.dark;
+    : _isDark = Theme.of(context).brightness == Brightness.dark;
 
-  Color get primary => AppColors.primary;         // même en dark
+  Color get primary => AppColors.primary; // même en dark
   Color get primaryDark => AppColors.primaryDark; // même en dark
 
-  Color get background  => _isDark ? AppColorsDark.background  : AppColors.background;
-  Color get surface     => _isDark ? AppColorsDark.surface     : AppColors.surface;
-  Color get surfaceAlt  => _isDark ? AppColorsDark.surfaceAlt  : AppColors.surfaceAlt;
-  Color get sheetBg     => _isDark ? AppColorsDark.sheetBg     : AppColors.sheetBg;
-  Color get inputFill   => _isDark ? AppColorsDark.inputFill   : AppColors.inputFill;
+  Color get background =>
+      _isDark ? AppColorsDark.background : AppColors.background;
+  Color get surface => _isDark ? AppColorsDark.surface : AppColors.surface;
+  Color get surfaceAlt =>
+      _isDark ? AppColorsDark.surfaceAlt : AppColors.surfaceAlt;
+  Color get sheetBg => _isDark ? AppColorsDark.sheetBg : AppColors.sheetBg;
+  Color get inputFill =>
+      _isDark ? AppColorsDark.inputFill : AppColors.inputFill;
 
-  Color get border      => _isDark ? AppColorsDark.border      : AppColors.border;
-  Color get divider     => _isDark ? AppColorsDark.divider     : AppColors.divider;
+  Color get border => _isDark ? AppColorsDark.border : AppColors.border;
+  Color get divider => _isDark ? AppColorsDark.divider : AppColors.divider;
 
-  Color get textPrimary   => _isDark ? AppColorsDark.textPrimary   : AppColors.textPrimary;
-  Color get textSecondary => _isDark ? AppColorsDark.textSecondary : AppColors.textSecondary;
-  Color get textTertiary  => _isDark ? AppColorsDark.textTertiary  : AppColors.textTertiary;
-  Color get textHint      => _isDark ? AppColorsDark.textHint      : AppColors.textHint;
+  Color get textPrimary =>
+      _isDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
+  Color get textSecondary =>
+      _isDark ? AppColorsDark.textSecondary : AppColors.textSecondary;
+  Color get textTertiary =>
+      _isDark ? AppColorsDark.textTertiary : AppColors.textTertiary;
+  Color get textHint => _isDark ? AppColorsDark.textHint : AppColors.textHint;
 
-  Color get error        => AppColors.error;
-  Color get warning      => AppColors.warning;
-  Color get success      => AppColors.success;
-  Color get info         => AppColors.info;
-  Color get rating       => AppColors.rating;
+  Color get error => AppColors.error;
+  Color get warning => AppColors.warning;
+  Color get success => AppColors.success;
+  Color get info => AppColors.info;
+  Color get rating => AppColors.rating;
 
-  Color get errorLight   => AppColors.errorLight;
+  Color get errorLight => AppColors.errorLight;
   Color get warningLight => AppColors.warningLight;
   Color get successLight => AppColors.successLight;
-  Color get infoLight    => AppColors.infoLight;
+  Color get infoLight => AppColors.infoLight;
 
-  Color get secondary    => AppColors.secondary;
+  Color get secondary => AppColors.secondary;
 }

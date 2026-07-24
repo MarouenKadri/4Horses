@@ -6,11 +6,11 @@ import '../theme/app_theme.dart';
 class AppAvatar extends StatelessWidget {
   final String? imageUrl;
   final double radius;
-  final String? fallbackName;   // affiche initiales si pas d'image
+  final String? fallbackName; // affiche initiales si pas d'image
   final Color? backgroundColor;
   final Color? borderColor;
   final double borderWidth;
-  final bool isVerified;        // badge vérifié en bas à droite
+  final bool isVerified; // badge vérifié en bas à droite
   final VoidCallback? onTap;
 
   const AppAvatar({
@@ -41,9 +41,7 @@ class AppAvatar extends StatelessWidget {
       radius: radius,
       backgroundColor: bg,
       backgroundImage: hasImage ? NetworkImage(imageUrl!) : null,
-      onBackgroundImageError: hasImage
-          ? (_, __) {}
-          : null,
+      onBackgroundImageError: hasImage ? (_, __) {} : null,
       child: hasImage
           ? null
           : Text(

@@ -67,10 +67,8 @@ class _FreelancerMyPublicationsTabState
       context,
       PageRouteBuilder(
         opaque: false,
-        pageBuilder: (_, __, ___) => PostPhotosViewer(
-          images: story.images,
-          caption: story.caption,
-        ),
+        pageBuilder: (_, __, ___) =>
+            PostPhotosViewer(images: story.images, caption: story.caption),
         transitionsBuilder: (_, anim, __, child) =>
             FadeTransition(opacity: anim, child: child),
         transitionDuration: const Duration(milliseconds: 200),

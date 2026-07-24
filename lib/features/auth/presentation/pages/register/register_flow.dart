@@ -412,7 +412,6 @@ class _RegisterFlowState extends State<RegisterFlow> {
   }
 }
 
-
 Widget _pageHeader(BuildContext context, String title, String subtitle) {
   return AppPageHeaderBlock(title: title, subtitle: subtitle);
 }

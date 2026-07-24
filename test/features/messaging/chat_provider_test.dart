@@ -16,15 +16,17 @@ ChatProvider _makeProvider({
 void main() {
   group('ChatProvider — open()', () {
     test('charge les messages et passe isLoading à false', () async {
-      final repo = FakeMessagingRepository(messages: [
-        ChatMessage(
-          id: 'm1',
-          conversationId: 'c1',
-          senderId: 'user-2',
-          content: 'Bonjour',
-          createdAt: DateTime.now(),
-        ),
-      ]);
+      final repo = FakeMessagingRepository(
+        messages: [
+          ChatMessage(
+            id: 'm1',
+            conversationId: 'c1',
+            senderId: 'user-2',
+            content: 'Bonjour',
+            createdAt: DateTime.now(),
+          ),
+        ],
+      );
       final provider = _makeProvider(repo: repo);
 
       await provider.open('c1');

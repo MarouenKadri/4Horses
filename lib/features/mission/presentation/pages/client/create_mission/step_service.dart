@@ -292,11 +292,7 @@ class _SelectedServiceSummary extends StatelessWidget {
               color: context.colors.surfaceAlt,
               borderRadius: BorderRadius.circular(11),
             ),
-            child: Icon(
-              icon,
-              size: 18,
-              color: context.colors.textSecondary,
-            ),
+            child: Icon(icon, size: 18, color: context.colors.textSecondary),
           ),
           AppGap.w10,
           Expanded(

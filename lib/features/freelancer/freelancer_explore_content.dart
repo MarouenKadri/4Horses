@@ -100,4 +100,3 @@ class _FreelancerExploreContentState extends State<FreelancerExploreContent>
     );
   }
 }
-

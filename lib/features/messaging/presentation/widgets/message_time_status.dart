@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/design/app_design_system.dart';
 import '../../data/models/message.dart';
 
-
 class MessageTimeStatus extends StatelessWidget {
   final ChatMessage message;
   final bool isMe;
@@ -21,7 +20,9 @@ class MessageTimeStatus extends StatelessWidget {
         Text(
           '${message.createdAt.hour}:${message.createdAt.minute.toString().padLeft(2, '0')}',
           style: context.chatTimestampStyle.copyWith(
-            color: isMe ? context.colors.surface.withValues(alpha: 0.75) : context.colors.textHint,
+            color: isMe
+                ? context.colors.surface.withValues(alpha: 0.75)
+                : context.colors.textHint,
           ),
         ),
         if (isMe) ...[

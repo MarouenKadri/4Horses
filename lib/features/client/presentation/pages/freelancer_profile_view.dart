@@ -186,7 +186,6 @@ class _FreelancerProfilePageState
     return years <= 1 ? '1 an' : '$years ans';
   }
 
-
   CancellationLevel get _cancellationLevel {
     final rate = _profileProvider.profile?.cancellationRate;
     if (rate == null) return widget.cancellationLevel;

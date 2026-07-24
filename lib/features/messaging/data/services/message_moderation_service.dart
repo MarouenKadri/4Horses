@@ -32,7 +32,8 @@ class MessageModerationService {
       'Les échanges de coordonnées ne sont pas autorisés.';
   static const _msgAddress =
       'Les adresses physiques ne sont pas autorisées dans le chat.';
-  static const _msgLink = 'Les liens externes ne sont pas autorisés dans le chat.';
+  static const _msgLink =
+      'Les liens externes ne sont pas autorisés dans le chat.';
   static const _msgSplit =
       'Les coordonnées partagées en plusieurs messages ne sont pas autorisées.';
 
@@ -47,7 +48,9 @@ class MessageModerationService {
   );
 
   // ── Téléphones français (+33 / 0033 / 0X) ─────────────────────────────────
-  static final _phoneFr = RegExp(r'(\+\s*33|0{2}\s*33|0)\s*[1-9](\s*[\d]{2}){4}');
+  static final _phoneFr = RegExp(
+    r'(\+\s*33|0{2}\s*33|0)\s*[1-9](\s*[\d]{2}){4}',
+  );
 
   // ── Téléphones tunisiens (+216 / 00216 / 2x,5x,9x XXXXXXX) ───────────────
   static final _phoneTn = RegExp(
@@ -66,10 +69,23 @@ class MessageModerationService {
   //    (séparateurs retirés) pour attraper « w h a t s a p p »,
   //    « w.h.a.t.s.a.p.p », etc. ──────────────────────────────────────────────
   static const _squeezedApps = [
-    'whatsapp', 'whatsap', 'watsapp', 'watsap', 'wattsapp',
-    'telegram', 'telegramme',
-    'snapchat', 'instagram', 'facebook', 'messenger',
-    'discord', 'wechat', 'tiktok', 'linkedin', 'viber', 'skype',
+    'whatsapp',
+    'whatsap',
+    'watsapp',
+    'watsap',
+    'wattsapp',
+    'telegram',
+    'telegramme',
+    'snapchat',
+    'instagram',
+    'facebook',
+    'messenger',
+    'discord',
+    'wechat',
+    'tiktok',
+    'linkedin',
+    'viber',
+    'skype',
   ];
 
   // ── Apps externes : alias courts, avec frontières de mots ─────────────────
@@ -103,12 +119,28 @@ class MessageModerationService {
 
   // ── Nombres en toutes lettres → chiffres ──────────────────────────────────
   static const _numberWords = {
-    'zero': '0', 'un': '1', 'deux': '2', 'trois': '3', 'quatre': '4',
-    'cinq': '5', 'six': '6', 'sept': '7', 'huit': '8', 'neuf': '9',
-    'dix': '10', 'onze': '11', 'douze': '12', 'treize': '13',
-    'quatorze': '14', 'quinze': '15', 'seize': '16',
-    'vingt': '20', 'trente': '30', 'quarante': '40',
-    'cinquante': '50', 'soixante': '60',
+    'zero': '0',
+    'un': '1',
+    'deux': '2',
+    'trois': '3',
+    'quatre': '4',
+    'cinq': '5',
+    'six': '6',
+    'sept': '7',
+    'huit': '8',
+    'neuf': '9',
+    'dix': '10',
+    'onze': '11',
+    'douze': '12',
+    'treize': '13',
+    'quatorze': '14',
+    'quinze': '15',
+    'seize': '16',
+    'vingt': '20',
+    'trente': '30',
+    'quarante': '40',
+    'cinquante': '50',
+    'soixante': '60',
   };
   static final _numberWordPattern = RegExp(
     '\\b(${_numberWords.keys.join('|')})\\b',
@@ -232,10 +264,7 @@ class MessageModerationService {
 
     // « o » utilisé comme zéro : O6 12…, 06 12 34 56 7o
     s = s.replaceAll(RegExp(r'o(?=[\s.\-]*\d)'), '0');
-    s = s.replaceAllMapped(
-      RegExp(r'(\d[\s.\-]*)o'),
-      (m) => '${m[1]}0',
-    );
+    s = s.replaceAllMapped(RegExp(r'(\d[\s.\-]*)o'), (m) => '${m[1]}0');
     return s;
   }
 

@@ -81,22 +81,19 @@ class FakeMessagingRepository implements MessagingRepository {
   Future<List<Conversation>> getConversations(
     String userId, {
     required bool isClientMode,
-  }) async =>
-      const [];
+  }) async => const [];
 
   @override
   Future<String?> getOrCreateConversation({
     required String clientId,
     required String freelancerId,
     String? missionId,
-  }) async =>
-      'conv_test';
+  }) async => 'conv_test';
 
   @override
   Future<String?> findConversation({
     required String clientId,
     required String freelancerId,
     String? missionId,
-  }) async =>
-      null;
+  }) async => null;
 }

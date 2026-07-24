@@ -20,7 +20,10 @@ Mission _mission({
     categoryId: 'menage',
     date: date ?? _baseDate,
     timeSlot: timeSlot,
-    address: const MissionAddress(fullAddress: '1 rue Test, Paris', shortAddress: 'Paris'),
+    address: const MissionAddress(
+      fullAddress: '1 rue Test, Paris',
+      shortAddress: 'Paris',
+    ),
     budget: const BudgetInfo(type: BudgetType.fixed, amount: 100),
     status: status,
     createdAt: DateTime(2026, 6, 1),
@@ -50,14 +53,18 @@ void main() {
 
     test('waitingCandidates → pending', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.waitingCandidates)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.waitingCandidates),
+        ),
         MissionFinanceState.pending,
       );
     });
 
     test('candidateReceived → pending', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.candidateReceived)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.candidateReceived),
+        ),
         MissionFinanceState.pending,
       );
     });
@@ -71,7 +78,9 @@ void main() {
 
     test('confirmed → secured', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.confirmed)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.confirmed),
+        ),
         MissionFinanceState.secured,
       );
     });
@@ -85,35 +94,45 @@ void main() {
 
     test('inProgress → secured', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.inProgress)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.inProgress),
+        ),
         MissionFinanceState.secured,
       );
     });
 
     test('completionRequested → secured', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.completionRequested)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.completionRequested),
+        ),
         MissionFinanceState.secured,
       );
     });
 
     test('completed → secured', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.completed)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.completed),
+        ),
         MissionFinanceState.secured,
       );
     });
 
     test('paymentHeld → secured', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.paymentHeld)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.paymentHeld),
+        ),
         MissionFinanceState.secured,
       );
     });
 
     test('awaitingRelease → awaitingRelease24h', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.awaitingRelease)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.awaitingRelease),
+        ),
         MissionFinanceState.awaitingRelease24h,
       );
     });
@@ -127,14 +146,18 @@ void main() {
 
     test('inDispute → disputeHold', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.inDispute)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.inDispute),
+        ),
         MissionFinanceState.disputeHold,
       );
     });
 
     test('cancelled sans presta → pending', () {
       expect(
-        MissionFinanceUi.resolveState(_mission(status: MissionStatus.cancelled)),
+        MissionFinanceUi.resolveState(
+          _mission(status: MissionStatus.cancelled),
+        ),
         MissionFinanceState.pending,
       );
     });
@@ -146,7 +169,11 @@ void main() {
     test('annulation > 24h avant → refund100', () {
       final missionStart = DateTime(2026, 6, 15, 10, 0);
       final now = missionStart.subtract(const Duration(hours: 48));
-      final m = _mission(status: MissionStatus.cancelled, presta: _presta, date: missionStart);
+      final m = _mission(
+        status: MissionStatus.cancelled,
+        presta: _presta,
+        date: missionStart,
+      );
       expect(
         MissionFinanceUi.resolveState(m, now: now),
         MissionFinanceState.refund100,
@@ -156,7 +183,11 @@ void main() {
     test('annulation < 24h avant → refund50', () {
       final missionStart = DateTime(2026, 6, 15, 10, 0);
       final now = missionStart.subtract(const Duration(hours: 12));
-      final m = _mission(status: MissionStatus.cancelled, presta: _presta, date: missionStart);
+      final m = _mission(
+        status: MissionStatus.cancelled,
+        presta: _presta,
+        date: missionStart,
+      );
       expect(
         MissionFinanceUi.resolveState(m, now: now),
         MissionFinanceState.refund50,
@@ -166,7 +197,11 @@ void main() {
     test('annulation exactement 24h avant → refund100 (≥ 24h)', () {
       final missionStart = DateTime(2026, 6, 15, 10, 0);
       final now = missionStart.subtract(const Duration(hours: 24));
-      final m = _mission(status: MissionStatus.cancelled, presta: _presta, date: missionStart);
+      final m = _mission(
+        status: MissionStatus.cancelled,
+        presta: _presta,
+        date: missionStart,
+      );
       expect(
         MissionFinanceUi.resolveState(m, now: now),
         MissionFinanceState.refund100,
@@ -176,7 +211,11 @@ void main() {
     test('annulation le jour J → refund50', () {
       final missionStart = DateTime(2026, 6, 15, 10, 0);
       final now = missionStart.subtract(const Duration(hours: 1));
-      final m = _mission(status: MissionStatus.cancelled, presta: _presta, date: missionStart);
+      final m = _mission(
+        status: MissionStatus.cancelled,
+        presta: _presta,
+        date: missionStart,
+      );
       expect(
         MissionFinanceUi.resolveState(m, now: now),
         MissionFinanceState.refund50,
@@ -188,24 +227,46 @@ void main() {
 
   group('MissionFinanceUi.isPaymentLinkedMission', () {
     test('confirmed → payment linked', () {
-      expect(MissionFinanceUi.isPaymentLinkedMission(_mission(status: MissionStatus.confirmed)), true);
+      expect(
+        MissionFinanceUi.isPaymentLinkedMission(
+          _mission(status: MissionStatus.confirmed),
+        ),
+        true,
+      );
     });
 
     test('closed → payment linked', () {
-      expect(MissionFinanceUi.isPaymentLinkedMission(_mission(status: MissionStatus.closed)), true);
+      expect(
+        MissionFinanceUi.isPaymentLinkedMission(
+          _mission(status: MissionStatus.closed),
+        ),
+        true,
+      );
     });
 
     test('waitingCandidates → not linked', () {
-      expect(MissionFinanceUi.isPaymentLinkedMission(_mission(status: MissionStatus.waitingCandidates)), false);
+      expect(
+        MissionFinanceUi.isPaymentLinkedMission(
+          _mission(status: MissionStatus.waitingCandidates),
+        ),
+        false,
+      );
     });
 
     test('cancelled sans presta → not linked', () {
-      expect(MissionFinanceUi.isPaymentLinkedMission(_mission(status: MissionStatus.cancelled)), false);
+      expect(
+        MissionFinanceUi.isPaymentLinkedMission(
+          _mission(status: MissionStatus.cancelled),
+        ),
+        false,
+      );
     });
 
     test('cancelled avec presta → payment linked', () {
       expect(
-        MissionFinanceUi.isPaymentLinkedMission(_mission(status: MissionStatus.cancelled, presta: _presta)),
+        MissionFinanceUi.isPaymentLinkedMission(
+          _mission(status: MissionStatus.cancelled, presta: _presta),
+        ),
         true,
       );
     });

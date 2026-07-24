@@ -13,7 +13,11 @@ void main() {
 
   group('sendMessage — messages autorisés', () {
     test('texte normal passe sans erreur', () async {
-      final msg = await repo.sendMessage('c1', 'u1', 'Bonjour, comment ça va ?');
+      final msg = await repo.sendMessage(
+        'c1',
+        'u1',
+        'Bonjour, comment ça va ?',
+      );
       expect(msg, isNotNull);
       expect(fake.sendCallCount, 1);
     });
